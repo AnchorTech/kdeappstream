@@ -42,24 +42,26 @@ INCLUDE_DIRECTORIES( ${QT_INCLUDE}
 KDE4_ADD_UI_FILES( TEST_COMMON_SRCS ./src/test/TestWindow.ui )
 
 ADD_DEFINITIONS( -Wall )
+ADD_DEFINITIONS(-DQT_SHARED )
 
 KDE4_ADD_EXECUTABLE( testapp ${TEST_COMMON_SRCS} )
 KDE4_ADD_EXECUTABLE( kappstream-server ${KAS_COMMON_SRCS} )
-ADD_LIBRARY( kappstream ${KASLIB_COMMON_SRCS} )
+ADD_LIBRARY( kappstream SHARED ${KASLIB_COMMON_SRCS} )
 
 TARGET_LINK_LIBRARIES( kappstream
-	               ${QT_LIBRARIES}
-		       ${KDE4_KDEUI_LIBS}
-		       ${KDE4_KPARTS_LIBS} 
+	               ${QT_QTCORE_LIBRARY}
+                       ${QT_QTGUI_LIBRARY}
 		       ${DL_LIB} )
 
 TARGET_LINK_LIBRARIES( kappstream-server
-	               ${QT_LIBRARIES}
+	               ${QT_QTCORE_LIBRARY}
+                       ${QT_QTGUI_LIBRARY}
 		       ${KDE4_KDEUI_LIBS}
 		       ${KDE4_KPARTS_LIBS} )
 
 TARGET_LINK_LIBRARIES( testapp
-	               ${QT_LIBRARIES}
+	               ${QT_QTCORE_LIBRARY}
+                       ${QT_QTGUI_LIBRARY}
 		       ${KDE4_KDEUI_LIBS}
 		       ${KDE4_KPARTS_LIBS} kappstream )
 
