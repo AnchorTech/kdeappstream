@@ -6,8 +6,8 @@
 
     QT       += core gui
 
-    TARGET = KAppStream
-    TEMPLATE = app
+    TARGET = kappstream_lib
+    TEMPLATE = lib
 
     SOURCES += main.cpp\
         paint/PaintEngine.cpp \

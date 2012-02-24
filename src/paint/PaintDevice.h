@@ -5,12 +5,19 @@
 
 namespace KAppStream
 {
+    class PaintEngine;
+
     class PaintDevice : public QPaintDevice
     {
+            PaintEngine * engine;
+
         public:
 
             explicit PaintDevice();
-            virtual QPaintEngine * paintEngine () const;
+
+            virtual ~PaintDevice();
+
+            virtual QPaintEngine * paintEngine() const;
 
     };
 }

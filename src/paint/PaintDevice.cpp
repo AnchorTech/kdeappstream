@@ -1,13 +1,25 @@
 #include "PaintDevice.h"
+#include "PaintEngine.h"
+
+#include <QDebug>
 
 using namespace KAppStream;
 
 PaintDevice::PaintDevice() :
-    QPaintDevice()
+    QPaintDevice(),
+    engine(new PaintEngine)
 {
+    qDebug() << "PaintDevice::PaintDevice()";
+}
+
+PaintDevice::~PaintDevice()
+{
+    qDebug() << "PaintDevice::~PaintDevice()";
+    delete engine;
 }
 
 QPaintEngine * PaintDevice::paintEngine() const
 {
-    return 0;
+    qDebug() << "PaintDevice::paintEngine()";
+    return engine;
 }

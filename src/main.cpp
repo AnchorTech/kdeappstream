@@ -1,11 +1,18 @@
 #include <QtGui/QApplication>
-#include "TestWindow.h"
+
+#include <QProcess>
+#include <QDebug>
+#include <QTimer>
+
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    TestWindow w;
-    w.show();
-
-    return a.exec();
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("LD_PRELOAD", "../lib/libkappstream_lib.so");
+    env.insert("GAMMARAY_UNSET_PRELOAD", "1");
+    QProcess p;
+    p.setProcessEnvironment(env);
+    p.setProcessChannelMode(QProcess::ForwardedChannels);
+    p.start("../test/test");
+    p.waitForFinished(-1);
 }
