@@ -11,19 +11,19 @@
 
     SOURCES += main.cpp\
         paint/PaintEngine.cpp \
-        paint/PaintDevice.cpp \
-        hooking/AbstractFunctionOverwriter.cpp \
-        hooking/UnixFunctionOverwriter.cpp \
-        hooking/FunctionOverwriterFactory.cpp \
-        hooking/Probe.cpp
+        paint/PaintDevice.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
-        paint/PaintDevice.h \
-        hooking/AbstractFunctionOverwriter.h \
-        hooking/UnixFunctionOverwriter.h \
-        hooking/FunctionOverwriterFactory.h
+        paint/PaintDevice.h
 
     unix {
         LIBS += -ldl
     }
+
+
+
+
+
+
+

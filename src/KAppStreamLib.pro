@@ -9,7 +9,7 @@
     TARGET = kappstream_lib
     TEMPLATE = lib
 
-    SOURCES += main.cpp\
+    SOURCES +=\
         paint/PaintEngine.cpp \
         paint/PaintDevice.cpp \
         hooking/AbstractFunctionOverwriter.cpp \
@@ -27,3 +27,4 @@
     unix {
         LIBS += -ldl
     }
+
