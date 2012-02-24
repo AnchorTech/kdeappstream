@@ -6,7 +6,7 @@
 
     QT       += core gui
 
-    TARGET = kappstream_lib
+    TARGET = kappstream
     TEMPLATE = lib
 
     SOURCES +=\

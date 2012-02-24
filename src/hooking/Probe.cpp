@@ -1,5 +1,11 @@
 #include <QtCore>
 #include <dlfcn.h>
+#include <QWidget>
+#include <QPainter>
+
+#include "paint/PaintDevice.h"
+
+using namespace KAppStream;
 
 class EventFilter;
 
@@ -7,8 +13,24 @@ static EventFilter *evFilter = 0;
 
 class EventFilter : public QObject
 {
+    PaintDevice * device;
+    QPainter * p;
+
+public:
+
+    EventFilter() :
+        device(new PaintDevice),
+        p(new QPainter(device))
+    {}
+
+    ~EventFilter()
+    {
+        delete device;
+    }
+
     bool eventFilter( QObject * recv, QEvent * e )
     {
+        QWidget * w;
         switch (e->type())
         {
         case QEvent::None:
@@ -270,7 +292,14 @@ class EventFilter : public QObject
             qDebug() << "QEvent::Move" << recv;
             break;
         case QEvent::Paint:
-            qDebug() << "QEvent::Paint" << recv;
+            //qDebug() << "QEvent::Paint" << recv;
+            w = dynamic_cast<QWidget*>(recv);
+            if (w)
+            {
+                //p->begin(device);
+                //w->render(p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+                //p->end();
+            }
             break;
         case QEvent::PaletteChange:
             qDebug() << "QEvent::PaletteChange" << recv;
@@ -440,6 +469,7 @@ void installUIExtractorEventFilter()
 
 extern "C" void Q_CORE_EXPORT qt_startup_hook()
 {
+    qDebug() << "qt_startup_hook";
     installUIExtractorEventFilter();
 #if !defined Q_OS_WIN && !defined Q_OS_MAC
     static void(*next_qt_startup_hook)() = (void (*)()) dlsym(RTLD_NEXT, "qt_startup_hook");

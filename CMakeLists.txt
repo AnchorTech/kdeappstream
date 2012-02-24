@@ -3,6 +3,9 @@ PROJECT( kde-appstream )
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
 FIND_PACKAGE( KDE4 REQUIRED )
+FIND_LIBRARY( DL_LIB NAMES ${CMAKE_DL_LIBS} )
+MESSAGE( STATUS "using dl library: ${DL_LIB}" )
+
 INCLUDE( KDE4Defaults )
 
 SET( CMAKE_PACKAGE_QTGUI TRUE )
@@ -10,29 +13,56 @@ SET( QT_USE_QTXML TRUE )
 
 SET( KAS_COMMON_SRCS
 	./src/main.cpp
-	./src/TestWindow.cpp
+   )
+
+SET( KASLIB_COMMON_SRCS
+	./src/hooking/AbstractFunctionOverwriter.cpp
+	./src/hooking/FunctionOverwriterFactory.cpp
+	./src/hooking/Probe.cpp
+	./src/hooking/UnixFunctionOverwriter.cpp
 	./src/paint/PaintDevice.cpp
 	./src/paint/PaintEngine.cpp
    )
 
-KDE4_ADD_UI_FILES( KAS_COMMON_SRCS ./src/TestWindow.ui )
+SET( TEST_COMMON_SRCS
+	./src/test/main.cpp
+	./src/test/TestWindow.cpp
+   )
 
 SET( INCLUDE_DIRS
 	./src
 	./src/paint
+	./src/test
    )
 
 INCLUDE_DIRECTORIES( ${QT_INCLUDE}
                      ${KDE4_INCLUDES}
 		     ${INCLUDE_DIRS} )
 
+KDE4_ADD_UI_FILES( TEST_COMMON_SRCS ./src/test/TestWindow.ui )
+
 ADD_DEFINITIONS( -Wall )
 
-KDE4_ADD_EXECUTABLE( kde-appstream ${KAS_COMMON_SRCS} )
+KDE4_ADD_EXECUTABLE( testapp ${TEST_COMMON_SRCS} )
+KDE4_ADD_EXECUTABLE( kappstream-server ${KAS_COMMON_SRCS} )
+ADD_LIBRARY( kappstream ${KASLIB_COMMON_SRCS} )
 
-TARGET_LINK_LIBRARIES( kde-appstream
+TARGET_LINK_LIBRARIES( kappstream
+	               ${QT_LIBRARIES}
+		       ${KDE4_KDEUI_LIBS}
+		       ${KDE4_KPARTS_LIBS} 
+		       ${DL_LIB} )
+
+TARGET_LINK_LIBRARIES( kappstream-server
 	               ${QT_LIBRARIES}
 		       ${KDE4_KDEUI_LIBS}
 		       ${KDE4_KPARTS_LIBS} )
 
-INSTALL( TARGETS kde-appstream ${INSTALL_TARGETS_DEFAULT_ARGS} )
+TARGET_LINK_LIBRARIES( testapp
+	               ${QT_LIBRARIES}
+		       ${KDE4_KDEUI_LIBS}
+		       ${KDE4_KPARTS_LIBS} kappstream )
+
+INSTALL( TARGETS testapp ${INSTALL_TARGETS_DEFAULT_ARGS} )
+INSTALL( TARGETS kappstream ${INSTALL_TARGETS_DEFAULT_ARGS} )
+INSTALL( TARGETS kappstream-server ${INSTALL_TARGETS_DEFAULT_ARGS} )
