@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-    QT       += core gui network
+    QT       += core gui
 
     TARGET = kappstream
     TEMPLATE = lib
@@ -15,19 +15,16 @@
         hooking/AbstractFunctionOverwriter.cpp \
         hooking/UnixFunctionOverwriter.cpp \
         hooking/FunctionOverwriterFactory.cpp \
-        hooking/Probe.cpp \
-    websocket/QWsSocket.cpp \
-    websocket/QWsServer.cpp
+        hooking/Probe.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
         paint/PaintDevice.h \
         hooking/AbstractFunctionOverwriter.h \
         hooking/UnixFunctionOverwriter.h \
-        hooking/FunctionOverwriterFactory.h \
-    websocket/QWsSocket.h \
-    websocket/QWsServer.h
+        hooking/FunctionOverwriterFactory.h
 
     unix {
         LIBS += -ldl
     }
+
