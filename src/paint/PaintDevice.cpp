@@ -9,4 +9,5 @@ PaintDevice::PaintDevice() :
 
 QPaintEngine * PaintDevice::paintEngine() const
 {
+    return 0;
 }

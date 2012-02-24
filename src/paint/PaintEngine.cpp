@@ -11,7 +11,9 @@ PaintEngine::~PaintEngine()
 {}
 
 bool PaintEngine::begin(QPaintDevice * pdev)
-{}
+{
+    return false;
+}
 
 void PaintEngine::drawEllipse(const QRectF & rect)
 {}
@@ -59,10 +61,14 @@ void PaintEngine::drawTiledPixmap(const QRectF & rect, const QPixmap & pixmap, c
 {}
 
 bool PaintEngine::end()
-{}
+{
+    return false;
+}
 
 PaintEngine::Type PaintEngine::type() const
-{}
+{
+    return QPaintEngine::SVG;
+}
 
 void PaintEngine::updateState (const QPaintEngineState & state)
 {}
