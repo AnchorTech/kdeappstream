@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-    QT       += core gui
+    QT       += core gui network script
 
     TARGET = KAppStream
     TEMPLATE = app
@@ -21,19 +21,3 @@
     unix {
         LIBS += -ldl
     }
-
-<<<<<<< HEAD
-
-
-
-
-
-
-
-
-
-=======
-OTHER_FILES += \
-    ../CMakeLists.txt
->>>>>>> b6535deb629b9d9eed47207a2ad88c73fd47f03c
-
