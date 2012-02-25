@@ -21,9 +21,4 @@
         LIBS += -ldl
     }
 
-
-
-
-
-
-
+OTHER_FILES +=

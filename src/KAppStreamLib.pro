@@ -17,7 +17,9 @@
         hooking/FunctionOverwriterFactory.cpp \
         hooking/Probe.cpp \
     websocket/QWsSocket.cpp \
-    websocket/QWsServer.cpp
+    websocket/QWsServer.cpp \
+    websocket/WebsocketServer.cpp \
+    websocket/HttpServer.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
@@ -26,8 +28,13 @@
         hooking/UnixFunctionOverwriter.h \
         hooking/FunctionOverwriterFactory.h \
     websocket/QWsSocket.h \
-    websocket/QWsServer.h
+    websocket/QWsServer.h \
+    websocket/WebsocketServer.h \
+    websocket/HttpServer.h
 
     unix {
         LIBS += -ldl
     }
+
+OTHER_FILES += \
+    websocket/index.html
