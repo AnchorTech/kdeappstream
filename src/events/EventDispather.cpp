@@ -1,9 +1,12 @@
 #include "EventDispather.h"
 
+#include <QWidget>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QScriptValue>
 #include <QScriptEngine>
+#include <QMouseEvent>
+#include <QApplication>
 
 EventDispather * EventDispather::m_instance = 0;
 
@@ -31,7 +34,7 @@ void EventDispather::run()
 
     QLocalSocket * socket = server.nextPendingConnection();
 
-    QScriptValue sc;
+    QScriptValue sc, tmp;
     QScriptEngine engine;
 
     while (true)
@@ -42,15 +45,16 @@ void EventDispather::run()
 
         sc = engine.evaluate("(" + QString(ba) + ")");
 
-        if (sc.property("result").isObject())
+        if ((tmp = sc.property("press")).isObject())
         {
-                QStringList items;
-                qScriptValueToSequence(sc.property("result"), items);
-
-                foreach (QString str, items) {
-                     qDebug("value %s",str.toStdString().c_str());
-                 }
-
+            qsreal x = tmp.property("x").toNumber();
+            qsreal y = tmp.property("y").toNumber();
+            QWidget * w = qApp->widgetAt(x, y);
+            if (w)
+            {
+                QMouseEvent * e = new QMouseEvent(QEvent::MouseButtonPress, QPoint(x, y), Qt::LeftButton, Qt::LeftButton, 0);
+                qApp->postEvent(w, e);
+            }
         }
     }
 }

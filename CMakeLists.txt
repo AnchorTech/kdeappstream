@@ -20,6 +20,7 @@ SET( KASLIB_COMMON_SRCS
         ./src/hooking/FunctionOverwriterFactory.cpp
         ./src/hooking/Probe.cpp
         ./src/hooking/UnixFunctionOverwriter.cpp
+        ./src/events/EventDispather.cpp
         ./src/paint/PaintDevice.cpp
         ./src/paint/PaintEngine.cpp
    )
@@ -51,6 +52,8 @@ ADD_LIBRARY( kappstream SHARED ${KASLIB_COMMON_SRCS} )
 TARGET_LINK_LIBRARIES( kappstream
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTGUI_LIBRARY}
+                       ${QT_QTNETWORK_LIBRARY}
+                       ${QT_QTSCRIPT_LIBRARY}
                        ${DL_LIB} )
 
 TARGET_LINK_LIBRARIES( kappstream-server
