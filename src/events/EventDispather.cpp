@@ -226,6 +226,10 @@ void EventDispather::run()
                     qApp->notify(QApplication::activeWindow(), new QEvent(QEvent::HoverEnter));
                     qApp->notify(w, new QEvent(QEvent::Enter));
                     qApp->notify(w, new QEvent(QEvent::HoverEnter));
+                    qApp->notify(w, new QEvent(QEvent::FocusIn));
+                    qApp->notify(w, e);
+                    e = new QMouseEvent(QEvent::MouseButtonRelease, w->mapFrom(QApplication::activeWindow(), QPoint(x, y)), QApplication::activeWindow()->mapToGlobal(QPoint(x, y)), Qt::NoButton, Qt::NoButton, m);
+
                     qApp->notify(w, e);
                     //e = new QMouseEvent(QEvent::MouseButtonPress, w->mapFromParent(QPoint(x, y)), Qt::LeftButton, Qt::LeftButton, m);
                     //qApp->notify(w, e);
