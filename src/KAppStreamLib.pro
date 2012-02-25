@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-    QT       += core gui
+    QT       += core gui network script
 
     TARGET = kappstream
     TEMPLATE = lib
@@ -15,16 +15,20 @@
         hooking/AbstractFunctionOverwriter.cpp \
         hooking/UnixFunctionOverwriter.cpp \
         hooking/FunctionOverwriterFactory.cpp \
-        hooking/Probe.cpp
+        hooking/Probe.cpp \
+    events/EventDispather.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
         paint/PaintDevice.h \
         hooking/AbstractFunctionOverwriter.h \
         hooking/UnixFunctionOverwriter.h \
-        hooking/FunctionOverwriterFactory.h
+        hooking/FunctionOverwriterFactory.h \
+    events/EventDispather.h
 
     unix {
         LIBS += -ldl
     }
+
+
 

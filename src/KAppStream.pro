@@ -15,11 +15,15 @@
 
     HEADERS  += \
         paint/PaintEngine.h \
-        paint/PaintDevice.h
+        paint/PaintDevice.h \
+    EventDispather.h
 
     unix {
         LIBS += -ldl
     }
+
+
+
 
 
 

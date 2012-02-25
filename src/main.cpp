@@ -7,6 +7,8 @@
 
 int main(int argc, char *argv[])
 {
+    QApplication app(argc, argv);
+
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LD_PRELOAD", "/usr/local/lib64/libkappstream.so");
     env.insert("GAMMARAY_UNSET_PRELOAD", "1");
@@ -14,6 +16,6 @@ int main(int argc, char *argv[])
     p.setProcessEnvironment(env);
     p.setProcessChannelMode(QProcess::ForwardedChannels);
     p.start("testapp");
-    p.waitForFinished(-1);
-    return p.exitCode();
+
+    app.exec();
 }
