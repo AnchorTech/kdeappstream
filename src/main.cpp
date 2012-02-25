@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("LD_PRELOAD", "../lib/libkappstream_lib.so");
+    env.insert("LD_PRELOAD", "/usr/local/lib64/libkappstream.so");
     env.insert("GAMMARAY_UNSET_PRELOAD", "1");
     QProcess p;
     p.setProcessEnvironment(env);

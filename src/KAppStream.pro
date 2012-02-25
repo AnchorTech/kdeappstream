@@ -21,3 +21,7 @@
     unix {
         LIBS += -ldl
     }
+
+OTHER_FILES += \
+    ../CMakeLists.txt
+
