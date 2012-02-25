@@ -1,0 +1,63 @@
+<html>
+    <head>
+    <script type="application/javascript">
+    function start() {
+        initWebsocket();
+    }
+    var wsUri = "ws://" + window.location.hostname + ":12345";
+    var websocket = null;
+
+    function debug(message)
+    {
+        debugTextArea.value += message + "\n";
+        debugTextArea.scrollTop = debugTextArea.scrollHeight;
+    }
+
+    //Sending message:
+    // websocket.send(str)
+
+    function receiveData(data) {
+    }
+
+    function initWebsocket()
+    {
+            try {
+                    if (typeof MozWebSocket == 'function')
+                            WebSocket = MozWebSocket;
+                    websocket = new WebSocket(wsUri);
+                    websocket.onopen = function (evt) {
+                        debug("Connected");
+                    };
+                    websocket.onclose = function (evt) {
+                        debug("Disconnected");
+                    };
+                    websocket.onmessage = function (evt) {
+                            debug("Got: " + evt.data);
+                            receiveData(evt.data);
+                    };
+                    websocket.onerror = function (evt) {
+                        debug("Connected");
+                    };
+            } catch (exception) {
+                debug("Error " + exception);
+            }
+            debug("WS url: " + wsUri);
+    }
+
+    function stopWebsocket()
+    {
+        if (websocket)
+        websocket.close();
+    }
+    </script>
+    </head>
+    <body onload="start();">
+    <div>
+        Place for canvas!
+        <canvas id="canvas"></canvas>
+        <p>
+            <textarea id="debug" style="width:400px;height:200px;"></textarea>
+        </p>
+    </div>
+    </body>
+</html>
