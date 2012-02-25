@@ -10,12 +10,42 @@
 #include <QScriptEngine>
 #include <QMouseEvent>
 #include <QApplication>
+#include <QtTest>
 
 EventDispather * EventDispather::m_instance = 0;
+
+EventDispather::EventDispather(const QString & sName, QObject * parent) :
+    QLocalServer(parent)
+{
+    m_instance = this;
+    name = sName;
+
+    if(!qApp)
+    {
+        qDebug() << name << "No application#############################################";
+        return;
+    }
+
+    qDebug() << name << "HAS APP#############################################";
+
+    this->setMaxPendingConnections(1);
+    if (!this->listen(name) || !this->waitForNewConnection(-1))
+    {
+        qDebug() << name << "No connection#############################################";
+
+        return;
+    }
+
+    socket = this->nextPendingConnection();
+
+    connect(socket, SIGNAL(readyRead()), this, SLOT(run()));
+}
 
 EventDispather::~EventDispather()
 {
     m_instance = 0;
+    socket->close();
+    this->close();
 }
 
 EventDispather * EventDispather::instance(const QString & sName, QObject * parent)
@@ -27,43 +57,23 @@ EventDispather * EventDispather::instance(const QString & sName, QObject * paren
 
 void EventDispather::run()
 {
-    if(!qApp)
-    {
-        qDebug() << name << "No application#############################################";
-        return;
-    }
-
-    qDebug() << name << "HAS APP#############################################";
-
-
-    QLocalServer server;
-    server.setMaxPendingConnections(1);
-    if (!server.listen(name) || !server.waitForNewConnection(-1))
-    {
-        qDebug() << name << "No connection#############################################";
-
-        return;
-    }
-
     qDebug() << name << "HAS CONNECTION #############################################";
-
-
-    QLocalSocket * socket = server.nextPendingConnection();
 
     QScriptValue sc, tmp;
     QScriptEngine engine;
 
-    while (true)
+    //while (true)
+    if (socket->bytesAvailable())
     {
-        while (!socket->waitForReadyRead())
-            qDebug() << "no data";
+        //while (!socket->waitForReadyRead())
+        //    qDebug() << "no data";
         qDebug() << "hasdata!";
 
         QByteArray ba = socket->readLine();
         if (ba.isEmpty())
         {
             qDebug() << "empty data" << ba << "##########################################################";
-            continue;
+            return;
         }
 
         qDebug() << "HAS DATA" << ba << "##############################################";
@@ -90,7 +100,7 @@ void EventDispather::run()
                 Qt::KeyboardModifiers m = Qt::NoModifier;
                 QString type = tmp.property("type").toString();
                 if (type.isEmpty())
-                    continue;
+                    return;
                 if (type == "move") {
                     t = QEvent::MouseMove;
                     qDebug() << "move event";
@@ -111,7 +121,7 @@ void EventDispather::run()
                     }
                     else {
                         qDebug() << type;
-                        continue;
+                        return;
                     }
 
                     QScriptValue buttons;
@@ -176,18 +186,50 @@ void EventDispather::run()
                     }
                 }
                 qDebug() << QPoint(x,y);
-                qDebug() << QApplication::activeWindow();
-                qDebug() << QApplication::activeWindow()->childAt(x,y);
-                w = QApplication::activeWindow()->childAt(x,y);
+                QPoint p = QPoint(x,y);
+                QWidget * tempw = QApplication::activeWindow();
+                while (tempw)
+                {
+                    qDebug() << tempw << p << tempw->parent();
+                    tempw = tempw->childAt(p);
+                    if (tempw)
+                        p = tempw->mapFromParent(p);
+                }
+                qDebug() << "-------------------------------";
+                p = QPoint(x,y);
+                tempw = QApplication::widgetAt(p);
+                while (tempw)
+                {
+                    qDebug() << tempw << p;
+                    p = tempw->mapFromParent(p);
+                    tempw = tempw->childAt(p);
+                }
+                qDebug() << "-------------------------------";
+                p = QPoint(x,y);
+                tempw = QApplication::topLevelAt(p);
+                while (tempw)
+                {
+                    qDebug() << tempw << p;
+                    p = tempw->mapFromParent(p);
+                    tempw = tempw->childAt(p);
+                }
+                qDebug() << "-------------------------------";
+                qDebug() << QApplication::topLevelWidgets();
+                w = QApplication::activeWindow()->childAt(x,y)->parentWidget();
                 qDebug() << "to by było na tyle";
-                qDebug() << w->mapFromParent(QPoint(x, y));
-                e = new QMouseEvent(t, w->mapFromParent(QPoint(x, y)), Qt::NoButton, Qt::NoButton, m);
-
-                qDebug() << "sending event";
+                e = new QMouseEvent(QEvent::MouseButtonPress, w->mapFrom(QApplication::activeWindow(), QPoint(x, y)), QApplication::activeWindow()->mapToGlobal(QPoint(x, y)), Qt::NoButton, Qt::NoButton, m);
+                qDebug() << e->pos() << e->globalPos();
+                //qDebug() << "sending event";
                 if (e)
                 {
-                    qApp->postEvent(w, e);
-                    QApplication::sendPostedEvents();
+                    qApp->notify(QApplication::activeWindow(), new QEvent(QEvent::Enter));
+                    qApp->notify(QApplication::activeWindow(), new QEvent(QEvent::HoverEnter));
+                    qApp->notify(w, new QEvent(QEvent::Enter));
+                    qApp->notify(w, new QEvent(QEvent::HoverEnter));
+                    qApp->notify(w, e);
+                    //e = new QMouseEvent(QEvent::MouseButtonPress, w->mapFromParent(QPoint(x, y)), Qt::LeftButton, Qt::LeftButton, m);
+                    //qApp->notify(w, e);
+//                    QApplication::sendPostedEvents();
                 }
             }
         }

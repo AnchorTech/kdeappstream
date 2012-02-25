@@ -2,19 +2,19 @@
 #define EVENTDISPATHER_H
 
 #include <QThread>
+#include <QLocalServer>
 
-class EventDispather : public QThread
+class EventDispather : public QLocalServer
 {
+        Q_OBJECT
+
         static EventDispather * m_instance;
+
+        QLocalSocket * socket;
 
         QString name;
 
-        EventDispather(const QString & sName, QObject * parent) :
-            QThread(parent)
-        {
-            m_instance = this;
-            name = sName;
-        }
+        EventDispather(const QString & sName, QObject * parent);
 
         Q_DISABLE_COPY(EventDispather)
 
@@ -24,9 +24,9 @@ class EventDispather : public QThread
 
         static EventDispather * instance(const QString & sName, QObject * parent);
 
-    protected:
+    public slots:
 
-        virtual void run();
+        void run();
 
 };
 

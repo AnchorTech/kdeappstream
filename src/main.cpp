@@ -28,12 +28,13 @@ int main(int argc, char *argv[])
         QByteArray ba = con->readLine();
         if (ba.isEmpty())
             ba = con->readLine();
-        sleep(3);
         QString sock = QString(ba);
         QLocalSocket s;
+        sleep(1);
         s.connectToServer("kappstream_" + QString::number(p.pid()));
         if (s.waitForConnected())
         {
+            sleep(3);
             const char * d = "{ \"mouse\" : { \"x\" : \"100\", \"y\" : \"100\", \"type\" : \"move\", \"buttons\" : [\"left\"] } }\n";
             s.write(d);
             qDebug() << s.waitForBytesWritten();

@@ -457,7 +457,7 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
         exit(-1);
     qDebug() << socket.write(getSocketName().toAscii()) << getSocketName().toAscii();
 
-    (EventDispather::instance(getSocketName(), qApp))->start();
+    EventDispather::instance(getSocketName(), qApp);
 
     socket.disconnectFromServer();
 

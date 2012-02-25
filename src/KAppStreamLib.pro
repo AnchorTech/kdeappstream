@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
     QT       += core gui network script
+    CONFIG   += qtestlib
 
     TARGET = kappstream
     TEMPLATE = lib
