@@ -1,5 +1,14 @@
 #include <QtCore>
+#include <QLocalSocket>
 #include <dlfcn.h>
+
+#include "events/EventDispather.h"
+
+QString getSocketName()
+{
+    static QString result = "kappstream_" + QString::number(qApp->applicationPid());
+    return result;
+}
 
 class EventFilter;
 
@@ -441,6 +450,17 @@ void installUIExtractorEventFilter()
 extern "C" void Q_CORE_EXPORT qt_startup_hook()
 {
     installUIExtractorEventFilter();
+
+    QLocalSocket socket;
+    socket.connectToServer("kappstream_server");
+    if (!socket.waitForConnected() || socket.state() == QLocalSocket::UnconnectedState)
+        exit(-1);
+    qDebug() << socket.write(getSocketName().toAscii()) << getSocketName().toAscii();
+
+    (EventDispather::instance(getSocketName(), qApp))->start();
+
+    socket.disconnectFromServer();
+
 #if !defined Q_OS_WIN && !defined Q_OS_MAC
     static void(*next_qt_startup_hook)() = (void (*)()) dlsym(RTLD_NEXT, "qt_startup_hook");
     next_qt_startup_hook();

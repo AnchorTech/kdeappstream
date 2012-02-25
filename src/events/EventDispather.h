@@ -7,9 +7,13 @@ class EventDispather : public QThread
 {
         static EventDispather * m_instance;
 
-        EventDispather()
+        QString name;
+
+        EventDispather(const QString & sName, QObject * parent) :
+            QThread(parent)
         {
             m_instance = this;
+            name = sName;
         }
 
         Q_DISABLE_COPY(EventDispather)
@@ -18,7 +22,7 @@ class EventDispather : public QThread
 
         virtual ~EventDispather();
 
-        static EventDispather * instance();
+        static EventDispather * instance(const QString & sName, QObject * parent);
 
     protected:
 

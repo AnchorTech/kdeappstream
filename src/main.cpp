@@ -3,11 +3,16 @@
 #include <QProcess>
 #include <QDebug>
 #include <QTimer>
-
+#include <QLocalServer>
+#include <QLocalSocket>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    QLocalServer server;
+    server.setMaxPendingConnections(1);
+    server.listen("kappstream_server");
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LD_PRELOAD", "/usr/local/lib64/libkappstream.so");
@@ -17,5 +22,28 @@ int main(int argc, char *argv[])
     p.setProcessChannelMode(QProcess::ForwardedChannels);
     p.start("testapp");
 
-    app.exec();
+    if (server.waitForNewConnection(30000))
+    {
+        QLocalSocket * con = server.nextPendingConnection();
+        QByteArray ba = con->readLine();
+        if (ba.isEmpty())
+            ba = con->readLine();
+        sleep(3);
+        QString sock = QString(ba);
+        QLocalSocket s;
+        s.connectToServer("kappstream_" + QString::number(p.pid()));
+        if (s.waitForConnected())
+        {
+            const char * d = "{ \"mouse\" : { \"x\" : \"100\", \"y\" : \"100\", \"type\" : \"move\", \"buttons\" : [\"left\"] } }\n";
+            s.write(d);
+            qDebug() << s.waitForBytesWritten();
+        }
+        else
+            qDebug() << "kappstream_" + QString::number(p.pid()) << "can't connect to process";
+        server.close();
+        app.exec();
+    }
+    else
+        qDebug() << "cant receive connection";
+    server.close();
 }
