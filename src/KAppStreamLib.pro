@@ -17,7 +17,11 @@
         hooking/UnixFunctionOverwriter.cpp \
         hooking/FunctionOverwriterFactory.cpp \
         hooking/Probe.cpp \
-        events/EventDispather.cpp
+        events/EventDispather.cpp \
+    websocket/WebsocketServer.cpp \
+    websocket/QWsSocket.cpp \
+    websocket/QWsServer.cpp \
+    websocket/HttpServer.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
@@ -25,8 +29,15 @@
         hooking/AbstractFunctionOverwriter.h \
         hooking/UnixFunctionOverwriter.h \
         hooking/FunctionOverwriterFactory.h \
-        events/EventDispather.h
+        events/EventDispather.h \
+    websocket/WebsocketServer.h \
+    websocket/QWsSocket.h \
+    websocket/QWsServer.h \
+    websocket/HttpServer.h
 
     unix {
         LIBS += -ldl
     }
+
+OTHER_FILES += \
+    websocket/index.html

@@ -11,12 +11,14 @@
 
     SOURCES += main.cpp\
         paint/PaintEngine.cpp \
-        paint/PaintDevice.cpp
+        paint/PaintDevice.cpp \
+    websocket/HttpServer.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
         paint/PaintDevice.h \
-    EventDispather.h
+    EventDispather.h \
+    websocket/HttpServer.h
 
     unix {
         LIBS += -ldl
@@ -24,4 +26,3 @@
 
 OTHER_FILES += \
     ../CMakeLists.txt
-

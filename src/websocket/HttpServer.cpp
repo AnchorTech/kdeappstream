@@ -1,5 +1,6 @@
 #include "HttpServer.h"
 #include <QTcpSocket>
+#include <QFile>
 #include <QStringList>
 #include <QRegExp>
 
@@ -26,7 +27,18 @@ void HttpServer::readClient()
         if (tokens[0] == "GET") {
             QTextStream os(socket);
             os.setAutoDetectUnicode(true);
-            // os << index.html
+                                os << "HTTP/1.0 200 Ok\r\n"
+                                    "Content-Type: text/html; charset=\"utf-8\"\r\n"
+                                    "\r\n";
+            QFile file("index.html");
+            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                qDebug() << "Can't read index"; //Error
+            QTextStream in(&file);
+            while(!in.atEnd())
+            {
+                QString line = in.readLine();
+                os << line;
+            }
             socket->close();
             if (socket->state() == QTcpSocket::UnconnectedState) {
                 delete socket;

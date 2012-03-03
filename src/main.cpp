@@ -6,16 +6,20 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 
+#include <websocket/HttpServer.h>
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    HttpServer htttpServer(8888,NULL);
+    qDebug() << "after";
 
     QLocalServer server;
     server.setMaxPendingConnections(1);
     server.listen("kappstream_server");
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("LD_PRELOAD", "/usr/local/lib64/libkappstream.so");
+    env.insert("LD_PRELOAD", "/usr/local/lib/libkappstream.so");
     env.insert("GAMMARAY_UNSET_PRELOAD", "1");
     QProcess p;
     p.setProcessEnvironment(env);
