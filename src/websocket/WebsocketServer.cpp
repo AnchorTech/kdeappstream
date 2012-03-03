@@ -28,12 +28,22 @@ void Server::onConnection()
 
 void Server::onDisconnection()
 {
-    delete client;
+    disconnect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
+    disconnect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
+    client->deleteLater();
     client = NULL;
     qDebug() << "Client disconnected";
+}
+
+void Server::sendMessage(QString message) {
+    if(client) {
+        client->write(message);
+    }
 }
 
 void Server::onDataReceived(QString data)
 {
     qDebug() << "Received data: " << data;
+    sendMessage(data); // pong
+    emit dataReceived(data);
 }

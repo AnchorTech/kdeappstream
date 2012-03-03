@@ -12,6 +12,10 @@ SET( CMAKE_PACKAGE_QTGUI TRUE )
 SET( QT_USE_QTXML TRUE )
 
 SET( KAS_COMMON_SRCS
+	./src/websocket/HttpServer.cpp
+	./src/websocket/QWsServer.cpp
+	./src/websocket/QWsSocket.cpp
+	./src/websocket/WebsocketServer.cpp
         ./src/main.cpp
    )
 
@@ -35,6 +39,9 @@ SET( INCLUDE_DIRS
         ./src/paint
         ./src/test
    )
+
+SET(data_dir ${DATA_INSTALL_DIR}/kdeappstream/data/)
+INSTALL( FILES "./src/websocket/index.html" DESTINATION ${data_dir} )
 
 INCLUDE_DIRECTORIES( ${QT_INCLUDE}
                      ${KDE4_INCLUDES}

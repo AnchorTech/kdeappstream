@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QStringList>
 #include <QRegExp>
+#include <kstandarddirs.h>
 
 HttpServer::HttpServer(int port, QObject *parent) :
     QTcpServer(parent)
@@ -27,10 +28,17 @@ void HttpServer::readClient()
         if (tokens[0] == "GET") {
             QTextStream os(socket);
             os.setAutoDetectUnicode(true);
-                                os << "HTTP/1.0 200 Ok\r\n"
-                                    "Content-Type: text/html; charset=\"utf-8\"\r\n"
-                                    "\r\n";
-            QFile file("index.html");
+            os << "HTTP/1.0 200 Ok\r\n"
+                  "Content-Type: text/html; charset=\"utf-8\"\r\n"
+                  "\r\n";
+            KStandardDirs sd;
+            QStringList sl = sd.findDirs("data", "kdeappstream/data/");
+            if(! sl.count()) {
+                qDebug() << "File not found.";
+                return;
+            }
+            QString dir = sl.first();
+            QFile file(dir + "/index.html");
             if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
                 qDebug() << "Can't read index"; //Error
             QTextStream in(&file);
