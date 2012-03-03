@@ -7,12 +7,13 @@
 #include <QLocalSocket>
 
 #include <websocket/HttpServer.h>
+#include <websocket/WebsocketServer.h>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     HttpServer htttpServer(8888,NULL);
-    qDebug() << "after";
+    Server webSocketServer(NULL);
 
     QLocalServer server;
     server.setMaxPendingConnections(1);

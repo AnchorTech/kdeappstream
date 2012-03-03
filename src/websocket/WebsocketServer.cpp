@@ -17,15 +17,20 @@ void Server::onConnection()
         // log error
     }
     client = server->nextPendingConnection();
-    connect(client,SIGNAL(connected()),this,SLOT(onConnection()));
+    client->write(QString("Hello"));
+    if(!client)  {
+        // log error
+    }
+    qDebug() << "Client connected";
     connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
     connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
 }
 
 void Server::onDisconnection()
 {
-    client->deleteLater();
+    delete client;
     client = NULL;
+    qDebug() << "Client disconnected";
 }
 
 void Server::onDataReceived(QString data)

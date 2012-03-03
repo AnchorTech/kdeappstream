@@ -37,7 +37,7 @@ void HttpServer::readClient()
             while(!in.atEnd())
             {
                 QString line = in.readLine();
-                os << line;
+                os << line << '\n';
             }
             socket->close();
             if (socket->state() == QTcpSocket::UnconnectedState) {
