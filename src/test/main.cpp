@@ -6,7 +6,6 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.installEventFilter(new KAppStream::EventFilter);
     TestWindow w;
     w.show();
     app.exec();
