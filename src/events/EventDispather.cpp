@@ -10,7 +10,6 @@
 #include <QScriptEngine>
 #include <QMouseEvent>
 #include <QApplication>
-#include <QtTest>
 
 EventDispather * EventDispather::m_instance = 0;
 

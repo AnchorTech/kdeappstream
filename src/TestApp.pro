@@ -4,17 +4,31 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network script
 
 TARGET = test
 TEMPLATE = app
 
 SOURCES += \
            test/TestWindow.cpp \
-           test/main.cpp
+           test/main.cpp \
+    paint/PaintEngine.cpp \
+    paint/PaintDevice.cpp \
+    paint/JSONBuilder.cpp \
+    events/EventFilter.cpp \
+    events/EventDispather.cpp
 
 HEADERS  += \
-            test/TestWindow.h
+            test/TestWindow.h \
+    paint/PaintEngine.h \
+    paint/PaintDevice.h \
+    paint/JSONBuilder.h \
+    events/EventFilter.h \
+    events/EventDispather.h
 
 FORMS    += \
             test/TestWindow.ui
+
+
+
+

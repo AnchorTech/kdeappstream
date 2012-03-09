@@ -25,6 +25,8 @@ SET( KASLIB_COMMON_SRCS
         ./src/hooking/Probe.cpp
         ./src/hooking/UnixFunctionOverwriter.cpp
         ./src/events/EventDispather.cpp
+        ./src/events/EventFilter.cpp
+        ./src/paint/JSONBuilder.cpp
         ./src/paint/PaintDevice.cpp
         ./src/paint/PaintEngine.cpp
    )

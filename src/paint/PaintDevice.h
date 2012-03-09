@@ -1,15 +1,18 @@
 #ifndef PAINTDEVICE_H
 #define PAINTDEVICE_H
 
+#include <QObject>
 #include <QPaintDevice>
 
 namespace KAppStream
 {
     class PaintEngine;
 
-    class PaintDevice : public QPaintDevice
+    class PaintDevice : public QObject, public QPaintDevice
     {
-            PaintEngine * engine;
+            Q_OBJECT
+
+            mutable PaintEngine * engine;
 
         public:
 
@@ -18,6 +21,14 @@ namespace KAppStream
             virtual ~PaintDevice();
 
             virtual QPaintEngine * paintEngine() const;
+
+        public slots:
+
+            void render(QWidget *);
+
+        protected:
+
+            virtual int metric(PaintDeviceMetric metric) const;
 
     };
 }

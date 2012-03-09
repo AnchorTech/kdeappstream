@@ -10,21 +10,20 @@
     TEMPLATE = app
 
     SOURCES += main.cpp\
-        paint/PaintEngine.cpp \
-        paint/PaintDevice.cpp \
     websocket/HttpServer.cpp \
     websocket/WebsocketServer.cpp \
     websocket/QWsSocket.cpp \
-    websocket/QWsServer.cpp
+    websocket/QWsServer.cpp \
+    paint/JSONBuilder.cpp \
+    libtest.cpp
 
     HEADERS  += \
-        paint/PaintEngine.h \
-        paint/PaintDevice.h \
     EventDispather.h \
     websocket/HttpServer.h \
     websocket/WebsocketServer.h \
     websocket/QWsSocket.h \
-    websocket/QWsServer.h
+    websocket/QWsServer.h \
+    paint/JSONBuilder.h
 
     unix {
         LIBS += -ldl
@@ -33,3 +32,14 @@
 OTHER_FILES += \
     ../CMakeLists.txt \
     websocket/index.html
+
+
+
+
+
+
+
+
+
+
+

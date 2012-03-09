@@ -21,7 +21,8 @@
     websocket/WebsocketServer.cpp \
     websocket/QWsSocket.cpp \
     websocket/QWsServer.cpp \
-    websocket/HttpServer.cpp
+    websocket/HttpServer.cpp \
+    events/EventFilter.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
@@ -29,7 +30,6 @@
         hooking/AbstractFunctionOverwriter.h \
         hooking/UnixFunctionOverwriter.h \
         hooking/FunctionOverwriterFactory.h \
-        events/EventDispather.h \
     websocket/WebsocketServer.h \
     websocket/QWsSocket.h \
     websocket/QWsServer.h \
@@ -41,3 +41,7 @@
 
 OTHER_FILES += \
     websocket/index.html
+
+
+
+
