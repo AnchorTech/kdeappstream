@@ -59,6 +59,13 @@ QString JSONBuilder::ellipse(const QRectF & r)
     return QString("\"ellipse\":{\"x\":%1,\"y\":%2,\"w\":%3,\"h\":%4}").arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
 }
 
+QString JSONBuilder::font(const QFont & f)
+{
+    QStringList result;
+    result.removeAll("");
+    return "\"font\":{" + result.join(",") + "}";
+}
+
 QString JSONBuilder::image(const QImage & i)
 {
     QByteArray byteArray;
@@ -117,9 +124,9 @@ QString JSONBuilder::state(const QPaintEngineState & s)
     if (f & QPaintEngine::DirtyBrush)
         result += brush(s.brush());
     if (f & QPaintEngine::DirtyBrushOrigin)
-        result += "";
+        result += QString("\"origin\":{\"x\":%1,\"y\":%2}").arg(s.brushOrigin().x()).arg(s.brushOrigin().y());
     if (f & QPaintEngine::DirtyFont)
-        result += "";
+        result += font(s.font());
     if (f & QPaintEngine::DirtyBackground || f & QPaintEngine::DirtyBackgroundMode)
     {
         QStringList t;
@@ -130,15 +137,23 @@ QString JSONBuilder::state(const QPaintEngineState & s)
         result += QString("\"bg\":{%1}").arg(t.join(","));
     }
     if (f & QPaintEngine::DirtyTransform)
-        result += "";
+        result += transform(s.transform());
     if (f & QPaintEngine::DirtyClipRegion)
         result += "";
     if (f & QPaintEngine::DirtyClipPath)
         result += "";
     if (f & QPaintEngine::DirtyHints)
-        result += "";
+    {
+        QStringList tmp;
+        tmp += "\"aliasing\":" + (s.renderHints() & QPainter::Antialiasing);
+        tmp += "\"testAliasing\":" + (s.renderHints() & QPainter::TextAntialiasing);
+        tmp += "\"smoothPixmapTransform\":" + (s.renderHints() & QPainter::SmoothPixmapTransform);
+        tmp += "\"highQualityAntialiasing\":" + (s.renderHints() & QPainter::HighQualityAntialiasing);
+        tmp += "\"nonCosmeticDefaultPen\":" + (s.renderHints() & QPainter::NonCosmeticDefaultPen);
+        result += "\"hints\":{" + tmp.join(",") + "}";
+    }
     if (f & QPaintEngine::DirtyCompositionMode)
-        result += "";
+        result += QString("\"mode\":%1").arg(s.compositionMode());
     if (f & QPaintEngine::DirtyClipEnabled)
         result += "";
     if (f & QPaintEngine::DirtyOpacity)

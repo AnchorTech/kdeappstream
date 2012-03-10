@@ -33,6 +33,7 @@ namespace KAppStream
             static QString color(const QColor & c);
             static QString ellipse(const QRect & r);
             static QString ellipse(const QRectF & r);
+            static QString font(const QFont & f);
             static QString image(const QImage & i);
             static QString line(const QLine & l);
             static QString line(const QLineF & l);
