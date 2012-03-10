@@ -14,8 +14,7 @@
     websocket/WebsocketServer.cpp \
     websocket/QWsSocket.cpp \
     websocket/QWsServer.cpp \
-    paint/JSONBuilder.cpp \
-    libtest.cpp
+    paint/JSONBuilder.cpp
 
     HEADERS  += \
     EventDispather.h \
@@ -32,6 +31,7 @@
 OTHER_FILES += \
     ../CMakeLists.txt \
     websocket/index.html
+
 
 
 
