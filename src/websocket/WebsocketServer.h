@@ -17,6 +17,7 @@ private slots:
     void onConnection();
     void onDisconnection();
     void onDataReceived(QString data);
+    void readData();
 
 signals:
     void dataReceived(QString data);

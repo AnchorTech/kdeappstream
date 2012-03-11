@@ -7,11 +7,15 @@
 		canvas { border: 1px solid black; }
     </style>
     <script type="text/javascript">
-	var debugTextArea = document.getElementById("debugTextArea");
-    var canvas = document.getElementById('main');
+    function init() {
+    var debugTextArea = document.getElementById("debugTextArea");
+
+    var canvas = document.getElementById("canvas");
+    console.log(canvas);
     var ctx = canvas.getContext('2d');
     var context = ctx;
     var widgets = {}
+
 
     function debug(message)
     {
@@ -31,14 +35,16 @@
         }
     }
 
-    var wsUri = "ws://localhost:1234";
-    var websocket = null;
+
 
     function initWebsocket()
     {
+    var wsUri = "ws://localhost:1234";
+    var websocket = null;
         try {
                 if (typeof MozWebSocket == 'function')
                         WebSocket = MozWebSocket;
+
                 websocket = new WebSocket(wsUri);
                 websocket.onopen = function (evt) {
                         debug("CONNECTED");
@@ -167,7 +173,7 @@
 
     function addWidget(id,parent,point) {
       widgets[id] = { 
-		    'parent': parent
+                    'parent': parent,
 		    'point' : point 
 		    }
     }
@@ -175,11 +181,13 @@
     function removeWidget(id) {
       delete widgets[id];
     }
+    initWebsocket();
+    }
 
     //initWebsocket();
     </script>
   </head>
-  <body onload="initWebsocket()">
+  <body onload="init()">
     <p>
       <button onclick="initWebsocket();">Connect</button> <button onclick=
       "stopWebsocket();">Disconnect</button> <button onclick=
@@ -193,6 +201,6 @@
       <input type="text" id="inputPseudo" value="pseudo"> <input type="text"
       id="inputText" onkeydown="if(event.keyCode==13)sendMessage();">
       <button onclick="sendMessage();">Envoyer</button>
-    </p>Your browser doesn't support canvas.
+    </p><canvas id="canvas">Your browser doesn't support canvas.</canvas>
   </body>
 </html>

@@ -7,7 +7,6 @@
 #include <QLocalSocket>
 
 #include <websocket/HttpServer.h>
-#include <websocket/WebsocketServer.h>
 
 int main(int argc, char *argv[])
 {

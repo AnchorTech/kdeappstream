@@ -1,5 +1,8 @@
 #include "WebsocketServer.h"
+#include "paint/JSONBuilder.h"
 #include <QDebug>
+
+using namespace KAppStream;
 
 WebsocketServer::WebsocketServer(QObject *parent) :
     QObject(parent),
@@ -24,6 +27,8 @@ void WebsocketServer::onConnection()
     qDebug() << "Client connected";
     connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
     connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
+    connect(JSONBuilder::instance(0),SIGNAL(readyRead()),this,SLOT(readData()));
+    readData();
 }
 
 void WebsocketServer::onDisconnection()
@@ -46,4 +51,8 @@ void WebsocketServer::onDataReceived(QString data)
     qDebug() << "Received data: " << data;
     sendMessage(data); // pong
     emit dataReceived(data);
+}
+
+void WebsocketServer::readData() {
+    JSONBuilder::instance(0)->flush(client);
 }

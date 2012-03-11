@@ -15,7 +15,6 @@ SET( KAS_COMMON_SRCS
 	./src/websocket/HttpServer.cpp
 	./src/websocket/QWsServer.cpp
 	./src/websocket/QWsSocket.cpp
-	./src/websocket/WebsocketServer.cpp
         ./src/main.cpp
    )
 
