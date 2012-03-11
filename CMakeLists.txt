@@ -30,6 +30,10 @@ SET( KASLIB_COMMON_SRCS
         ./src/paint/PaintDevice.cpp
         ./src/paint/PaintEngine.cpp
         ./src/paint/WebRenderer.cpp
+	./src/websocket/QWsServer.cpp
+	./src/websocket/QWsSocket.cpp
+	./src/websocket/WebsocketServer.cpp
+	./src/websocket/WebsocketThread.cpp
    )
 
 SET( TEST_COMMON_SRCS

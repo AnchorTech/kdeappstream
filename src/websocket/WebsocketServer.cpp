@@ -1,7 +1,7 @@
 #include "WebsocketServer.h"
 #include <QDebug>
 
-Server::Server(QObject *parent) :
+WebsocketServer::WebsocketServer(QObject *parent) :
     QObject(parent),
     server(new QWsServer(this)),
     client(NULL)
@@ -11,7 +11,7 @@ Server::Server(QObject *parent) :
     connect(server, SIGNAL(newConnection()), this, SLOT(onConnection()));
 }
 
-void Server::onConnection()
+void WebsocketServer::onConnection()
 {
     if(client != NULL) {
         // log error
@@ -26,7 +26,7 @@ void Server::onConnection()
     connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
 }
 
-void Server::onDisconnection()
+void WebsocketServer::onDisconnection()
 {
     disconnect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
     disconnect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
@@ -35,13 +35,13 @@ void Server::onDisconnection()
     qDebug() << "Client disconnected";
 }
 
-void Server::sendMessage(QString message) {
+void WebsocketServer::sendMessage(QString message) {
     if(client) {
         client->write(message);
     }
 }
 
-void Server::onDataReceived(QString data)
+void WebsocketServer::onDataReceived(QString data)
 {
     qDebug() << "Received data: " << data;
     sendMessage(data); // pong

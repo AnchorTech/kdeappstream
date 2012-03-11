@@ -74,6 +74,8 @@ namespace KAppStream
             void brush(const QBrush & b);
             void gradient(const QGradient & g);
             void transform(const QTransform & t);
+        signals:
+            void dataReady(const QString &data);
     };
 }
 

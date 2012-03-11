@@ -36,7 +36,7 @@ void JSONBuilder::flush()
         if (buffer[buffer.length()-1] == QChar(','))
             buffer[buffer.length()-1] = QChar('\0');
         qDebug() << buffer;
-        // TODO: Sends all data to the socket
+        emit dataReady(buffer);
         buffer.clear();
     }
 }
