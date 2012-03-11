@@ -19,37 +19,61 @@ namespace KAppStream
     {
             Q_OBJECT
 
-            PaintDevice * pd;
-            static JSONBuilder * m_instance;
-            QQueue<QWidget*> _render;
             QSemaphore _sem;
+            QString buffer;
+
+            struct State
+            {
+                    State()
+                    {
+                        state = 0;
+                    }
+
+                    QPaintEngine::DirtyFlags state;
+
+                    QBrush backgroundBrush;
+                    Qt::BGMode backgroundMode;
+                    QBrush brush;
+                    QPointF brushOrigin;
+                    Qt::ClipOperation clipOperation;
+                    QPainterPath clipPath;
+                    QRegion clipRegion;
+                    QPainter::CompositionMode compositionMode;
+                    QFont font;
+                    bool isClipEnabled;
+                    qreal opacity;
+                    QPen pen;
+                    QPainter::RenderHints renderHints;
+                    QTransform transform;
+
+            } cur_state;
+
+            static JSONBuilder * m_instance;
 
             JSONBuilder(QObject * parent = 0);
 
         public:
 
             static JSONBuilder * instance(QObject * parent = 0);
-            void queue(QWidget * widget);
-            static QString color(const QColor & c);
-            static QString ellipse(const QRect & r);
-            static QString ellipse(const QRectF & r);
-            static QString font(const QFont & f);
-            static QString image(const QImage & i);
-            static QString line(const QLine & l);
-            static QString line(const QLineF & l);
-            static QString pixmap(const QPixmap & pm);
-            static QString pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr);
-            static QString rect(const QRect & r);
-            static QString rect(const QRectF & r);
-            static QString state(const QPaintEngineState & s);
-            static QString pen(const QPen & p);
-            static QString brush(const QBrush & b);
-            static QString gradient(const QGradient & g);
-            static QString transform(const QTransform & t);
 
-        public slots:
-
-            void render();
+            void flush();
+            void color(const QColor & c);
+            void ellipse(const QRect & r);
+            void ellipse(const QRectF & r);
+            void font(const QFont & f);
+            void image(const QImage & i);
+            void line(const QLine & l);
+            void line(const QLineF & l);
+            void pixmap(const QPixmap & pm);
+            void pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr);
+            void rect(const QRect & r);
+            void rect(const QRectF & r);
+            void state(const QPaintEngineState & s);
+            void saveState();
+            void pen(const QPen & p);
+            void brush(const QBrush & b);
+            void gradient(const QGradient & g);
+            void transform(const QTransform & t);
     };
 }
 

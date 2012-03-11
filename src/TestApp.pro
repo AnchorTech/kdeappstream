@@ -16,7 +16,8 @@ SOURCES += \
     paint/JSONBuilder.cpp \
     events/EventFilter.cpp \
     events/EventDispather.cpp \
-    test/main_qt.cpp
+    test/main_qt.cpp \
+    paint/WebRenderer.cpp
 
 HEADERS  += \
             test/TestWindow.h \
@@ -24,10 +25,15 @@ HEADERS  += \
     paint/PaintDevice.h \
     paint/JSONBuilder.h \
     events/EventFilter.h \
-    events/EventDispather.h
+    events/EventDispather.h \
+    paint/WebRenderer.h
+
+INCLUDEPATH += paint
 
 FORMS    += \
             test/TestWindow.ui
+
+
 
 
 

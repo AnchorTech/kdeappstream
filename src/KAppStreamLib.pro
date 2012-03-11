@@ -22,7 +22,9 @@
     websocket/QWsSocket.cpp \
     websocket/QWsServer.cpp \
     websocket/HttpServer.cpp \
-    events/EventFilter.cpp
+    events/EventFilter.cpp \
+    paint/JSONBuilder.cpp \
+    paint/WebRenderer.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
@@ -33,14 +35,22 @@
     websocket/WebsocketServer.h \
     websocket/QWsSocket.h \
     websocket/QWsServer.h \
-    websocket/HttpServer.h
+    websocket/HttpServer.h \
+    paint/JSONBuilder.h \
+    paint/WebRenderer.h
 
     unix {
         LIBS += -ldl
     }
 
 OTHER_FILES += \
-    websocket/index.html
+    websocket/index.html \
+    ../CMakeLists.txt
+
+
+
+
+
 
 
 

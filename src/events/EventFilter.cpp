@@ -1,6 +1,6 @@
 #include "EventFilter.h"
 
-#include "paint/JSONBuilder.h"
+#include "WebRenderer.h"
 
 #include <QEvent>
 #include <QDebug>
@@ -12,7 +12,7 @@ using namespace KAppStream;
 EventFilter::EventFilter(QObject *parent) :
     QObject(parent)
 {
-    JSONBuilder::instance(this);
+    WebRenderer::instance(this);
 }
 
 EventFilter::~EventFilter()
@@ -279,11 +279,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::Move" << recv;
                 break;
             case QEvent::Paint:
-                {
-                    //qDebug() << "QEvent::Paint" << recv;
-                    //w->render(pd);
-                    JSONBuilder::instance()->queue(w);
-                }
+                WebRenderer::instance()->queue(w);
                 break;
             case QEvent::PaletteChange:
                 //qDebug() << "QEvent::PaletteChange" << recv;

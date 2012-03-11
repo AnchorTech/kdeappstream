@@ -29,6 +29,7 @@ SET( KASLIB_COMMON_SRCS
         ./src/paint/JSONBuilder.cpp
         ./src/paint/PaintDevice.cpp
         ./src/paint/PaintEngine.cpp
+        ./src/paint/WebRenderer.cpp
    )
 
 SET( TEST_COMMON_SRCS

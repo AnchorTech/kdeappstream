@@ -16,13 +16,9 @@ JSONBuilder * JSONBuilder::m_instance = 0;
 
 JSONBuilder::JSONBuilder(QObject * parent) :
     QObject(parent),
-    pd(new PaintDevice),
     _sem(1)
 {
-    QTimer * t = new QTimer(this);
-    t->setInterval(500);
-    connect(t, SIGNAL(timeout()), this, SLOT(render()));
-    t->start();
+    buffer.reserve(10000);
 }
 
 JSONBuilder * JSONBuilder::instance(QObject * parent)
@@ -32,253 +28,367 @@ JSONBuilder * JSONBuilder::instance(QObject * parent)
     return m_instance;
 }
 
-void JSONBuilder::queue(QWidget * widget)
+void JSONBuilder::flush()
 {
-    if (!_sem.tryAcquire(1))
-        return;
-    if (widget->isVisible() && !_render.contains(widget))
+    this->saveState();
+    if (buffer.length())
     {
-        _render.enqueue(widget);
-        qDebug() << widget;
+        if (buffer[buffer.length()-1] == QChar(','))
+            buffer[buffer.length()-1] = QChar('\0');
+        qDebug() << buffer;
+        // TODO: Sends all data to the socket
+        buffer.clear();
     }
-    _sem.release();
 }
 
-QString JSONBuilder::color(const QColor & c)
+void JSONBuilder::ellipse(const QRect & r)
 {
-    return QString("\"color\":\"%1\"").arg(c.name());
+    this->saveState();
+    buffer.append("\"ellipse\":{\"x\":").append(QString::number(r.x()))
+            .append(",\"y\":").append(QString::number(r.y()))
+            .append(",\"w\":").append(QString::number(r.width()))
+            .append(",\"h\":").append(QString::number(r.height()))
+            .append("}");
+    buffer.append(',');
 }
 
-QString JSONBuilder::ellipse(const QRect & r)
+void JSONBuilder::ellipse(const QRectF & r)
 {
-    return QString("\"ellipse\":{\"x\":%1,\"y\":%2,\"w\":%3,\"h\":%4}").arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
+    this->saveState();
+    buffer.append("\"ellipse\":{\"x\":").append(QString::number(r.x()))
+            .append(",\"y\":").append(QString::number(r.y()))
+            .append(",\"w\":").append(QString::number(r.width()))
+            .append(",\"h\":").append(QString::number(r.height()))
+            .append("}");
+    buffer.append(',');
 }
 
-QString JSONBuilder::ellipse(const QRectF & r)
+void JSONBuilder::image(const QImage & i)
 {
-    return QString("\"ellipse\":{\"x\":%1,\"y\":%2,\"w\":%3,\"h\":%4}").arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
-}
-
-QString JSONBuilder::font(const QFont & f)
-{
-    QStringList result;
-    result.removeAll("");
-    return "\"font\":{" + result.join(",") + "}";
-}
-
-QString JSONBuilder::image(const QImage & i)
-{
+    this->saveState();
     QByteArray byteArray;
-    QBuffer buffer(&byteArray);
-    i.save(&buffer, "PNG");
-    return QString("\"image\":\"data:image/png;base64," + byteArray.toBase64() + "\"");
+    QBuffer buf(&byteArray);
+    i.save(&buf, "PNG");
+    buffer.append("\"image\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"");
+    buffer.append(',');
 }
 
-QString JSONBuilder::line(const QLine & l)
+void JSONBuilder::line(const QLine & l)
 {
-    return QString("\"line\":{\"xs\":%1,\"ys\":%2,\"xe\":%3,\"ye\":%4}").arg(l.x1()).arg(l.y1()).arg(l.x2()).arg(l.y2());
+    this->saveState();
+    buffer.append("\"line\":{\"xs\":").append(QString::number(l.x1()))
+            .append(",\"ys\":").append(QString::number(l.y1()))
+            .append(",\"xe\":").append(QString::number(l.x2()))
+            .append(",\"ye\":").append(QString::number(l.y2()));
+    buffer.append(',');
 }
 
-QString JSONBuilder::line(const QLineF & l)
+void JSONBuilder::line(const QLineF & l)
 {
-    return QString("\"line\":{\"xs\":%1,\"ys\":%2,\"xe\":%3,\"ye\":%4}").arg(l.x1()).arg(l.y1()).arg(l.x2()).arg(l.y2());
+    this->saveState();
+    buffer.append("\"line\":{\"xs\":").append(QString::number(l.x1()))
+            .append(",\"ys\":").append(QString::number(l.y1()))
+            .append(",\"xe\":").append(QString::number(l.x2()))
+            .append(",\"ye\":").append(QString::number(l.y2()));
+    buffer.append(',');
 }
 
-QString JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
+void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
+
+    this->saveState();   QByteArray byteArray;
+    QBuffer buf(&byteArray);
+    pm.copy(sr.toRect()).save(&buf, "PNG");
+    buffer.append("\"pixmap\":{\"x\":").append(QString::number(r.x()))
+            .append(",\"y\":").append(QString::number(r.y()))
+            .append(",\"w\":").append(QString::number(r.width()))
+            .append(",\"h\":").append(QString::number(r.height()))
+            .append(",\"data\":\"data:image/png;base64,").append(byteArray.toBase64())
+            .append("\"}");
+    buffer.append(',');
+}
+
+void JSONBuilder::pixmap(const QPixmap & pm)
+{
+    this->saveState();
     QByteArray byteArray;
-    QBuffer buffer(&byteArray);
-    pm.copy(sr.toRect()).save(&buffer, "PNG");
-    return QString("\"pixmap\":{\"x\":%1,\"y\":%2,\"w\":%3,\"h\":%4,\"data\":\"data:image/png;base64," + byteArray.toBase64() + "\"}")
-            .arg(r.x())
-            .arg(r.y())
-            .arg(r.width())
-            .arg(r.height());
+    QBuffer buf(&byteArray);
+    pm.save(&buf, "PNG");
+    buffer.append("\"pixmap\":{ \"data\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"}");
+    buffer.append(',');
 }
 
-QString JSONBuilder::pixmap(const QPixmap & pm)
+void JSONBuilder::rect(const QRect & r)
 {
-    QByteArray byteArray;
-    QBuffer buffer(&byteArray);
-    pm.save(&buffer, "PNG");
-    return QString("\"pixmap\":\"data:image/png;base64," + byteArray.toBase64() + "\"");
+    this->saveState();
+    buffer.append("\"rect\":{\"x\":").append(QString::number(r.x()))
+            .append(",\"y\":").append(QString::number(r.y()))
+            .append(",\"w\":").append(QString::number(r.width()))
+            .append(",\"h\":").append(QString::number(r.height()))
+            .append("}");
+    buffer.append(',');
 }
 
-QString JSONBuilder::rect(const QRect & r)
+void JSONBuilder::rect(const QRectF & r)
 {
-    return QString("\"rect\":{\"x\":%1,\"y\":%2,\"w\":%3,\"h\":%4}").arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
+    this->saveState();
+    buffer.append("\"rect\":{\"x\":").append(QString::number(r.x()))
+            .append(",\"y\":").append(QString::number(r.y()))
+            .append(",\"w\":").append(QString::number(r.width()))
+            .append(",\"h\":").append(QString::number(r.height()))
+            .append("}");
+    buffer.append(',');
 }
 
-QString JSONBuilder::rect(const QRectF & r)
+void JSONBuilder::state(const QPaintEngineState & s)
 {
-    return QString("\"rect\":{\"x\":%1,\"y\":%2,\"w\":%3,\"h\":%4}").arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
-}
-
-QString JSONBuilder::state(const QPaintEngineState & s)
-{
-    QStringList result;
-
     QPaintEngine::DirtyFlags f = s.state();
-    if (f & QPaintEngine::DirtyPen)
-        result += pen(s.pen());
+    if (f & QPaintEngine::DirtyBackground)
+        cur_state.backgroundBrush = s.backgroundBrush();
+    if (f & QPaintEngine::DirtyBackgroundMode)
+        cur_state.backgroundMode = s.backgroundMode();
     if (f & QPaintEngine::DirtyBrush)
-        result += brush(s.brush());
+        cur_state.brush = s.brush();
     if (f & QPaintEngine::DirtyBrushOrigin)
-        result += QString("\"origin\":{\"x\":%1,\"y\":%2}").arg(s.brushOrigin().x()).arg(s.brushOrigin().y());
-    if (f & QPaintEngine::DirtyFont)
-        result += font(s.font());
-    if (f & QPaintEngine::DirtyBackground || f & QPaintEngine::DirtyBackgroundMode)
-    {
-        QStringList t;
-        if (f & QPaintEngine::DirtyBackground)
-            t += brush(s.brush());
-        if (f & QPaintEngine::DirtyBackgroundMode)
-            t += QString("\"mode\":%1").arg(s.backgroundMode());
-        result += QString("\"bg\":{%1}").arg(t.join(","));
-    }
-    if (f & QPaintEngine::DirtyTransform)
-        result += transform(s.transform());
-    if (f & QPaintEngine::DirtyClipRegion)
-        result += "";
+        cur_state.brushOrigin = s.brushOrigin();
+    if (f & QPaintEngine::DirtyClipPath || f & QPaintEngine::DirtyClipRegion)
+        cur_state.clipOperation = s.clipOperation();
     if (f & QPaintEngine::DirtyClipPath)
-        result += "";
-    if (f & QPaintEngine::DirtyHints)
-    {
-        QStringList tmp;
-        tmp += "\"aliasing\":" + (s.renderHints() & QPainter::Antialiasing);
-        tmp += "\"testAliasing\":" + (s.renderHints() & QPainter::TextAntialiasing);
-        tmp += "\"smoothPixmapTransform\":" + (s.renderHints() & QPainter::SmoothPixmapTransform);
-        tmp += "\"highQualityAntialiasing\":" + (s.renderHints() & QPainter::HighQualityAntialiasing);
-        tmp += "\"nonCosmeticDefaultPen\":" + (s.renderHints() & QPainter::NonCosmeticDefaultPen);
-        result += "\"hints\":{" + tmp.join(",") + "}";
-    }
+        cur_state.clipPath = s.clipPath();
+    if (f & QPaintEngine::DirtyClipRegion)
+        cur_state.clipRegion = s.clipRegion();
     if (f & QPaintEngine::DirtyCompositionMode)
-        result += QString("\"mode\":%1").arg(s.compositionMode());
+        cur_state.compositionMode = s.compositionMode();
+    if (f & QPaintEngine::DirtyFont)
+        cur_state.font = s.font();
     if (f & QPaintEngine::DirtyClipEnabled)
-        result += "";
+        cur_state.isClipEnabled = s.isClipEnabled();
     if (f & QPaintEngine::DirtyOpacity)
-        result += QString("\"opacity\":%1").arg(s.opacity());
-    result.removeAll("");
-    return "\"state\":{" + result.join(",") + "}";
+        cur_state.opacity = s.opacity();
+    if (f & QPaintEngine::DirtyPen)
+        cur_state.pen = s.pen();
+    if (f & QPaintEngine::DirtyHints)
+        cur_state.renderHints = s.renderHints();
+    if (f & QPaintEngine::DirtyTransform)
+        cur_state.transform = s.transform();
+    cur_state.state |= f;
 }
 
-QString JSONBuilder::pen(const QPen & p)
+////////////// HELPER FUNCTIONS BELOW - NOT COLON SEPARATED /////////////////
+
+void JSONBuilder::saveState()
 {
-    QStringList result;
+    QPaintEngine::DirtyFlags f = cur_state.state;
+    if (f & QPaintEngine::AllDirty)
+    {
+        buffer.append("\"state\":{");
+
+        if (f & QPaintEngine::DirtyPen)
+        {
+            pen(cur_state.pen);
+            buffer.append(",");
+        }
+        if (f & QPaintEngine::DirtyBrush)
+        {
+            brush(cur_state.brush);
+            buffer.append(",");
+        }
+        if (f & QPaintEngine::DirtyFont)
+        {
+            font(cur_state.font);
+            buffer.append(",");
+        }
+        if (f & QPaintEngine::DirtyBrushOrigin)
+        {
+            buffer.append("\"origin\":{\"x\":").append(QString::number(cur_state.brushOrigin.x()))
+                    .append(",\"y\":").append(QString::number(cur_state.brushOrigin.y()))
+                    .append("},");
+        }
+        if (f & QPaintEngine::DirtyTransform)
+        {
+            transform(cur_state.transform);
+            buffer.append(",");
+        }
+        if (f & QPaintEngine::DirtyCompositionMode)
+        {
+            buffer.append("\"mode\":").append(QString::number(cur_state.compositionMode));
+            buffer.append(",");
+        }
+        if (f & QPaintEngine::DirtyBackground || f & QPaintEngine::DirtyBackgroundMode)
+        {
+            buffer.append("bg:{");
+            if (f & QPaintEngine::DirtyBackground)
+            {
+                brush(cur_state.backgroundBrush);
+                buffer.append(",");
+            }
+            if (f & QPaintEngine::DirtyBackgroundMode)
+                buffer.append("\"mode\":").append(QString::number(cur_state.backgroundMode));
+            if (buffer[buffer.length()-1] == QChar(','))
+            {
+                buffer[buffer.length()-1] = QChar('}');
+                buffer.append(',');
+            }
+            else
+                buffer.append("},");
+        }
+        if (f & QPaintEngine::DirtyHints)
+        {
+            buffer.append("\"hints\":{");
+            buffer += "\"aliasing\":";                   buffer += QString::number(cur_state.renderHints & QPainter::Antialiasing);
+            buffer += ",\"textAliasing\":";              buffer += QString::number(cur_state.renderHints & QPainter::TextAntialiasing);
+            buffer += ",\"smoothPixmapTransform\":";     buffer += QString::number(cur_state.renderHints & QPainter::SmoothPixmapTransform);
+            buffer += ",\"highQualityAntialiasing\":";   buffer += QString::number(cur_state.renderHints & QPainter::HighQualityAntialiasing);
+            buffer += ",\"nonCosmeticDefaultPen\":";     buffer += QString::number(cur_state.renderHints & QPainter::NonCosmeticDefaultPen);
+            buffer.append("},");
+        }
+        if (f & QPaintEngine::DirtyOpacity)
+        {
+            buffer.append("\"opacity\":").append(QString::number(cur_state.opacity));
+            buffer.append(',');
+        }
+
+
+        if (f & QPaintEngine::DirtyClipRegion);
+        if (f & QPaintEngine::DirtyClipPath);
+        if (f & QPaintEngine::DirtyClipEnabled);
+
+
+        if (buffer[buffer.length()-1] == QChar(','))
+        {
+            buffer[buffer.length()-1] = QChar('}');
+            buffer.append(',');
+        }
+        else
+            buffer.append("},");
+
+        cur_state.state = 0;
+    }
+}
+
+void JSONBuilder::color(const QColor & c)
+{
+    buffer.append("\"color\":\"").append(c.name()).append("\"");
+}
+
+void JSONBuilder::font(const QFont & f)
+{
+    //QStringList result;
+    //result.removeAll("");
+    //return "\"font\":{" + result.join(",") + "}";
+}
+
+void JSONBuilder::pen(const QPen & p)
+{
+    buffer.append("\"pen\":{");
 
     // If brush defined (instead color)
     QBrush b = p.brush();
     if (b.style() != Qt::NoBrush && b.style() != Qt::SolidPattern)
-        result += brush(p.brush());
+        brush(p.brush());
     else
-        result += color(p.color());
+        color(p.color());
 
     // If Penstyle different than SolidLine
     if (!p.isSolid())
     {
-        result += QString("\"style\":%1").arg(p.style());
-        result += QString("\"cap\":%1").arg(p.capStyle());
-        QStringList tmp;
+        buffer.append(",\"style\":").append(QString::number(p.style()));
+        buffer.append(",\"cap\":").append(QString::number(p.capStyle()));
+        buffer.append(",\"pattern\":[");
         foreach (qreal d, p.dashPattern())
-            tmp += QString::number(d);
-        result += QString("\"pattern\":[%1]").arg(tmp.join(","));
-        result += QString("\"offset\":%1").arg(p.dashOffset());
+            buffer.append(QString::number(d)).append(',');
+        if (buffer[buffer.length()-1] == QChar(','))
+            buffer[buffer.length()-1] = QChar(']');
+        else
+            buffer.append("]");
+        buffer.append(",\"offset\":").append(QString::number(p.dashOffset()));
     }
 
-    result += QString("\"join\":%1").arg(p.joinStyle());
-    result += QString("\"miter\":%1").arg(p.miterLimit());
-    result += QString("\"width\":%1").arg(p.width());
-
-    result.removeAll("");
-    return "\"pen\":{" + result.join(",") + "}";
+    buffer.append(",\"join\":").append(QString::number(p.joinStyle()));
+    buffer.append(",\"miter\":").append(QString::number(p.miterLimit()));
+    buffer.append(",\"width\":").append(QString::number(p.width()));
+    buffer.append('}');
 }
 
-QString JSONBuilder::brush(const QBrush & b)
+void JSONBuilder::brush(const QBrush & b)
 {
-    QStringList result;
+    buffer.append("\"brush\":{");
 
     switch (b.style())
     {
         case Qt::NoBrush:
-            return "";
+            return;
         case Qt::SolidPattern:
-            result += color(b.color());
+            color(b.color());
             break;
         case Qt::LinearGradientPattern:
         case Qt::RadialGradientPattern:
         case Qt::ConicalGradientPattern:
             if (b.gradient())
-                result += gradient(*(b.gradient()));
+                gradient(*(b.gradient()));
             break;
         case Qt::TexturePattern:
             {
                 QImage img = b.textureImage();
                 if (!img.isNull())
-                    result += image(img);
+                {
+                    QByteArray byteArray;
+                    QBuffer buf(&byteArray);
+                    img.save(&buf, "PNG");
+                    buffer.append("\"image\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"");
+                }
                 else
                 {
                     QPixmap pix = b.texture();
                     if (!pix.isNull())
-                        result += pixmap(pix);
+                    {
+                        QByteArray byteArray;
+                        QBuffer buf(&byteArray);
+                        pix.save(&buf, "PNG");
+                        buffer.append("\"pixmap\":{ \"data\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"}");
+                    }
                 }
             }
             break;
         default:
-            result += color(b.color());
-            result += QString("\"style\":%1").arg(b.style());
+            color(b.color());
+            buffer.append(",\"style\":").append(QString::number(b.style()));
             break;
     }
 
     if (!b.transform().isIdentity())
-        result += "\"transform\":" + transform(b.transform());
-
-    result.removeAll("");
-    return "\"brush\":{" + result.join(",") + "}";
-}
-
-QString JSONBuilder::gradient(const QGradient & g)
-{
-    QStringList result;
-    result += QString("\"type\":%1").arg(g.type());
-
-    QStringList tmp;
-    foreach (QGradientStop stop, g.stops())
-        tmp += QString("[%1, %2]").arg(stop.first).arg(stop.second.name());
-    result += "\"stops\":[" + tmp.join(",") + "]";
-
-    result.removeAll("");
-    return QString("\"gradient\":{") + result.join(",") + "}";
-}
-
-QString JSONBuilder::transform(const QTransform & t)
-{
-    return QString("\"transform\":[ [%1, %2, %3], [%4, %5, %6], [%7, %8, %9] ]")
-            .arg(t.m11())
-            .arg(t.m12())
-            .arg(t.m13())
-            .arg(t.m21())
-            .arg(t.m22())
-            .arg(t.m23())
-            .arg(t.m31())
-            .arg(t.m32())
-            .arg(t.m33());
-}
-
-void JSONBuilder::render()
-{
-    _sem.acquire();
-    QQueue<QWidget*> tmp = _render;
-    if (!tmp.isEmpty())
     {
-        QPainter p(pd);
-        do
-        {
-            qDebug() << tmp.first();
-            tmp.dequeue()->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
-        }
-        while (!tmp.isEmpty());
-        p.end();
+        if (buffer[buffer.length()-1] != QChar('{'))
+            buffer.append(',');
+        transform(b.transform());
     }
-    _render.clear();
-    _sem.release();
+
+    buffer.append('}');
+}
+
+void JSONBuilder::gradient(const QGradient & g)
+{
+    buffer.append("\"gradient\":{\"type\":").append(QString::number(g.type()));
+    buffer.append(",\"stops\":[");
+    foreach (QGradientStop stop, g.stops())
+        buffer.append("[").append(QString::number(stop.first)).append(",").append(stop.second.name()).append("],");
+    if (buffer[buffer.length()-1] == QChar(','))
+        buffer[buffer.length()-1] = QChar(']');
+    else
+        buffer.append("]");
+    buffer.append("}");
+}
+
+void JSONBuilder::transform(const QTransform & t)
+{
+    buffer.append("\"transform\":[ [")
+            .append(QString::number(t.m11())).append(",")
+            .append(QString::number(t.m12())).append(",")
+            .append(QString::number(t.m13())).append("]")
+            .append(QString::number(t.m21())).append(",")
+            .append(QString::number(t.m22())).append(",")
+            .append(QString::number(t.m23())).append("]")
+            .append(QString::number(t.m31())).append(",")
+            .append(QString::number(t.m32())).append(",")
+            .append(QString::number(t.m33())).append("]]");
 }

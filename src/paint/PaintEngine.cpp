@@ -27,12 +27,12 @@ bool PaintEngine::begin(QPaintDevice * pdev)
 
 void PaintEngine::drawEllipse(const QRectF & rect)
 {
-    qDebug() << JSONBuilder::ellipse(rect);
+    JSONBuilder::instance()->ellipse(rect);
 }
 
 void PaintEngine::drawEllipse(const QRect & rect)
 {
-    qDebug() << JSONBuilder::ellipse(rect);
+    JSONBuilder::instance()->ellipse(rect);
 }
 
 void PaintEngine::drawImage(const QRectF & rectangle, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
@@ -43,13 +43,13 @@ void PaintEngine::drawImage(const QRectF & rectangle, const QImage & image, cons
 void PaintEngine::drawLines(const QLineF * lines, int lineCount)
 {
     while (lineCount--)
-        qDebug() << JSONBuilder::line(*(lines++));
+        JSONBuilder::instance()->line(*(lines++));
 }
 
 void PaintEngine::drawLines(const QLine * lines, int lineCount)
 {
     while (lineCount--)
-        qDebug() << JSONBuilder::line(*(lines++));
+        JSONBuilder::instance()->line(*(lines++));
 }
 
 void PaintEngine::drawPath(const QPainterPath & path)
@@ -59,7 +59,7 @@ void PaintEngine::drawPath(const QPainterPath & path)
 
 void PaintEngine::drawPixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
-    qDebug() << JSONBuilder::pixmap(r, pm, sr);
+    JSONBuilder::instance()->pixmap(r, pm, sr);
 }
 
 void PaintEngine::drawPoints(const QPointF * points, int pointCount)
@@ -85,13 +85,13 @@ void PaintEngine::drawPolygon(const QPoint * points, int pointCount, PolygonDraw
 void PaintEngine::drawRects(const QRectF * rects, int rectCount)
 {
     while (rectCount--)
-        qDebug() << JSONBuilder::rect(*(rects++));
+        JSONBuilder::instance()->rect(*(rects++));
 }
 
 void PaintEngine::drawRects(const QRect * rects, int rectCount)
 {
     while (rectCount--)
-        qDebug() << JSONBuilder::rect(*(rects++));
+        JSONBuilder::instance()->rect(*(rects++));
 }
 
 void PaintEngine::drawTextItem(const QPointF & p, const QTextItem & textItem)
@@ -106,7 +106,6 @@ void PaintEngine::drawTiledPixmap(const QRectF & rect, const QPixmap & pixmap, c
 
 bool PaintEngine::end()
 {
-    qDebug() << "PaintEngine::end()";
     setPaintDevice(0);
     return true;
 }
@@ -119,5 +118,5 @@ PaintEngine::Type PaintEngine::type() const
 
 void PaintEngine::updateState (const QPaintEngineState & state)
 {
-    qDebug() << JSONBuilder::state(state);
+    JSONBuilder::instance()->state(state);
 }
