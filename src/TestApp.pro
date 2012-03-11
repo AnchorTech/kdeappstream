@@ -11,12 +11,12 @@ TEMPLATE = app
 
 SOURCES += \
            test/TestWindow.cpp \
-           test/main.cpp \
     paint/PaintEngine.cpp \
     paint/PaintDevice.cpp \
     paint/JSONBuilder.cpp \
     events/EventFilter.cpp \
-    events/EventDispather.cpp
+    events/EventDispather.cpp \
+    test/main_qt.cpp
 
 HEADERS  += \
             test/TestWindow.h \
@@ -28,6 +28,8 @@ HEADERS  += \
 
 FORMS    += \
             test/TestWindow.ui
+
+
 
 
 
