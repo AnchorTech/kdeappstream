@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QByteArray>
 #include <QBuffer>
+#include <QLocalSocket>
 
 using namespace KAppStream;
 
@@ -28,17 +29,23 @@ JSONBuilder * JSONBuilder::instance(QObject * parent)
     return m_instance;
 }
 
-void JSONBuilder::flush()
+void JSONBuilder::finish()
+{
+    _sem.acquire();
+    emit readyRead();
+}
+
+void JSONBuilder::flush(QIODevice * device)
 {
     this->saveState();
     if (buffer.length())
     {
-        if (buffer[buffer.length()-1] == QChar(','))
-            buffer[buffer.length()-1] = QChar('\0');
-        qDebug() << buffer;
-        // TODO: Sends all data to the socket
+        if (buffer[buffer.length()-1] == ',')
+            buffer[buffer.length()-1] = '\0';
+        device->write(buffer);
         buffer.clear();
     }
+    _sem.release();
 }
 
 void JSONBuilder::ellipse(const QRect & r)
@@ -174,8 +181,6 @@ void JSONBuilder::state(const QPaintEngineState & s)
     cur_state.state |= f;
 }
 
-////////////// HELPER FUNCTIONS BELOW - NOT COLON SEPARATED /////////////////
-
 void JSONBuilder::saveState()
 {
     QPaintEngine::DirtyFlags f = cur_state.state;
@@ -224,9 +229,9 @@ void JSONBuilder::saveState()
             }
             if (f & QPaintEngine::DirtyBackgroundMode)
                 buffer.append("\"mode\":").append(QString::number(cur_state.backgroundMode));
-            if (buffer[buffer.length()-1] == QChar(','))
+            if (buffer[buffer.length()-1] == ',')
             {
-                buffer[buffer.length()-1] = QChar('}');
+                buffer[buffer.length()-1] = '}';
                 buffer.append(',');
             }
             else
@@ -254,9 +259,9 @@ void JSONBuilder::saveState()
         if (f & QPaintEngine::DirtyClipEnabled);
 
 
-        if (buffer[buffer.length()-1] == QChar(','))
+        if (buffer[buffer.length()-1] == ',')
         {
-            buffer[buffer.length()-1] = QChar('}');
+            buffer[buffer.length()-1] = '}';
             buffer.append(',');
         }
         else
@@ -265,6 +270,8 @@ void JSONBuilder::saveState()
         cur_state.state = 0;
     }
 }
+
+////////////// HELPER FUNCTIONS BELOW - NOT COLON SEPARATED /////////////////
 
 void JSONBuilder::color(const QColor & c)
 {
@@ -297,8 +304,8 @@ void JSONBuilder::pen(const QPen & p)
         buffer.append(",\"pattern\":[");
         foreach (qreal d, p.dashPattern())
             buffer.append(QString::number(d)).append(',');
-        if (buffer[buffer.length()-1] == QChar(','))
-            buffer[buffer.length()-1] = QChar(']');
+        if (buffer[buffer.length()-1] == ',')
+            buffer[buffer.length()-1] = ']';
         else
             buffer.append("]");
         buffer.append(",\"offset\":").append(QString::number(p.dashOffset()));
@@ -358,7 +365,7 @@ void JSONBuilder::brush(const QBrush & b)
 
     if (!b.transform().isIdentity())
     {
-        if (buffer[buffer.length()-1] != QChar('{'))
+        if (buffer[buffer.length()-1] != '{')
             buffer.append(',');
         transform(b.transform());
     }
@@ -372,8 +379,8 @@ void JSONBuilder::gradient(const QGradient & g)
     buffer.append(",\"stops\":[");
     foreach (QGradientStop stop, g.stops())
         buffer.append("[").append(QString::number(stop.first)).append(",").append(stop.second.name()).append("],");
-    if (buffer[buffer.length()-1] == QChar(','))
-        buffer[buffer.length()-1] = QChar(']');
+    if (buffer[buffer.length()-1] == ',')
+        buffer[buffer.length()-1] = ']';
     else
         buffer.append("]");
     buffer.append("}");

@@ -29,6 +29,7 @@ namespace KAppStream
         public slots:
 
             void render();
+
     };
 }
 

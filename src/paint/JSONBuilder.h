@@ -20,7 +20,7 @@ namespace KAppStream
             Q_OBJECT
 
             QSemaphore _sem;
-            QString buffer;
+            QByteArray buffer;
 
             struct State
             {
@@ -56,7 +56,8 @@ namespace KAppStream
 
             static JSONBuilder * instance(QObject * parent = 0);
 
-            void flush();
+            void finish();
+            void flush(QIODevice * device);
             void color(const QColor & c);
             void ellipse(const QRect & r);
             void ellipse(const QRectF & r);
@@ -74,6 +75,10 @@ namespace KAppStream
             void brush(const QBrush & b);
             void gradient(const QGradient & g);
             void transform(const QTransform & t);
+
+        signals:
+
+            void readyRead();
     };
 }
 

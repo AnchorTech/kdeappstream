@@ -60,6 +60,6 @@ void WebRenderer::render()
         p.end();
     }
     _render.clear();
-    JSONBuilder::instance()->flush();
+    JSONBuilder::instance()->finish();
     _sem.release();
 }
