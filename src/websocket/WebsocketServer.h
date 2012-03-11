@@ -5,11 +5,12 @@
 #include "QWsServer.h"
 #include "QWsSocket.h"
 
-class Server : public QObject
+class WebsocketServer : public QObject
 {
     Q_OBJECT
 public:
-    Server(QObject *parent = 0);
+    WebsocketServer(QObject *parent = 0);
+public slots:
     void sendMessage(QString message);
 
 private slots:
@@ -20,7 +21,7 @@ private slots:
 signals:
     void dataReceived(QString data);
 
-private:
+public:
     QWsServer *server;
     QWsSocket *client;
     static const int port = 1234;

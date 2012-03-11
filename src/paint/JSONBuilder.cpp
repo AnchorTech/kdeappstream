@@ -40,9 +40,16 @@ void JSONBuilder::flush(QIODevice * device)
     this->saveState();
     if (buffer.length())
     {
+<<<<<<< HEAD
         if (buffer[buffer.length()-1] == ',')
             buffer[buffer.length()-1] = '\0';
         device->write(buffer);
+=======
+        if (buffer[buffer.length()-1] == QChar(','))
+            buffer[buffer.length()-1] = QChar('\0');
+        qDebug() << buffer;
+        emit dataReady(buffer);
+>>>>>>> 48894279b1ea84a28a220146369ba0f3b7c0ef52
         buffer.clear();
     }
     _sem.release();

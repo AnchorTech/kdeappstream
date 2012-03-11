@@ -7,6 +7,8 @@
 #include "paint/PaintEngine.h"
 #include "events/EventFilter.h"
 #include "events/EventDispather.h"
+#include "websocket/WebsocketThread.h"
+
 
 using namespace KAppStream;
 
@@ -39,6 +41,9 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
     EventDispather::instance(getSocketName(), qApp);
 
     socket.disconnectFromServer();
+    WebsocketThread *websocketThread = new WebsocketThread(0);
+    websocketThread->run();
+    QWsSocket *clientSocket = websocketThread->server->client;
 
 #if !defined Q_OS_WIN && !defined Q_OS_MAC
     static void(*next_qt_startup_hook)() = (void (*)()) dlsym(RTLD_NEXT, "qt_startup_hook");

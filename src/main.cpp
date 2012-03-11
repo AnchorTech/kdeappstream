@@ -13,7 +13,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     HttpServer htttpServer(8888,NULL);
-    Server webSocketServer(NULL);
+
+    QLocalServer localSocket;
 
     QLocalServer server;
     server.setMaxPendingConnections(1);

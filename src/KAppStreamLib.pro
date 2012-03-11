@@ -24,7 +24,8 @@
     websocket/HttpServer.cpp \
     events/EventFilter.cpp \
     paint/JSONBuilder.cpp \
-    paint/WebRenderer.cpp
+    paint/WebRenderer.cpp \
+    websocket/WebsocketThread.cpp
 
     HEADERS  += \
         paint/PaintEngine.h \
@@ -37,7 +38,8 @@
     websocket/QWsServer.h \
     websocket/HttpServer.h \
     paint/JSONBuilder.h \
-    paint/WebRenderer.h
+    paint/WebRenderer.h \
+    websocket/WebsocketThread.h
 
     unix {
         LIBS += -ldl
@@ -46,12 +48,3 @@
 OTHER_FILES += \
     websocket/index.html \
     ../CMakeLists.txt
-
-
-
-
-
-
-
-
-
