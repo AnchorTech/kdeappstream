@@ -31,18 +31,23 @@ JSONBuilder * JSONBuilder::instance(QObject * parent)
 
 void JSONBuilder::finish()
 {
+    qDebug() << "locking buffer";
     _sem.acquire();
+    qDebug() << "emit signal";
     emit readyRead();
+    qDebug() << "emited signal";
 }
 
 void JSONBuilder::flush(QIODevice * device)
 {
+    qDebug() << "flushing";
     this->saveState();
     if (buffer.length())
     {
         if (buffer[buffer.length()-1] == ',')
             buffer[buffer.length()-1] = '\0';
         device->write(buffer);
+        qDebug() << "write to socket";
         buffer.clear();
     }
     _sem.release();

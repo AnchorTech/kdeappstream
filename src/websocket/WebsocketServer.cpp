@@ -28,7 +28,6 @@ void WebsocketServer::onConnection()
     connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
     connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
     connect(JSONBuilder::instance(0),SIGNAL(readyRead()),this,SLOT(readData()));
-    readData();
 }
 
 void WebsocketServer::onDisconnection()
@@ -54,5 +53,7 @@ void WebsocketServer::onDataReceived(QString data)
 }
 
 void WebsocketServer::readData() {
+    qDebug() << "readData";
     JSONBuilder::instance(0)->flush(client);
+    qDebug() << "finishRead";
 }

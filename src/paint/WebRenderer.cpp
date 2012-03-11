@@ -58,8 +58,8 @@ void WebRenderer::render()
         }
         while (!tmp.isEmpty());
         p.end();
+        JSONBuilder::instance()->finish();
     }
     _render.clear();
-    JSONBuilder::instance()->finish();
     _sem.release();
 }
