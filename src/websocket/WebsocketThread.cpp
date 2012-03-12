@@ -7,5 +7,6 @@ WebsocketThread::WebsocketThread(QObject *parent) :
 }
 
 void WebsocketThread::run() {
-    server = new WebsocketServer(this);
+    server = new WebsocketServer(0);
+    exec();
 }

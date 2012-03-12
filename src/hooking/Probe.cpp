@@ -33,7 +33,7 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
     installUIExtractorEventFilter();
 
     WebsocketThread *websocketThread = new WebsocketThread(0);
-    websocketThread->run();
+    websocketThread->start();
     QLocalSocket socket;
     socket.connectToServer("kappstream_server");
     if (!socket.waitForConnected() || socket.state() == QLocalSocket::UnconnectedState)
