@@ -7,25 +7,43 @@
 
 class WebsocketServer : public QObject
 {
-    Q_OBJECT
-public:
-    WebsocketServer(QObject *parent = 0);
-public slots:
-    void sendMessage(QString message);
+        Q_OBJECT
 
-private slots:
-    void onConnection();
-    void onDisconnection();
-    void onDataReceived(QString data);
-    void readData();
+        QWsServer * server;
+        QWsSocket * client;
 
-signals:
-    void dataReceived(QString data);
+        static WebsocketServer * m_instance;
+        WebsocketServer(QObject * parent = 0);
 
-public:
-    QWsServer *server;
-    QWsSocket *client;
-    static const int port = 1234;
+        static const int port = 1234;
+
+    public:
+
+        static WebsocketServer * instance(QObject * parent = 0);
+        ~WebsocketServer();
+        bool connectSocket();
+
+    public slots:
+
+        void sendMessage(QString message);
+
+    private slots:
+
+        void onConnection();
+        void onDisconnection();
+        void onDataReceived(QString data);
+        void readData();
+
+    protected:
+
+        void run();
+
+    signals:
+
+        void connected();
+        void disconnected();
+        void dataReceived(QString data);
+
 };
 
 #endif // SERVER_H

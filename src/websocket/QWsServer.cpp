@@ -33,32 +33,39 @@ QWsServer::~QWsServer()
 
 bool QWsServer::listen(const QHostAddress & address, quint16 port)
 {
+    qDebug() << "listen";
 	return tcpServer->listen(address, port);
 }
 
 void QWsServer::close()
 {
+    qDebug() << "close";
 	tcpServer->close();
 }
 
 QAbstractSocket::SocketError QWsServer::serverError()
 {
+    qDebug() << "serverError" <<  tcpServer->serverError();
 	return tcpServer->serverError();
 }
 
 QString QWsServer::errorString()
 {
+    qDebug() << "errorString" << tcpServer->errorString();
 	return tcpServer->errorString();
 }
 
 void QWsServer::newTcpConnection()
 {
-	QTcpSocket * clientSocket = tcpServer->nextPendingConnection();
+    qDebug() << "newTcpConnection";
+        QTcpSocket * clientSocket = tcpServer->nextPendingConnection();
 	QObject * clientObject = qobject_cast<QObject*>(clientSocket);
 	connect(clientObject, SIGNAL(readyRead()), this, SLOT(dataReceived()));
 }
+
 void QWsServer::dataReceived()
 {
+    qDebug() << "dataReceived";
 	QTcpSocket * clientSocket = qobject_cast<QTcpSocket*>(sender());
 	if (clientSocket == 0)
 		return;
@@ -194,19 +201,20 @@ void QWsServer::dataReceived()
 	clientSocket->flush();
 
 	// TEMPORARY CODE FOR LINUX COMPATIBILITY
-	QWsSocket * wsSocket = new QWsSocket( clientSocket, this );
-	addPendingConnection( wsSocket );
-	emit newConnection();
+        QWsSocket * wsSocket = new QWsSocket( clientSocket, this );
+        addPendingConnection( wsSocket );
+        emit newConnection();
 
-	/*
+
 	// ORIGINAL CODE
-	int socketDescriptor = clientSocket->socketDescriptor();
-	incomingConnection( socketDescriptor );
-	*/
+        //int socketDescriptor = clientSocket->socketDescriptor();
+        //incomingConnection( socketDescriptor );
+
 }
 
 void QWsServer::incomingConnection( int socketDescriptor )
 {
+    qDebug() << "incomingConnection";
 	QTcpSocket * tcpSocket = new QTcpSocket(tcpServer);
 	tcpSocket->setSocketDescriptor( socketDescriptor, QAbstractSocket::ConnectedState );
 	QWsSocket * wsSocket = new QWsSocket( tcpSocket, this );
@@ -217,17 +225,20 @@ void QWsServer::incomingConnection( int socketDescriptor )
 
 void QWsServer::addPendingConnection( QWsSocket * socket )
 {
+    qDebug() << "addPendingConnection";
 	if ( pendingConnections.size() < maxPendingConnections() )
 		pendingConnections.enqueue(socket);
 }
 
 QWsSocket * QWsServer::nextPendingConnection()
 {
+    qDebug() << "nextPendingConnection";
 	return pendingConnections.dequeue();
 }
 
 bool QWsServer::hasPendingConnections()
 {
+    qDebug() << "hasPendingConnections";
 	if ( pendingConnections.size() > 0 )
 		return true;
 	return false;
@@ -235,56 +246,67 @@ bool QWsServer::hasPendingConnections()
 
 int QWsServer::maxPendingConnections()
 {
+    qDebug() << "maxPendingConnections";
 	return tcpServer->maxPendingConnections();
 }
 
 bool QWsServer::isListening()
 {
+    qDebug() << "isListening";
 	return tcpServer->isListening();
 }
 
 QNetworkProxy QWsServer::proxy()
 {
+    qDebug() << "proxy";
 	return tcpServer->proxy();
 }
 
 QHostAddress QWsServer::serverAddress()
 {
+    qDebug() << "serverAddress";
 	return tcpServer->serverAddress();
 }
 
 quint16 QWsServer::serverPort()
 {
+    qDebug() << "serverPort";
 	return tcpServer->serverPort();
 }
 
 void QWsServer::setMaxPendingConnections( int numConnections )
 {
+    qDebug() << "setMaxPendingConnections";
 	tcpServer->setMaxPendingConnections( numConnections );
 }
 
 void QWsServer::setProxy( const QNetworkProxy & networkProxy )
 {
+    qDebug() << "setProxy";
 	tcpServer->setProxy( networkProxy );
 }
 
 bool QWsServer::setSocketDescriptor( int socketDescriptor )
 {
+    qDebug() << "setSocketDescriptor";
 	return tcpServer->setSocketDescriptor( socketDescriptor );
 }
 
 int QWsServer::socketDescriptor()
 {
+    qDebug() << "socketDescriptor";
 	return tcpServer->socketDescriptor();
 }
 
 bool QWsServer::waitForNewConnection( int msec, bool * timedOut )
 {
+    qDebug() << "waitForNewConnection";
 	return tcpServer->waitForNewConnection( msec, timedOut );
 }
 
 QString QWsServer::computeAcceptV2(QString key)
 {
+    qDebug() << "computeAcceptV2";
 	key += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 	QByteArray hash = QCryptographicHash::hash ( key.toUtf8(), QCryptographicHash::Sha1 );
 	return hash.toBase64();
@@ -292,6 +314,7 @@ QString QWsServer::computeAcceptV2(QString key)
 
 QString QWsServer::computeAcceptV1( QString key1, QString key2, QString thirdPart )
 {
+    qDebug() << "computeAcceptV1";
 	QString numStr1;
 	QString numStr2;
 
@@ -327,6 +350,7 @@ QString QWsServer::computeAcceptV1( QString key1, QString key2, QString thirdPar
 
 QString QWsServer::serializeInt( quint32 number, quint8 nbBytes )
 {
+    qDebug() << "serializeInt";
 	QString bin;
 	quint8 currentNbBytes = 0;
 	while (number > 0 && currentNbBytes < nbBytes)

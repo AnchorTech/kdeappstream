@@ -1,13 +1,17 @@
 #include "EventFilter.h"
 
 #include "WebRenderer.h"
+#include "websocket/WebsocketServer.h"
 
 #include <QEvent>
 #include <QDebug>
 #include <QWidget>
 #include <QPainter>
+#include <QApplication>
 
 using namespace KAppStream;
+
+bool hasConnection = false;
 
 EventFilter::EventFilter(QObject *parent) :
     QObject(parent)
@@ -17,6 +21,18 @@ EventFilter::EventFilter(QObject *parent) :
 
 EventFilter::~EventFilter()
 {
+}
+
+void EventFilter::connected()
+{
+    hasConnection = true;
+    qDebug() << "connection";
+}
+
+void EventFilter::disconnected()
+{
+    hasConnection = false;
+    qDebug() << "no connection";
 }
 
 bool EventFilter::eventFilter(QObject * recv, QEvent * e)

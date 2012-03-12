@@ -4,6 +4,8 @@
 
 using namespace KAppStream;
 
+WebsocketServer * WebsocketServer::m_instance = 0;
+
 WebsocketServer::WebsocketServer(QObject *parent) :
     QObject(parent),
     server(new QWsServer(this)),
@@ -14,20 +16,39 @@ WebsocketServer::WebsocketServer(QObject *parent) :
     connect(server, SIGNAL(newConnection()), this, SLOT(onConnection()));
 }
 
+WebsocketServer::~WebsocketServer()
+{
+    m_instance = 0;
+}
+
+WebsocketServer * WebsocketServer::instance(QObject * parent)
+{
+    if (!m_instance)
+        m_instance = new WebsocketServer(parent);
+    return m_instance;
+}
+
+bool WebsocketServer::connectSocket()
+{
+    return server->waitForNewConnection(-1);
+}
+
 void WebsocketServer::onConnection()
 {
     if(client != NULL) {
         // log error
     }
     client = server->nextPendingConnection();
-    client->write(QString("Hello"));
-    if(!client)  {
-        // log error
+    if(client)  {
+        qDebug() << client->write(QString("Hello"));
+        qDebug() << "Client connected " << client->errorString();
+        connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
+        connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
+        connect(JSONBuilder::instance(),SIGNAL(readyRead()),this,SLOT(readData()));
     }
-    qDebug() << "Client connected";
-    connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
-    connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
-    connect(JSONBuilder::instance(0),SIGNAL(readyRead()),this,SLOT(readData()));
+    else
+        qDebug() << "error " << client->errorString();
+    emit connected();
 }
 
 void WebsocketServer::onDisconnection()
@@ -37,6 +58,7 @@ void WebsocketServer::onDisconnection()
     client->deleteLater();
     client = NULL;
     qDebug() << "Client disconnected";
+    emit disconnected();
 }
 
 void WebsocketServer::sendMessage(QString message) {

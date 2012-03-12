@@ -17,6 +17,11 @@ namespace KAppStream
             virtual ~EventFilter();
             bool eventFilter(QObject * recv, QEvent * e);
 
+        public slots:
+
+            void connected();
+            void disconnected();
+
         signals:
 
             void render(QWidget *);

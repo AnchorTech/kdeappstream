@@ -17,7 +17,11 @@ SOURCES += \
     events/EventFilter.cpp \
     events/EventDispather.cpp \
     test/main_qt.cpp \
-    paint/WebRenderer.cpp
+    paint/WebRenderer.cpp \
+    websocket/WebsocketThread.cpp \
+    websocket/WebsocketServer.cpp \
+    websocket/QWsSocket.cpp \
+    websocket/QWsServer.cpp
 
 HEADERS  += \
             test/TestWindow.h \
@@ -26,12 +30,24 @@ HEADERS  += \
     paint/JSONBuilder.h \
     events/EventFilter.h \
     events/EventDispather.h \
-    paint/WebRenderer.h
+    paint/WebRenderer.h \
+    websocket/WebsocketThread.h \
+    websocket/WebsocketServer.h \
+    websocket/QWsSocket.h \
+    websocket/QWsServer.h
 
 INCLUDEPATH += paint
 
 FORMS    += \
             test/TestWindow.ui
+
+OTHER_FILES += \
+    websocket/index.html
+
+
+
+
+
 
 
 

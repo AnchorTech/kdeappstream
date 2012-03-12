@@ -32,17 +32,20 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
 {
     installUIExtractorEventFilter();
 
-    WebsocketThread *websocketThread = new WebsocketThread(0);
+    WebsocketThread * websocketThread = new WebsocketThread(0);
+    qDebug() << QObject::connect(websocketThread, SIGNAL(connected()), evFilter, SLOT(connected()));
+    qDebug() << QObject::connect(websocketThread, SIGNAL(disconnected()), evFilter, SLOT(disconnected()));
     websocketThread->start();
-    QLocalSocket socket;
-    socket.connectToServer("kappstream_server");
-    if (!socket.waitForConnected() || socket.state() == QLocalSocket::UnconnectedState)
-        exit(-1);
-    qDebug() << socket.write(getSocketName().toAscii()) << getSocketName().toAscii();
 
-    EventDispather::instance(getSocketName(), qApp);
+//    QLocalSocket socket;
+//    socket.connectToServer("kappstream_server");
+//    if (!socket.waitForConnected() || socket.state() == QLocalSocket::UnconnectedState)
+//        exit(-1);
+//    qDebug() << socket.write(getSocketName().toAscii()) << getSocketName().toAscii();
 
-    socket.disconnectFromServer();
+    //EventDispather::instance(getSocketName(), qApp);
+
+//    socket.disconnectFromServer();
 
 
 #if !defined Q_OS_WIN && !defined Q_OS_MAC
