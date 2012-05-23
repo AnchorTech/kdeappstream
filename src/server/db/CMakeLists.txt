@@ -24,7 +24,7 @@ INCLUDE_DIRECTORIES( ${QT_INCLUDE}
                      ${KDE4_INCLUDES}
                      ${INCLUDE_DIRS} )
 
-KDE4_ADD_SHARED_LIBRARY( kappstream-server-db ${KAPPSTREAM_SERVER_SRCS} )
+KDE4_ADD_LIBRARY( kappstream-server-db SHARED ${KAPPSTREAM_SERVER_SRCS} )
 
 TARGET_LINK_LIBRARIES( kappstream-server-db
                        ${QT_QTCORE_LIBRARY}
