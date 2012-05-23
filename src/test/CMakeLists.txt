@@ -1,0 +1,25 @@
+SET( TEST_APP_SRCS
+     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/TestWindow.cpp )
+
+SET( TEST_APP_HEADERS
+     ${CMAKE_CURRENT_SOURCE_DIR}/TestWindow.h )
+
+SET( INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR} )
+
+INCLUDE_DIRECTORIES( ${QT_INCLUDE}
+                     ${KDE4_INCLUDES}
+                     ${INCLUDE_DIRS} )
+
+KDE4_ADD_UI_FILES( TEST_APP_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/TestWindow.ui )
+
+KDE4_ADD_EXECUTABLE( testapp ${TEST_APP_SRCS} )
+
+TARGET_LINK_LIBRARIES( testapp
+                       ${QT_QTCORE_LIBRARY}
+                       ${QT_QTGUI_LIBRARY}
+                       ${KDE4_KDEUI_LIBS}
+                       ${KDE4_KPARTS_LIBS} )
+
+INSTALL( TARGETS testapp ${INSTALL_TARGETS_DEFAULT_ARGS} )

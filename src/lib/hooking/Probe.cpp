@@ -9,7 +9,6 @@
 #include "events/EventDispather.h"
 #include "websocket/WebsocketThread.h"
 
-
 using namespace KAppStream;
 
 QString getSocketName()
