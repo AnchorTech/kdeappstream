@@ -23,7 +23,11 @@
 
 OTHER_FILES += \
     CMakeLists.txt \
+    canvas.html \
     index.html
+
+
+
 
 
 

@@ -25,7 +25,8 @@ TARGET_LINK_LIBRARIES( kappstream-server
                        ${QT_QTGUI_LIBRARY}
                        ${KDE4_KDEUI_LIBS}
                        ${KDE4_KPARTS_LIBS}
-                       kappstream-server-db )
+                       )#kappstream-server-db )
 
 INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/index.html DESTINATION ${KAPPSTREAM_SERVER_DATA_DIR} )
+INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/canvas.html DESTINATION ${KAPPSTREAM_SERVER_DATA_DIR} )
 INSTALL( TARGETS kappstream-server ${INSTALL_TARGETS_DEFAULT_ARGS} )

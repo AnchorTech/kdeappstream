@@ -1,0 +1,219 @@
+<html>
+  <head>
+    <title>
+      Websocket client test
+    </title>
+    <style type="text/css">
+                canvas { border: 1px solid black; }
+    </style>
+    <script type="text/javascript">
+
+        // var sessionID
+
+        function CreateQt() {
+            this.debugTextArea = document.getElementById("debugTextArea");
+            this.canvas = document.getElementById("canvas");
+            console.log(canvas);
+            this.ctx = canvas.getContext('2d');
+            this.context = this.ctx;
+            this.widgets = {}
+            this.websocket = 1;
+
+            this.debug = function(message)
+            {
+                debugTextArea.value += message + "\n";
+                debugTextArea.scrollTop = debugTextArea.scrollHeight;
+            }
+
+            this.sendMessage = function()
+            {
+                var pseudo = document.getElementById("inputPseudo").value;
+                var msg = document.getElementById("inputText").value;
+                var strToSend = pseudo + ": " + msg;
+                if ( websocket != null )
+                {
+                        document.getElementById("inputText").value = "";
+                        websocket.send( strToSend );
+                }
+            }
+
+
+            this.initWebsocket = function()
+            {
+                this.wsUri = "ws://localhost:1234";
+                try {
+                        if (typeof MozWebSocket == 'function')
+                                WebSocket = MozWebSocket;
+
+                        alert(this.websocket);
+                        this.websocket = new WebSocket(this.wsUri);
+                        alert(this.websocket);
+
+                        this.websocket.onopen = function (evt) {
+                            alert('CONNECTED');
+                                this.debug("CONNECTED");
+                        };
+                        this.websocket.onclose = function (evt) {
+                            alert('DISCONNECTED');
+                            for(var i in evt)
+                            alert(i + ': ' + eval('evt.'+i));
+                                this.debug("DISCONNECTED");
+                        };
+                        this.websocket.onmessage = function (evt) {
+                            alert('onmessage');
+                                this.debug( evt.data );
+                        };
+                        this.websocket.onerror = function (evt) {
+                                this.debug('ERROR: ' + evt.data);
+                        };
+
+                } catch (exception) {
+                        debug('ERROR: ' + exception);
+                }
+            }
+
+            this.stopWebsocket = function()
+            {
+                if (websocket)
+                        websocket.close();
+            }
+
+            this.checkSocket = function()
+            {
+                if ( websocket != null ) {
+                        var stateStr;
+                        switch (websocket.readyState) {
+                                case 0:
+                                        stateStr = "CONNECTING";
+                                        break;
+                                case 1:
+                                        stateStr = "OPEN";
+                                        break;
+                                case 2:
+                                        stateStr = "CLOSING";
+                                        break;
+                                case 3:
+                                        stateStr = "CLOSED";
+                                        break;
+                                default:
+                                        stateStr = "UNKNOW";
+                                        break;
+                        }
+                        debug("Websocket state = " + websocket.readyState + " ( " + stateStr + " )");
+                } else {
+                        debug("Websocket is null");
+                }
+            }
+
+            this.drawEllipse = function(centerX, centerY, width, height) {
+                context.save();
+                context.beginPath();
+                context.moveTo(centerX, centerY - height/2); // A1
+                context.bezierCurveTo(
+                                centerX + width/2, centerY - height/2, // C1
+                                centerX + width/2, centerY + height/2, // C2
+                                centerX, centerY + height/2); // A2
+
+                context.bezierCurveTo(
+                                centerX - width/2, centerY + height/2, // C3
+                                centerX - width/2, centerY - height/2, // C4
+                                centerX, centerY - height/2); // A1
+
+                context.fillStyle = "red";
+                context.fill();
+                context.closePath();
+                context.restore();
+            }
+
+            this.Point = function(x,y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            this.drawImage = function(sourcePoint, sourceWidth, sourceHeight, destinationPoint, destinationWidth, destinationHeight ,image) {
+                var  img = new Image();
+                img.onload = function() {
+                        context.drawImage(img,sourcePoint.x,sourcePoint.y,sourceWidth,sourceHeight,
+                                        destinationPoint.x, destinationPoint.y,destinationWidth,destinationHeight);
+                }
+                img.src = image;
+            }
+
+            this.drawLine = function(point1, point2) {
+                context.save();
+                context.beginPath();
+                context.moveTo(point1.x,point2.y);
+                context.lineTo(point1.x,point2.y);
+                context.closePath();
+                context.stroke();
+                context.restore();
+            }
+
+            this.drawPath = function(path) {
+
+            }
+
+            this.drawPoint = function(point) {
+                context.fillRect(point.x,point.y,1,1);
+                context.fill();
+            }
+
+            this.drawPolygon = function(points) {
+                context.save();
+                context.beginPath();
+                context.moveTo(points[0].x,points[0].y);
+                for(var i = 1; i < array.length; i++) {
+                        context.lineTo(array[i].x,array[i].y);
+                }
+                context.fill();
+                context.stroke();
+                context.closePath();
+            }
+
+            this.drawRectangle = function(point,width,height) {
+                context.fillRect(point.x,point.y,width,height);
+                context.strokeRect(point.x,point.y,width,height);
+            }
+
+            this.drawText = function(point,text) {
+                context.fillText(text,point.x,point.y);
+            }
+
+            this.addWidget = function(id,parent,point) {
+                widgets[id] = {
+                              'parent': parent,
+                              'point' : point
+                              }
+            }
+
+            this.removeWidget = function(id) {
+                delete widgets[id];
+            }
+        }
+
+
+    function init() {
+        Qt = new CreateQt();
+        Qt.initWebsocket();
+    }
+
+    //initWebsocket();
+    </script>
+  </head>
+  <body onload="init()">
+    <p>
+      <button onclick="initWebsocket();">Connect</button> <button onclick=
+      "stopWebsocket();">Disconnect</button> <button onclick=
+      "checkSocket();">State</button>
+    </p>
+    <p>
+      <textarea id="debugTextArea" style="width:400px;height:200px;">
+</textarea>
+    </p>
+    <p>
+      <input type="text" id="inputPseudo" value="pseudo"> <input type="text"
+      id="inputText" onkeydown="if(event.keyCode==13)sendMessage();">
+      <button onclick="sendMessage();">Envoyer</button>
+    </p><canvas id="canvas">Your browser doesn't support canvas.</canvas>
+  </body>
+</html>

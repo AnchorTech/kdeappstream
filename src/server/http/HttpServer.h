@@ -30,6 +30,10 @@ class HttpServer : public QTcpServer
 
         virtual void incomingConnection(int socket);
 
+        void sendStatus(QTextStream & os, int status);
+        void sendIndex(QTextStream & os);
+        void sendCanvas(QTextStream & os, QString applicationName);
+
     private slots:
 
         void discardClient();

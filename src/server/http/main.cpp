@@ -11,8 +11,13 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    HttpService service;
-    return app.exec();
+    while (true)
+    {
+        HttpService service;
+        int result = app.exec();
+        if (result != 2)
+            return result;
+    }
 
 //    QLocalServer localSocket;
 
