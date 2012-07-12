@@ -6,6 +6,8 @@
 #include <kstandarddirs.h>
 #include <QUuid>
 
+#include "WebSocketService.h"
+
 HttpServer::HttpServer(uint _port, QObject * parent) :
     QTcpServer(parent),
     port(_port),
@@ -114,22 +116,11 @@ void HttpServer::sendIndex(QTextStream & os)
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
             continue;
 
-        QString headTag("<head>");
+        QRegExp sessionIDTag("\\[PUT_SESSION_ID_HERE\\]");
         QTextStream in(&file);
-        while(!in.atEnd())
-        {
-            QString line = in.readLine();
-            if (line.contains(headTag))
-            {
-                line.replace(headTag, "<head>"
-                             "<script type=\"text/javascript\">"
-                             "var sessionID = '" + QUuid::createUuid().toString() + "';</script>");
-                os << line << '\n';
-                break;
-            }
-            os << line << '\n';
-        }
-        os << in.readAll();
+        QString data = in.readAll();
+        data.replace(sessionIDTag, QUuid::createUuid().toString());
+        os << data;
         return;
     }
     qDebug() << "Can't read index";
@@ -154,23 +145,16 @@ void HttpServer::sendCanvas(QTextStream & os, QString applicationName)
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
             continue;
 
-        QString headTag("<head>");
+        QRegExp sessionIDTag("\\[PUT_SESSION_ID_HERE\\]");
         QTextStream in(&file);
-        while(!in.atEnd())
-        {
-            QString line = in.readLine();
-            if (line.contains(headTag))
-            {
-                line.replace(headTag, "<head>"
-                             "<script type=\"text/javascript\">"
-                             "var sessionID = '" + QUuid::createUuid().toString() + "';</script>");
-                os << line << '\n';
-                break;
-            }
-            os << line << '\n';
-        }
-        os << in.readAll();
+        QString data = in.readAll();
+        data.replace(sessionIDTag, QUuid::createUuid().toString());
+        os << data;
+
+        WebSocketService * service = new WebSocketService(5889, this);
+        service->start();
+
         return;
     }
-    qDebug() << "Can't read index";
+    qDebug() << "Can't read canvas";
 }

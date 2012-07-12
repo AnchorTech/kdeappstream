@@ -8,7 +8,7 @@
     </style>
     <script type="text/javascript">
 
-        // var sessionID
+        var sessionID = '[PUT_SESSION_ID_HERE]';
 
         function CreateQt() {
             this.debugTextArea = document.getElementById("debugTextArea");
@@ -36,7 +36,6 @@
                         websocket.send( strToSend );
                 }
             }
-
 
             this.initWebsocket = function()
             {
