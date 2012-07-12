@@ -46,6 +46,7 @@ void WebSocketServer::onDataReceived(QString data)
         return;
 
     qDebug("Connection received");
+    qDebug(data.toAscii());
 
     // TODO : Data verification
     Q_UNUSED(data)
