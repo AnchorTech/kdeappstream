@@ -33,9 +33,6 @@ void WebSocketServer::newClient()
 
     clients << clientSocket;
 
-    QTextStream os(clientSocket);
-    os << "Connect to port 5890 to interact with application";
-
     qDebug("Client connected");
 }
 
@@ -60,7 +57,7 @@ void WebSocketServer::onDataReceived(QString data)
     p.setProcessChannelMode(QProcess::ForwardedChannels);
     p.start("testapp");
 
-    socket->close();
+    socket->close("Connect to port 5890 to interact with application");
 
     this->close();
     emit serverClosed();
