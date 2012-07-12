@@ -28,9 +28,9 @@ WSConnector.prototype = {
     init:function () {
         var self = this;
         try {
-            if (typeof MozWebSocket == 'function')
-                WebSocket = MozWebSocket;
-            this.websocket = new MozWebSocket(this.wsUri);
+            if (typeof WebSocket == 'function')
+                WebSocket = WebSocket;
+            this.websocket = new WebSocket(this.wsUri);
             this.websocket.onopen = function() {
                 console.log('sending hello');
                 self.websocket.send(sessionID);
@@ -233,7 +233,7 @@ WSConnector.prototype = {
 
 
 function init() {
-    var connector = new WSConnector('ws://localhost:5889');sss
+    var connector = new WSConnector('ws://localhost:5889');
 }
 
 </script>

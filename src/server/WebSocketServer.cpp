@@ -55,7 +55,15 @@ void WebSocketServer::onDataReceived(QString data)
     QProcess p;
     p.setProcessEnvironment(env);
     p.setProcessChannelMode(QProcess::ForwardedChannels);
-    p.start("testapp");
+
+    if (p.startDetached("testapp"))
+    {
+        qDebug("Process started");
+    }
+    else
+    {
+        qDebug("Process cannot be started.");
+    }
 
     socket->close("Connect to port 5890 to interact with application");
 
