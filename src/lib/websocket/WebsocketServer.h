@@ -21,6 +21,7 @@ class WebsocketServer : public QObject
         ~WebsocketServer();
         bool connectSocket();
         quint16 serverPort();
+        bool waitForConnected(int wait);
 
     public slots:
 

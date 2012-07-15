@@ -57,7 +57,8 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
     socket.waitForBytesWritten();
     socket.close();
 
-    //websocketService->waitForConnected(10000);
+    if (!websocketService->waitForConnected(10000))
+        exit(-1);
 
     installUIExtractorEventFilter();
     //QObject::connect(websocketService, SIGNAL(connected()), evFilter, SLOT(connected()));

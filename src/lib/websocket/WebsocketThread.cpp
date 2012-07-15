@@ -17,6 +17,11 @@ quint16 WebsocketThread::serverPort()
     return 0;
 }
 
+bool WebsocketThread::waitForConnected(int wait)
+{
+    return server->waitForConnected(wait);
+}
+
 void WebsocketThread::run()
 {
     qDebug() << "preparing connections";
