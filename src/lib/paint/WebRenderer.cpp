@@ -34,18 +34,14 @@ WebRenderer * WebRenderer::instance(QObject * parent)
 
 void WebRenderer::queue(QWidget * widget)
 {
-    qDebug("queue()");
     _sem.acquire();
     if (widget->isVisible() && !_render.contains(widget))
-    {
         _render.enqueue(widget);
-    }
     _sem.release();
 }
 
 void WebRenderer::render()
 {
-    qDebug("render()");
     if (!_sem.tryAcquire())
         return;
     QQueue<QWidget*> tmp = _render;

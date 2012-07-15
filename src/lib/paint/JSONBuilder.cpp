@@ -36,17 +36,20 @@ void JSONBuilder::finish()
 
 void JSONBuilder::flush(QIODevice * device)
 {
-    if (!device)
-        return;
     _sem.acquire();
-    this->saveStatePriv();
-    if (buffer.length())
+    qDebug() << buffer;
+    if (device)
     {
-        if (buffer[buffer.length()-1] == ',')
-            buffer[buffer.length()-1] = '\0';
-        device->write(buffer);
-        buffer.clear();
+        this->saveStatePriv();
+        if (buffer.length())
+        {
+            if (buffer[buffer.length()-1] == ',')
+                buffer[buffer.length()-1] = '\0';
+            device->write(buffer);
+            device->waitForBytesWritten(1000);
+        }
     }
+    buffer.clear();
     _sem.release();
 }
 

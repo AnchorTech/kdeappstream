@@ -14,6 +14,7 @@ WebsocketServer::WebsocketServer(QObject *parent) :
     server->listen(QHostAddress::Any); // returns boolean
     server->setMaxPendingConnections(1);
     connect(server, SIGNAL(newConnection()), this, SLOT(onConnection()));
+    connect(JSONBuilder::instance(), SIGNAL(readyRead()), this, SLOT(readData()));
 }
 
 WebsocketServer::~WebsocketServer()
@@ -50,7 +51,6 @@ void WebsocketServer::onConnection()
         qDebug() << "Client connected " << client->errorString();
         connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
         connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
-        connect(JSONBuilder::instance(), SIGNAL(readyRead()), this, SLOT(readData()));
     }
     else
         qDebug() << "error " << client->errorString();
@@ -83,7 +83,5 @@ void WebsocketServer::onDataReceived(QString data)
 
 void WebsocketServer::readData()
 {
-    if (!client)
-        return;
     JSONBuilder::instance(0)->flush(client);
 }
