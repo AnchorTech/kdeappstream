@@ -103,13 +103,14 @@ CanvasDrawer.prototype = {
             this.drawPixmap(data.pixmap,ctx);
         }
         ctx.restore();
+
     },
     drawPixmap:function (data,ctx) {
         var img = new Image();
-        img.onload = function(){
-            ctx.drawImage(img,data.x,data.y,data.w,data.h);
-        };
+
         img.src = data.data;
+
+            ctx.drawImage(img,data.x,data.y,data.w,data.h);
     }
 };
 
