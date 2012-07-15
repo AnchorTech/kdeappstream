@@ -81,7 +81,6 @@ QtLogic.prototype = {
                 y:data.y,
                 name:data.name
             };
-            debug(this.widgets[data.id]);
         }
         var widget = this.widgets[data.id];
         var renders = data.render;
@@ -98,20 +97,19 @@ function CanvasDrawer(canvasId) {
 CanvasDrawer.prototype = {
     draw:function (data, translation) {
         var ctx = this.canvas.getContext("2d");
-        //ctx.translate(translation.x, translation.y);
+        ctx.save();
+        ctx.translate(translation.x, translation.y);
         if (data.pixmap) {
             this.drawPixmap(data.pixmap,ctx);
-            //ctx.restore();
         }
+        ctx.restore();
     },
     drawPixmap:function (data,ctx) {
         var img = new Image();
         img.onload = function(){
-            debug('drawing');
             ctx.drawImage(img,data.x,data.y,data.w,data.h);
         };
         img.src = data.data;
-        //ctx.putImageData(data.data,data.x,data.y);
     }
 };
 
