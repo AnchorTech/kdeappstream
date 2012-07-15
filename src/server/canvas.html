@@ -12,16 +12,16 @@
 <script type="text/javascript">
 
 function debug(msg) {
-    if(console)
+    if (console)
         console.log(msg);
 }
 
 var sessionID = '[PUT_SESSION_ID_HERE]';
 var portNumber = [PUT_PORT_NUMBER_HERE];
+var verbose = false;
 
 function WSConnector(uri, options) {
     this.wsUri = uri;
-    this.init();
     this.options = options;
 }
 
@@ -33,19 +33,20 @@ WSConnector.prototype = {
                 WebSocket = MozWebSocket;
             this.websocket = new WebSocket(this.wsUri);
             socket = this.websocket;
-            this.websocket.onopen = function() {
-               // console.log('sending hello');
-                //self.websocket.send(sessionID);
-                //console.log('sent');
+            this.websocket.onopen = function () {
+                debug('Connected');
             };
-            this.websocket.onmessage = function(evt) {
-                debug('Data received: ' + evt.data);
+            this.websocket.onmessage = function (evt) {
+                var data = jQuery.parseJSON(evt.data);
+                if (verbose)
+                    debug(data);
+                qtLogic.input(data);
             };
-            this.websocket.onerror = function(evt) {
+            this.websocket.onerror = function (evt) {
                 debug('Error');
                 debug(evt);
             };
-            this.websocket.onclose = function(evt) {
+            this.websocket.onclose = function (evt) {
                 debug('Connection closed.');
             };
         } catch (exception) {
@@ -58,6 +59,62 @@ WSConnector.prototype = {
         console.log('sent');
     }
 };
+
+function QtLogic() {
+    this.widgets = {}
+}
+
+QtLogic.prototype = {
+    input:function (data) {
+        var self = this;
+        $.each(data,function(_,value) {
+            self.singleInput(value);
+        });
+    },
+    singleInput: function(data){
+        var self = this;
+        if (data.w && data.h) { // has widget data
+            this.widgets[data.id] = { // store
+                w:data.w,
+                h:data.h,
+                x:data.x,
+                y:data.y,
+                name:data.name
+            };
+            debug(this.widgets[data.id]);
+        }
+        var widget = this.widgets[data.id];
+        var renders = data.render;
+        $.each(renders, function (_, value) {
+            canvasDrawer.draw(value,{x: widget.x, y: widget.y});
+        });
+    }
+};
+
+function CanvasDrawer(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+}
+
+CanvasDrawer.prototype = {
+    draw:function (data, translation) {
+        var ctx = this.canvas.getContext("2d");
+        //ctx.translate(translation.x, translation.y);
+        if (data.pixmap) {
+            this.drawPixmap(data.pixmap,ctx);
+            //ctx.restore();
+        }
+    },
+    drawPixmap:function (data,ctx) {
+        var img = new Image();
+        img.onload = function(){
+            debug('drawing');
+            ctx.drawImage(img,data.x,data.y,data.w,data.h);
+        };
+        img.src = data.data;
+        //ctx.putImageData(data.data,data.x,data.y);
+    }
+};
+
 
 //function CreateQt() {
 //    this.debugTextArea = document.getElementById("debugTextArea");
@@ -235,12 +292,19 @@ WSConnector.prototype = {
 
 
 function init() {
-    var connector = new WSConnector('ws://localhost:' + portNumber);
+    wsConnector = new WSConnector('ws://localhost:' + portNumber);
+    qtLogic = new QtLogic();
+    canvasDrawer = new CanvasDrawer('canvas');
+    wsConnector.init();
 }
+
+$(document).ready(function() {
+init();
+})
 
 </script>
 </head>
-<body onload="init()">
-<canvas id="canvas">Your browser doesn't support canvas.</canvas>
+<body>
+<canvas id="canvas" width="800" height="600">Your browser doesn't support canvas.</canvas>
 </body>
 </html>
