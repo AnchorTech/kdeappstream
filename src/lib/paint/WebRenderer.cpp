@@ -52,8 +52,11 @@ void WebRenderer::render()
         QPainter p(this->pd);
         do
         {
-            tmp.first()->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+            QWidget * w = tmp.first();
+            JSONBuilder::instance()->beginContext(w);
+            w->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
             tmp.dequeue();
+            JSONBuilder::instance()->endContext();
         }
         while (!tmp.isEmpty());
         p.end();

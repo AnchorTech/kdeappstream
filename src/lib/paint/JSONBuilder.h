@@ -23,6 +23,7 @@ namespace KAppStream
 
             QSemaphore _sem;
             QByteArray buffer;
+            QList<QWidget*> context;
 
             struct State
             {
@@ -57,6 +58,9 @@ namespace KAppStream
         public:
 
             static JSONBuilder * instance(QObject * parent = 0);
+
+            void beginContext(QWidget * widget);
+            void endContext();
 
             void finish();
             void flush(QWsSocket * device);
