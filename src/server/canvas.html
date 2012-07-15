@@ -68,6 +68,7 @@ QtLogic.prototype = {
     input:function (data) {
         var self = this;
         $.each(data, function (_, value) {
+            //debug(value);
             self.singleInput(value);
         });
     },
@@ -77,23 +78,69 @@ QtLogic.prototype = {
             case "draw":
                 this.drawCommand(data);
                 break;
+            case "addChild":
+                    this.addChildCommand(data);
+                break;
         }
     },
-
+    addChildCommand: function(data) {
+        debug(data);
+        this.addWidgetChild(data.id, data.child);
+    },
     drawCommand:function (data) {
+        widgety = this.widgets;
         var widgetData = data.widget;
-        this.widgets[widgetData.id] = { // store
+        var widgetId = widgetData.id;
+        this.updateWidget(widgetId, { // store
             w:widgetData.w,
             h:widgetData.h,
             x:widgetData.x,
             y:widgetData.y,
             name:widgetData.name
-        };
-        var widget = this.widgets[widgetData.id];
-        var renders = data.render;
-        $.each(renders, function (_, value) {
-            canvasDrawer.draw(value, {x:widget.x, y:widget.y});
         });
+        var widget = this.getWidget(widgetId);
+        var renders = data.render;
+        var translation = this.calculateTranslation(widget);
+        $.each(renders, function (_, value) {
+            canvasDrawer.draw(value, translation);
+        });
+    },
+    getWidget: function(id) {
+        if(! this.widgets[id]) {
+            this.widgets[id] = {
+                id: id,
+                parent: null,
+                children: []
+            }
+        }
+        return this.widgets[id];
+    },
+    updateWidget: function(id, data) {
+        $.extend(this.getWidget(id), data);
+    },
+    addWidgetChild: function(id, childId) {
+        var children = this.getWidget(id).children;
+        var found = false;
+        $.each(children, function(_,child) {
+           if(child.id == childId) {
+               found = true;
+               return false; // break
+           }
+        });
+        if(!found) {
+           children.push(this.getWidget(childId));
+           this.updateWidget(childId,{parent: this.getWidget(id)});
+        }
+    },
+    calculateTranslation: function(widget) {
+        var x = 0, y = 0;
+        var parent = widget;
+        while(parent) {
+            x += parent.x;
+            y += parent.y;
+            parent = parent.parent;
+        }
+        return {x: x, y: y};
     }
 };
 
