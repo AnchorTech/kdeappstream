@@ -37,10 +37,7 @@ void JSONBuilder::beginRender(QWidget * widget)
         return;
 
     QSize s = widget->size();
-    QWidget * parent = widget;
-    while (parent->parentWidget())
-        parent = parent->parentWidget();
-    QPoint p = widget->mapTo(parent, widget->pos());
+    QPoint p = widget->pos();
     if (!widget->parentWidget())
         p = QPoint(0,0);
 
