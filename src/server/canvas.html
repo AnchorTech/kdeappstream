@@ -29,13 +29,14 @@ WSConnector.prototype = {
     init:function () {
         var self = this;
         try {
-            if (typeof WebSocket == 'function')
-                WebSocket = WebSocket;
+            if (typeof MozWebSocket == 'function')
+                WebSocket = MozWebSocket;
             this.websocket = new WebSocket(this.wsUri);
+            socket = this.websocket;
             this.websocket.onopen = function() {
-                console.log('sending hello');
-                self.websocket.send(sessionID);
-                console.log('sent');
+               // console.log('sending hello');
+                //self.websocket.send(sessionID);
+                //console.log('sent');
             };
             this.websocket.onmessage = function(evt) {
                 debug('Data received: ' + evt.data);
@@ -234,7 +235,7 @@ WSConnector.prototype = {
 
 
 function init() {
-    var connector = new WSConnector('ws://localhost:5889');
+    var connector = new WSConnector('ws://localhost:' + portNumber);
 }
 
 </script>
