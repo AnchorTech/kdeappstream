@@ -32,9 +32,20 @@ JSONBuilder * JSONBuilder::instance(QObject * parent)
 
 void KAppStream::JSONBuilder::beginContext(QWidget * widget)
 {
+    if (!widget)
+        return;
+
+    QSize s = widget->size();
+    QPoint p = widget->pos();
+
     context << widget;
     buffer.append("{")
           .append("\"id\":").append(QString::number((long long)widget).toAscii())
+          .append(",\"name\":\"").append(widget->staticMetaObject.className()).append("\"")
+          .append(",\"x\":").append(QString::number( p.x() ).toAscii())
+          .append(",\"y\":").append(QString::number( p.y() ).toAscii())
+          .append(",\"w\":").append(QString::number( s.width() ).toAscii())
+          .append(",\"h\":").append(QString::number( s.height() ).toAscii())
           .append(",\"render\":[");
 }
 
