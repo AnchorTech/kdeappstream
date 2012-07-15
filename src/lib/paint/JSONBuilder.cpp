@@ -2,6 +2,7 @@
 
 #include "paint/PaintDevice.h"
 #include "paint/PaintEngine.h"
+#include "websocket/QWsSocket.h"
 
 #include <QString>
 #include <QWidget>
@@ -34,7 +35,7 @@ void JSONBuilder::finish()
     emit readyRead();
 }
 
-void JSONBuilder::flush(QIODevice * device)
+void JSONBuilder::flush(QWsSocket * device)
 {
     _sem.acquire();
     qDebug() << buffer;

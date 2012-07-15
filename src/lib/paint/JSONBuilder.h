@@ -11,6 +11,8 @@
 #include <QPixmap>
 #include <QPaintEngineState>
 
+class QWsSocket;
+
 namespace KAppStream
 {
     class PaintDevice;
@@ -57,7 +59,7 @@ namespace KAppStream
             static JSONBuilder * instance(QObject * parent = 0);
 
             void finish();
-            void flush(QIODevice * device);
+            void flush(QWsSocket * device);
             void ellipse(const QRect & r);
             void ellipse(const QRectF & r);
             void image(const QImage & i);
