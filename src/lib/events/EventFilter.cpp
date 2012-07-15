@@ -8,6 +8,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QApplication>
+#include <QPaintEvent>
 
 using namespace KAppStream;
 
@@ -295,7 +296,9 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::Move" << recv;
                 break;
             case QEvent::Paint:
+                qDebug() << "queueing";
                 WebRenderer::instance()->queue(w);
+                qDebug() << "queued!";
                 break;
             case QEvent::PaletteChange:
                 //qDebug() << "QEvent::PaletteChange" << recv;

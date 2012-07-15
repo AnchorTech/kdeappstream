@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QProcessEnvironment>
+#include <QSharedMemory>
 
 WebSocketServer::WebSocketServer(int port) :
     QWsServer()
@@ -50,15 +51,41 @@ void WebSocketServer::onDataReceived(QString data)
     // TODO : Data verification
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("LD_PRELOAD", "/usr/local/lib64/libkappstream.so");
+    env.insert("LD_PRELOAD", "/usr/lib64/libkappstream.so");
     env.insert("GAMMARAY_UNSET_PRELOAD", "1");
     QProcess p;
     p.setProcessEnvironment(env);
     p.setProcessChannelMode(QProcess::ForwardedChannels);
+    p.start("testapp");
 
-    if (p.startDetached("testapp"))
+    QSharedMemory sm("kappstream_1234m");
+
+    if (p.waitForStarted())
     {
         qDebug("Process started");
+        qDebug(QString("kappstream_1234mm" + QString::number(p.pid())).toAscii());
+
+        sm.create(sizeof(qint64));
+        if (!sm.isAttached() && !sm.attach())
+        {
+            qDebug("Process cannot be synchronized.");
+            qDebug(QString::number(sm.error()).toAscii());
+            emit serverClosed();
+        }
+
+        for (int i = 0; i < 100; ++i)
+        {
+            if (sm.lock())
+            {
+                qint64 * port = (qint64 *) sm.data();
+                qDebug() << *port;
+                if (*port > 0)
+                    break;
+                sm.unlock();
+            }
+            sleep(2);
+        }
+        sm.detach();
     }
     else
     {
@@ -68,7 +95,6 @@ void WebSocketServer::onDataReceived(QString data)
     socket->close("Connect to port 5890 to interact with application");
 
     this->close();
-    emit serverClosed();
 
     qDebug("WebSocket server closed");
 }

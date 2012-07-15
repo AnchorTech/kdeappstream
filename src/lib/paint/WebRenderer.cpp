@@ -34,32 +34,33 @@ WebRenderer * WebRenderer::instance(QObject * parent)
 
 void WebRenderer::queue(QWidget * widget)
 {
-    if (!_sem.tryAcquire(1))
-        return;
+    qDebug("queue()");
+    _sem.acquire();
     if (widget->isVisible() && !_render.contains(widget))
     {
         _render.enqueue(widget);
-        qDebug() << widget;
     }
     _sem.release();
 }
 
 void WebRenderer::render()
 {
-    _sem.acquire();
+    qDebug("render()");
+    if (!_sem.tryAcquire())
+        return;
     QQueue<QWidget*> tmp = _render;
+    _render.clear();
+    _sem.release();
     if (!tmp.isEmpty())
     {
-        QPainter p(pd);
+        QPainter p(this->pd);
         do
         {
-            qDebug() << tmp.first();
-            tmp.dequeue()->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+            tmp.first()->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+            tmp.dequeue();
         }
         while (!tmp.isEmpty());
         p.end();
         JSONBuilder::instance()->finish();
     }
-    _render.clear();
-    _sem.release();
 }

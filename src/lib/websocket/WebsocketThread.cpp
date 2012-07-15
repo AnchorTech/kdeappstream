@@ -4,16 +4,25 @@
 #include <QApplication>
 
 WebsocketThread::WebsocketThread(QObject *parent) :
-    QThread(parent)
+    QThread(parent),
+    server(0)
 {
 
 }
 
+quint16 WebsocketThread::serverPort()
+{
+    if (server)
+        return server->serverPort();
+    return 0;
+}
+
 void WebsocketThread::run()
 {
-    //server = new WebsocketServer();
     qDebug() << "preparing connections";
-    //connect(server->server, SIGNAL(newConnection()), this, SLOT(onConnection()));
+    server = WebsocketServer::instance();
+    connect(server, SIGNAL(newConnection()), this, SLOT(onConnection()));
+    qDebug() << "WebSocket server started";
     exec();
 }
 

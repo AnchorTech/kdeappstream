@@ -2,18 +2,12 @@ SET( KAPPSTREAM_SERVER_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/HttpService.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/HttpServer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/WebSocketService.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/WebSocketServer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/QWsServer.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/QWsSocket.cpp )
+    ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationWrapperThread.cpp )
 
 SET( KAPPSTREAM_SERVER_HEADERS 
     ${CMAKE_CURRENT_SOURCE_DIR}/HttpService.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/HttpServer.h  
-    ${CMAKE_CURRENT_SOURCE_DIR}/WebSocketService.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/WebSocketServer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/QWsServer.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/QWsSocket.h )
+    ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationWrapperThread.h )
 
 SET( INCLUDE_DIRS
     ${COMMON_INCLUDE_DIRS}

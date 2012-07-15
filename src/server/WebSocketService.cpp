@@ -11,6 +11,7 @@ WebSocketService::WebSocketService(int port, QObject * parent) :
 void WebSocketService::run()
 {
     WebSocketServer server(port);
-    connect(&server, SIGNAL(serverClosed()), this, SLOT(quit()));
+    //connect(&server, SIGNAL(serverClosed()), this, SLOT(quit()));
     exec();
+    qDebug("End WebSocket service");
 }

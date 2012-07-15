@@ -2,6 +2,7 @@
 #define HTTPSERVER_H
 
 #include <QTcpServer>
+#include <QLocalServer>
 
 class HttpServer : public QTcpServer
 {
@@ -9,6 +10,7 @@ class HttpServer : public QTcpServer
 
         uint port;
         bool disabled;
+        QLocalServer init_server;
 
     public:
 

@@ -5,15 +5,27 @@
 #include <QRegExp>
 #include <kstandarddirs.h>
 #include <QUuid>
+#include <QProcessEnvironment>
+#include <QLocalSocket>
 
-#include "WebSocketService.h"
+#include "ApplicationWrapperThread.h"
 
 HttpServer::HttpServer(uint _port, QObject * parent) :
     QTcpServer(parent),
     port(_port),
-    disabled(false)
+    disabled(false),
+    init_server(this)
 {
+    QLocalServer::removeServer("kappstream_init");
     listen(QHostAddress::Any, port);
+    if (!init_server.listen("kappstream_init"))
+    {
+        qDebug() << "Cannot start istening on local server";
+        qDebug() << init_server.errorString();
+        qDebug() << init_server.fullServerName();
+        qDebug() << init_server.serverName();
+        exit(-1);
+    }
 }
 
 void HttpServer::incomingConnection(int socket)
@@ -145,15 +157,44 @@ void HttpServer::sendCanvas(QTextStream & os, QString applicationName)
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
             continue;
 
-        QRegExp sessionIDTag("\\[PUT_SESSION_ID_HERE\\]");
-        QTextStream in(&file);
-        QString data = in.readAll();
-        data.replace(sessionIDTag, QUuid::createUuid().toString());
-        os << data;
+        ApplicationWrapperThread * wraper = new ApplicationWrapperThread("testapp", this);
+        wraper->start();
 
-        WebSocketService * service = new WebSocketService(5889, this);
-        service->start();
+        if (init_server.waitForNewConnection(10000))
+        {
+            QLocalSocket * socket = init_server.nextPendingConnection();
+            if (socket)
+            {
+                if (socket->waitForReadyRead())
+                {
+                    char buf[11];
+                    memset(buf, 0, 11);
+                    socket->read(buf, 10);
 
+                    qDebug() << buf;
+
+                    QRegExp sessionIDTag("\\[PUT_SESSION_ID_HERE\\]");
+                    QRegExp portNumberTag("\\[PUT_PORT_NUMBER_HERE\\]");
+                    QTextStream in(&file);
+                    QString data = in.readAll();
+                    data.replace(sessionIDTag, QUuid::createUuid().toString());
+                    data.replace(portNumberTag, buf);
+                    os << data;
+                    return;
+                }
+                else
+                    qDebug() << "Read not ready";
+            }
+            else
+                qDebug() << "Empty socket";
+            qDebug() << socket->errorString();
+        }
+        else
+            qDebug() << "Waiting for connection failed";
+
+        qDebug() << "Cannot get app server port number";
+        qDebug() << init_server.errorString();
+        os << "Server internal error";
         return;
     }
     qDebug() << "Can't read canvas";

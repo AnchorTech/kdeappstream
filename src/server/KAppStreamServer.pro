@@ -12,18 +12,12 @@
     SOURCES += main.cpp \
         HttpServer.cpp \
         HttpService.cpp \
-    QWsServer.cpp \
-    QWsSocket.cpp \
-    WebSocketServer.cpp \
-    WebSocketService.cpp
+    ApplicationWrapperThread.cpp
 
     HEADERS  += \
         HttpServer.h \
         HttpService.h \
-    QWsServer.h \
-    QWsSocket.h \
-    WebSocketServer.h \
-    WebSocketService.h
+    ApplicationWrapperThread.h
 
     unix {
         LIBS += -ldl
@@ -33,6 +27,16 @@ OTHER_FILES += \
     CMakeLists.txt \
     canvas.html \
     index.html
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -2,17 +2,18 @@
 
 int QWsSocket::maxBytesPerFrame = 1400;
 
-QWsSocket::QWsSocket(QTcpSocket * socket, QObject * parent) :
+QWsSocket::QWsSocket( QTcpSocket * socket, QObject * parent, quint8 protVers ) :
 	QAbstractSocket( QAbstractSocket::UnknownSocketType, parent )
 {
 	tcpSocket = socket;
+	protocolVersion = protVers;
 
 	//setSocketState( QAbstractSocket::UnconnectedState );
 	setSocketState( socket->state() );
 
 	connect( tcpSocket, SIGNAL(readyRead()), this, SLOT(dataReceived()) );
-        connect( tcpSocket, SIGNAL(disconnected()), this, SLOT(tcpSocketDisconnected()) );
-        connect( tcpSocket, SIGNAL(aboutToClose()), this, SLOT(tcpSocketAboutToClose()) );
+	connect( tcpSocket, SIGNAL(disconnected()), this, SLOT(tcpSocketDisconnected()) );
+	connect( tcpSocket, SIGNAL(aboutToClose()), this, SLOT(tcpSocketAboutToClose()) );
 }
 
 QWsSocket::~QWsSocket()
@@ -21,7 +22,12 @@ QWsSocket::~QWsSocket()
 
 void QWsSocket::dataReceived()
 {
-    qDebug() << "dataReceived";
+	if ( protocolVersion == 0 )
+	{
+		dataReceivedV0();
+		return;
+	}
+
 	QByteArray BA; // ReadBuffer
 	quint8 byte; // currentByteBuffer
 
@@ -79,12 +85,10 @@ void QWsSocket::dataReceived()
 	{
 		if ( Opcode == OpBinary )
 		{
-                    qDebug() << "OpBinary";
 			emit frameReceived( currentFrame );
 		}
 		else if ( Opcode == OpText )
 		{
-                    qDebug() << "OpText";
 			QString byteString;
 			byteString.reserve(currentFrame.size());
 			for (int i=0 ; i<currentFrame.size() ; i++)
@@ -93,19 +97,16 @@ void QWsSocket::dataReceived()
 		}
 		else if ( Opcode == OpPing )
 		{
-                    qDebug() << "OpPing";
 			QByteArray pongRequest = QWsSocket::composeHeader( true, OpPong, 0 );
 			write( pongRequest );
 		}
 		else if ( Opcode == OpPong )
 		{
-                    qDebug() << "OpPong";
 			quint64 ms = pingTimer.elapsed();
 			emit pong(ms);
 		}
 		else if ( Opcode == OpClose )
 		{
-                    qDebug() << "OpClose";
 			tcpSocket->close();
 		}
 		currentFrame.clear();
@@ -115,9 +116,83 @@ void QWsSocket::dataReceived()
 		dataReceived();
 }
 
+void QWsSocket::dataReceivedV0()
+{
+	QByteArray BA, rawData;
+	quint8 type, b = 0x00;
+
+	BA = tcpSocket->read(1);
+	type = BA[0];
+
+	if ( ( type & 0x80 ) == 0x00 ) // MSB of type not set
+	{
+		if ( type != 0x00 )
+		{
+			// ABORT CONNEXION
+			tcpSocket->readAll();
+			return;
+		}
+		
+		// read data
+		do
+		{
+			BA = tcpSocket->read(1);
+			b = BA[0];
+			if ( b != 0xFF )
+				rawData.append( b );
+		} while ( b != 0xFF );
+
+		currentFrame.append( rawData );
+	}
+	else // MSB of type set
+	{
+		if ( type != 0xFF )
+		{
+			// ABORT CONNEXION
+			tcpSocket->readAll();
+			return;
+		}
+
+		quint8 length = 0x00;
+		
+		bool bIsNotZero = true;
+		do
+		{
+			BA = tcpSocket->read(1);
+			b = BA[0];
+			bIsNotZero = ( b != 0x00 ? true : false );
+			if ( bIsNotZero ) // b must be != 0
+			{
+				quint8 b_v = b & 0x7F;
+				length *= 128;
+				length += b_v;
+			}
+		} while ( ( ( b & 0x80 ) == 0x80 ) && bIsNotZero );
+
+		BA = tcpSocket->read(length); // discard this bytes
+	}
+
+	if ( currentFrame.size() > 0 )
+	{
+		QString byteString;
+		byteString.reserve( currentFrame.size() );
+		for (int i=0 ; i<currentFrame.size() ; i++)
+			byteString[i] = currentFrame[i];
+		emit frameReceived( byteString );
+		currentFrame.clear();
+	}
+
+	if ( tcpSocket->bytesAvailable() )
+		dataReceived();
+}
+
 qint64 QWsSocket::write ( const QString & string, int maxFrameBytes )
 {
-    qDebug() << "write";
+	if ( protocolVersion == 0 )
+	{
+		return QWsSocket::write( string.toAscii(), maxFrameBytes );
+	}
+
 	if ( maxFrameBytes == 0 )
 		maxFrameBytes = maxBytesPerFrame;
 
@@ -127,7 +202,15 @@ qint64 QWsSocket::write ( const QString & string, int maxFrameBytes )
 
 qint64 QWsSocket::write ( const QByteArray & byteArray, int maxFrameBytes )
 {
-    qDebug() << "write";
+	if ( protocolVersion == 0 )
+	{
+		QByteArray BA;
+		BA.append( (char)0x00 );
+		BA.append( byteArray );
+		BA.append( (char)0xFF );
+		return writeFrame( BA );
+	}
+
 	if ( maxFrameBytes == 0 )
 		maxFrameBytes = maxBytesPerFrame;
 
@@ -137,13 +220,11 @@ qint64 QWsSocket::write ( const QByteArray & byteArray, int maxFrameBytes )
 
 qint64 QWsSocket::writeFrame ( const QByteArray & byteArray )
 {
-    qDebug() << "writeFrame";
 	return tcpSocket->write( byteArray );
 }
 
 qint64 QWsSocket::writeFrames ( QList<QByteArray> framesList )
 {
-    qDebug() << "writeFrames";
 	qint64 nbBytesWritten = 0;
 	for ( int i=0 ; i<framesList.size() ; i++ )
 	{
@@ -154,10 +235,18 @@ qint64 QWsSocket::writeFrames ( QList<QByteArray> framesList )
 
 void QWsSocket::close( QString reason )
 {
-    qDebug() << "close";
+	if ( protocolVersion == 0 )
+	{
+		QByteArray BA;
+		BA.append( (char)0xFF );
+		BA.append( (char)0x00 );
+		tcpSocket->write(BA);
+		tcpSocket->close();
+		return;
+	}
+
 	// Compose and send close frame
 	quint64 messageSize = reason.size();
-	QByteArray maskingKey = generateMaskingKey();
 	QByteArray BA;
 	quint8 byte;
 
@@ -173,19 +262,16 @@ void QWsSocket::close( QString reason )
 
 void QWsSocket::tcpSocketAboutToClose()
 {
-    qDebug() << "tcpSocketAboutToClose";
 	emit aboutToClose();
 }
 
 void QWsSocket::tcpSocketDisconnected()
 {
-    qDebug() << "tcpSocketDisconnected" << tcpSocket->error() << tcpSocket->errorString();
 	emit disconnected();
 }
 
 QByteArray QWsSocket::generateMaskingKey()
 {
-    qDebug() << "generateMaskingKey";
 	QByteArray key;
 	for ( int i=0 ; i<4 ; i++ )
 	{
@@ -197,7 +283,6 @@ QByteArray QWsSocket::generateMaskingKey()
 
 QByteArray QWsSocket::mask( QByteArray data, QByteArray maskingKey )
 {
-    qDebug() << "mask";
 	for ( int i=0 ; i<data.size() ; i++ )
 	{
 		data[i] = ( data[i] ^ maskingKey[ i % 4 ] );
@@ -208,13 +293,12 @@ QByteArray QWsSocket::mask( QByteArray data, QByteArray maskingKey )
 
 QList<QByteArray> QWsSocket::composeFrames( QByteArray byteArray, bool asBinary, int maxFrameBytes )
 {
-    qDebug() << "composeFrames";
 	if ( maxFrameBytes == 0 )
 		maxFrameBytes = maxBytesPerFrame;
 
 	QList<QByteArray> framesList;
 
-	QByteArray maskingKey = generateMaskingKey();
+	QByteArray maskingKey;// = generateMaskingKey();
 
 	int nbFrames = byteArray.size() / maxFrameBytes + 1;
 
@@ -247,7 +331,7 @@ QList<QByteArray> QWsSocket::composeFrames( QByteArray byteArray, bool asBinary,
 		QByteArray dataForThisFrame = byteArray.left( size );
 		byteArray.remove( 0, size );
 		
-		dataForThisFrame = QWsSocket::mask( dataForThisFrame, maskingKey );
+		//dataForThisFrame = QWsSocket::mask( dataForThisFrame, maskingKey );
 		BA.append( dataForThisFrame );
 		
 		framesList << BA;
@@ -258,7 +342,6 @@ QList<QByteArray> QWsSocket::composeFrames( QByteArray byteArray, bool asBinary,
 
 QByteArray QWsSocket::composeHeader( bool fin, EOpcode opcode, quint64 payloadLength, QByteArray maskingKey )
 {
-    qDebug() << "composeHeader";
 	QByteArray BA;
 	quint8 byte;
 
@@ -318,7 +401,6 @@ QByteArray QWsSocket::composeHeader( bool fin, EOpcode opcode, quint64 payloadLe
 
 void QWsSocket::ping()
 {
-    qDebug() << "ping";
 	pingTimer.restart();
 	QByteArray pingFrame = QWsSocket::composeHeader( true, OpPing, 0 );
 	writeFrame( pingFrame );
@@ -326,7 +408,6 @@ void QWsSocket::ping()
 
 QString QWsSocket::composeOpeningHandShake( QString ressourceName, QString host, QString origin, QString extensions, QString key )
 {
-    qDebug() << "composeOpeningHandShake";
 	QString hs;
 	hs.append("GET /ws HTTP/1.1\r\n");
 	hs.append("Host: pmx\r\n");

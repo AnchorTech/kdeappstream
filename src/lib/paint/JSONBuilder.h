@@ -58,10 +58,8 @@ namespace KAppStream
 
             void finish();
             void flush(QIODevice * device);
-            void color(const QColor & c);
             void ellipse(const QRect & r);
             void ellipse(const QRectF & r);
-            void font(const QFont & f);
             void image(const QImage & i);
             void line(const QLine & l);
             void line(const QLineF & l);
@@ -71,10 +69,16 @@ namespace KAppStream
             void rect(const QRectF & r);
             void state(const QPaintEngineState & s);
             void saveState();
+
+        private:
+
+            void color(const QColor & c);
+            void font(const QFont & f);
             void pen(const QPen & p);
             void brush(const QBrush & b);
             void gradient(const QGradient & g);
             void transform(const QTransform & t);
+            void saveStatePriv();
 
         signals:
 

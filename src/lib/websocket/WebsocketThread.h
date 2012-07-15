@@ -14,6 +14,7 @@ class WebsocketThread : public QThread
     public:
 
         explicit WebsocketThread(QObject * parent = 0);
+        quint16 serverPort();
 
     public slots:
 

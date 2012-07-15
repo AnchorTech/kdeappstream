@@ -15,13 +15,12 @@ class WebsocketServer : public QObject
         static WebsocketServer * m_instance;
         WebsocketServer(QObject * parent = 0);
 
-        static const int port = 1234;
-
     public:
 
         static WebsocketServer * instance(QObject * parent = 0);
         ~WebsocketServer();
         bool connectSocket();
+        quint16 serverPort();
 
     public slots:
 
