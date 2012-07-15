@@ -45,7 +45,7 @@ void JSONBuilder::beginRender(QWidget * widget)
         p = QPoint(0,0);
 
     context << widget;
-    buffer.append("{\"command\":\"draw\",")
+    buffer.append("{\"command\":\"draw\"")
           .append(",\"widget\":{")
           .append("\"id\":").append(QString::number((long long)widget).toAscii())
           .append(",\"name\":\"").append(widget->metaObject()->className()).append("\"")
