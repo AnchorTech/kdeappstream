@@ -59,8 +59,11 @@ namespace KAppStream
 
             static JSONBuilder * instance(QObject * parent = 0);
 
-            void beginContext(QWidget * widget);
-            void endContext();
+            void beginRender(QWidget * widget);
+            void endRender();
+
+            void addChild(QWidget * child, QWidget * parent);
+            void removeChild(QWidget * child, QWidget * parent);
 
             void finish();
             void flush(QWsSocket * device);

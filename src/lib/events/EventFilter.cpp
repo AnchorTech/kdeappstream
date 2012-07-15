@@ -2,6 +2,7 @@
 
 #include "WebRenderer.h"
 #include "websocket/WebsocketServer.h"
+#include "paint/JSONBuilder.h"
 
 #include <QEvent>
 #include <QDebug>
@@ -86,16 +87,23 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ApplicationWindowIconChange" << recv;
                 break;
             case QEvent::ChildAdded:
-                //qDebug() << "QEvent::ChildAdded" << recv;
+                {
+                    QChildEvent * ce = (QChildEvent*)e;
+                    QWidget * cw = dynamic_cast<QWidget*>(ce->child());
+                    if (cw)
+                        JSONBuilder::instance()->addChild(cw, w);
+                }
                 break;
-                //        case QEvent::ChildInserted:
-                //            qDebug() << "QEvent::ChildInserted" << recv;
-                //            break;
             case QEvent::ChildPolished:
                 //qDebug() << "QEvent::ChildPolished" << recv;
                 break;
             case QEvent::ChildRemoved:
-                //qDebug() << "QEvent::ChildRemoved" << recv;
+                {
+                    QChildEvent * ce = (QChildEvent*)e;
+                    QWidget * cw = dynamic_cast<QWidget*>(ce->child());
+                    if (cw)
+                        JSONBuilder::instance()->removeChild(cw, w);
+                }
                 break;
             case QEvent::Clipboard:
                 //qDebug() << "QEvent::Clipboard" << recv;
@@ -296,7 +304,9 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::Move" << recv;
                 break;
             case QEvent::Paint:
-                WebRenderer::instance()->queue(w);
+                {
+                    WebRenderer::instance()->queue(w);
+                }
                 break;
             case QEvent::PaletteChange:
                 //qDebug() << "QEvent::PaletteChange" << recv;

@@ -31,28 +31,32 @@ JSONBuilder * JSONBuilder::instance(QObject * parent)
     return m_instance;
 }
 
-void KAppStream::JSONBuilder::beginContext(QWidget * widget)
+void JSONBuilder::beginRender(QWidget * widget)
 {
     if (!widget)
         return;
 
     QSize s = widget->size();
-    QPoint p = widget->pos();
+    QWidget * parent = widget;
+    while (parent->parentWidget())
+        parent = parent->parentWidget();
+    QPoint p = widget->mapTo(parent, widget->pos());
     if (!widget->parentWidget())
         p = QPoint(0,0);
 
     context << widget;
-    buffer.append("{")
+    buffer.append("{\"command\":\"draw\",")
+          .append(",\"widget\":{")
           .append("\"id\":").append(QString::number((long long)widget).toAscii())
           .append(",\"name\":\"").append(widget->metaObject()->className()).append("\"")
           .append(",\"x\":").append(QString::number( p.x() ).toAscii())
           .append(",\"y\":").append(QString::number( p.y() ).toAscii())
           .append(",\"w\":").append(QString::number( s.width() ).toAscii())
           .append(",\"h\":").append(QString::number( s.height() ).toAscii())
-          .append(",\"render\":[");
+          .append("},\"render\":[");
 }
 
-void KAppStream::JSONBuilder::endContext()
+void JSONBuilder::endRender()
 {
     if (!context.length())
         return;
@@ -60,6 +64,26 @@ void KAppStream::JSONBuilder::endContext()
     if (buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
+}
+
+void JSONBuilder::addChild(QWidget * child, QWidget * parent)
+{
+    _sem.acquire();
+    buffer.append("{\"command\":\"addChild\"")
+          .append(",\"id\":").append(QString::number((long long)parent).toAscii())
+          .append(",\"child\":").append(QString::number((long long)child).toAscii())
+          .append("},");
+    _sem.release();
+}
+
+void JSONBuilder::removeChild(QWidget * child, QWidget * parent)
+{
+    _sem.acquire();
+    buffer.append("{\"command\":\"removeChild\"")
+          .append(",\"id\":").append(QString::number((long long)parent).toAscii())
+          .append(",\"child\":").append(QString::number((long long)child).toAscii())
+          .append("},");
+    _sem.release();
 }
 
 void JSONBuilder::finish()
@@ -89,11 +113,12 @@ void JSONBuilder::ellipse(const QRect & r)
 {
     _sem.acquire();
     this->saveStatePriv();
-    buffer.append("{\"ellipse\":{\"x\":").append(QString::number(r.x()))
-            .append(",\"y\":").append(QString::number(r.y()))
-            .append(",\"w\":").append(QString::number(r.width()))
-            .append(",\"h\":").append(QString::number(r.height()))
-            .append("}},");
+    buffer.append("{\"t\":\"ellipse\"")
+          .append(",\"x\":").append(QString::number(r.x()))
+          .append(",\"y\":").append(QString::number(r.y()))
+          .append(",\"w\":").append(QString::number(r.width()))
+          .append(",\"h\":").append(QString::number(r.height()))
+          .append("},");
     _sem.release();
 }
 
@@ -101,11 +126,12 @@ void JSONBuilder::ellipse(const QRectF & r)
 {
     _sem.acquire();
     this->saveStatePriv();
-    buffer.append("{\"ellipse\":{\"x\":").append(QString::number(r.x()))
-            .append(",\"y\":").append(QString::number(r.y()))
-            .append(",\"w\":").append(QString::number(r.width()))
-            .append(",\"h\":").append(QString::number(r.height()))
-            .append("}},");
+    buffer.append("{\"t\":\"ellipse\"")
+          .append(",\"x\":").append(QString::number(r.x()))
+          .append(",\"y\":").append(QString::number(r.y()))
+          .append(",\"w\":").append(QString::number(r.width()))
+          .append(",\"h\":").append(QString::number(r.height()))
+          .append("},");
     _sem.release();
 }
 
@@ -116,7 +142,8 @@ void JSONBuilder::image(const QImage & i)
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     i.save(&buf, "PNG");
-    buffer.append("{\"image\":\"data:image/png;base64,")
+    buffer.append("{\"t\":\"image\"")
+          .append(",\"data:image/png;base64,")
           .append(byteArray.toBase64())
           .append("\"},");
     _sem.release();
@@ -126,11 +153,12 @@ void JSONBuilder::line(const QLine & l)
 {
     _sem.acquire();
     this->saveStatePriv();
-    buffer.append("{\"line\":{\"xs\":").append(QString::number(l.x1()))
-            .append(",\"ys\":").append(QString::number(l.y1()))
-            .append(",\"xe\":").append(QString::number(l.x2()))
-            .append(",\"ye\":").append(QString::number(l.y2()))
-            .append("}},");
+    buffer.append("{\"t\":\"line\"")
+          .append(",\"xs\":").append(QString::number(l.x1()))
+          .append(",\"ys\":").append(QString::number(l.y1()))
+          .append(",\"xe\":").append(QString::number(l.x2()))
+          .append(",\"ye\":").append(QString::number(l.y2()))
+          .append("},");
     _sem.release();
 }
 
@@ -138,11 +166,12 @@ void JSONBuilder::line(const QLineF & l)
 {
     _sem.acquire();
     this->saveStatePriv();
-    buffer.append("{\"line\":{\"xs\":").append(QString::number(l.x1()))
-            .append(",\"ys\":").append(QString::number(l.y1()))
-            .append(",\"xe\":").append(QString::number(l.x2()))
-            .append(",\"ye\":").append(QString::number(l.y2()))
-            .append("}},");
+    buffer.append("{\"t\":\"line\"")
+          .append(",\"xs\":").append(QString::number(l.x1()))
+          .append(",\"ys\":").append(QString::number(l.y1()))
+          .append(",\"xe\":").append(QString::number(l.x2()))
+          .append(",\"ye\":").append(QString::number(l.y2()))
+          .append("},");
     _sem.release();
 }
 
@@ -153,12 +182,13 @@ void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     pm.copy(sr.toRect()).save(&buf, "PNG");
-    buffer.append("{\"pixmap\":{\"x\":").append(QString::number(r.x()))
-            .append(",\"y\":").append(QString::number(r.y()))
-            .append(",\"w\":").append(QString::number(r.width()))
-            .append(",\"h\":").append(QString::number(r.height()))
-            .append(",\"data\":\"data:image/png;base64,").append(byteArray.toBase64())
-            .append("\"}},");
+    buffer.append("{\"t\":\"pixmap\"")
+          .append(",\"x\":").append(QString::number(r.x()))
+          .append(",\"y\":").append(QString::number(r.y()))
+          .append(",\"w\":").append(QString::number(r.width()))
+          .append(",\"h\":").append(QString::number(r.height()))
+          .append(",\"data\":\"data:image/png;base64,").append(byteArray.toBase64())
+          .append("\"},");
     _sem.release();
 }
 
@@ -169,9 +199,10 @@ void JSONBuilder::pixmap(const QPixmap & pm)
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     pm.save(&buf, "PNG");
-    buffer.append("{\"pixmap\":{\"data\":\"data:image/png;base64,")
+    buffer.append("{\"t\":\"pixmap\"")
+          .append(",\"data\":\"data:image/png;base64,")
           .append(byteArray.toBase64())
-          .append("\"}},");
+          .append("\"},");
     _sem.release();
 }
 
@@ -179,11 +210,12 @@ void JSONBuilder::rect(const QRect & r)
 {
     _sem.acquire();
     this->saveStatePriv();
-    buffer.append("{\"rect\":{\"x\":").append(QString::number(r.x()))
-            .append(",\"y\":").append(QString::number(r.y()))
-            .append(",\"w\":").append(QString::number(r.width()))
-            .append(",\"h\":").append(QString::number(r.height()))
-            .append("}},");
+    buffer.append("{\"t\":\"rect\"")
+          .append(",\"x\":").append(QString::number(r.x()))
+          .append(",\"y\":").append(QString::number(r.y()))
+          .append(",\"w\":").append(QString::number(r.width()))
+          .append(",\"h\":").append(QString::number(r.height()))
+          .append("},");
     _sem.release();
 }
 
@@ -191,11 +223,12 @@ void JSONBuilder::rect(const QRectF & r)
 {
     _sem.acquire();
     this->saveStatePriv();
-    buffer.append("{\"rect\":{\"x\":").append(QString::number(r.x()))
-            .append(",\"y\":").append(QString::number(r.y()))
-            .append(",\"w\":").append(QString::number(r.width()))
-            .append(",\"h\":").append(QString::number(r.height()))
-            .append("}},");
+    buffer.append("{\"t\":\"rect\"")
+          .append(",\"x\":").append(QString::number(r.x()))
+          .append(",\"y\":").append(QString::number(r.y()))
+          .append(",\"w\":").append(QString::number(r.width()))
+          .append(",\"h\":").append(QString::number(r.height()))
+          .append("},");
     _sem.release();
 }
 
@@ -247,7 +280,8 @@ void JSONBuilder::saveStatePriv()
     QPaintEngine::DirtyFlags f = cur_state.state;
     if (f & QPaintEngine::AllDirty)
     {
-        buffer.append("{\"state\":{");
+        buffer.append("{\"t\":\"state\"")
+              .append(",\"data\":{");
 
 //        if (f & QPaintEngine::DirtyPen)
 //        {

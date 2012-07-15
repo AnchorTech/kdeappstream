@@ -53,10 +53,10 @@ void WebRenderer::render()
         do
         {
             QWidget * w = tmp.first();
-            JSONBuilder::instance()->beginContext(w);
+            JSONBuilder::instance()->beginRender(w);
             w->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
             tmp.dequeue();
-            JSONBuilder::instance()->endContext();
+            JSONBuilder::instance()->endRender();
         }
         while (!tmp.isEmpty());
         p.end();
