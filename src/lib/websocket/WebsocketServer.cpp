@@ -41,6 +41,8 @@ quint16 WebsocketServer::serverPort()
 
 bool WebsocketServer::waitForConnected(int wait)
 {
+    if (client)
+        return true;
     return server->waitForNewConnection(wait);
 }
 

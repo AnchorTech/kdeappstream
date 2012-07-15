@@ -20,7 +20,7 @@ WebRenderer::WebRenderer(QObject * parent) :
     _sem(1)
 {
     QTimer * t = new QTimer(this);
-    t->setInterval(500);
+    t->setInterval(100);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
     t->start();
 }
