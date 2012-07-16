@@ -418,7 +418,9 @@ void JSONBuilder::pen(const QPen & p)
 void JSONBuilder::brush(const QBrush & b)
 {
 
-    buffer.append("\"brush\":{");
+    buffer.append("\"brush\":{")
+          .append("\"t\":").append(QString::number(b.style()))
+          .append(",");
 
     switch (b.style())
     {
@@ -458,19 +460,14 @@ void JSONBuilder::brush(const QBrush & b)
             break;
         default:
             color(b.color());
-            buffer.append(",\"style\":").append(QString::number(b.style()));
             break;
     }
 
-    if (b.style() != Qt::NoBrush)
-    {
-        if (!b.transform().isIdentity())
-        {
-            if (buffer[buffer.length()-1] != '{')
-                buffer.append(',');
-            transform(b.transform());
-        }
-    }
+    if (b.style() != Qt::NoBrush && !b.transform().isIdentity())
+        transform(b.transform());
+
+    if (buffer[buffer.length()-1] == ',')
+        buffer.remove(buffer.length()-1, 1);
 
     buffer.append('}');
 }
