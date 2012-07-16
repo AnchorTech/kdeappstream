@@ -21,7 +21,7 @@ JSONBuilder::JSONBuilder(QObject * parent) :
     QObject(parent),
     _sem(1)
 {
-    //buffer.reserve(10000);
+    buffer.reserve(10000);
 }
 
 JSONBuilder * JSONBuilder::instance(QObject * parent)
@@ -43,6 +43,7 @@ void JSONBuilder::beginRender(QWidget * widget)
     else if (widget->windowType() & Qt::Window)
         p = widget->parentWidget()->mapFromGlobal(p);
 
+    context << widget;
     buffer.append("{\"command\":\"draw\"")
           .append(",\"widget\":{")
           .append("\"id\":").append(QString::number((long long)widget).toAscii())
