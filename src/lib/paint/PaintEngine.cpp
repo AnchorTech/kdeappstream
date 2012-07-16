@@ -11,12 +11,10 @@ using namespace KAppStream;
 PaintEngine::PaintEngine() :
     QPaintEngine()
 {
-    qDebug() << "PaintEngine::PaintEngine()";
 }
 
 PaintEngine::~PaintEngine()
 {
-    qDebug() << "PaintEngine::~PaintEngine()";
 }
 
 bool PaintEngine::begin(QPaintDevice * pdev)

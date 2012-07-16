@@ -42,6 +42,7 @@ void WebRenderer::queue(QWidget * widget)
 
 void WebRenderer::render()
 {
+    qDebug() << "--------------";
     if (!_sem.tryAcquire())
         return;
     QQueue<QWidget*> tmp = _render;
