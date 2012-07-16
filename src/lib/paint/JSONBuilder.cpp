@@ -137,7 +137,7 @@ void JSONBuilder::image(const QRectF & rectangle, const QImage & image, const QR
 {
     _sem.acquire();
     buffer.append("{\"t\":\"image\"")
-          .append("\"},");
+          .append("},");
     _sem.release();
 }
 
@@ -185,7 +185,7 @@ void JSONBuilder::path(const QPainterPath & path)
 {
     _sem.acquire();
     buffer.append("{\"t\":\"path\"")
-          .append("\"},");
+          .append("},");
     _sem.release();
 }
 
@@ -224,7 +224,7 @@ void JSONBuilder::points(const QPointF * points, int pointCount)
 {
     _sem.acquire();
     buffer.append("{\"t\":\"points\"")
-          .append("\"},");
+          .append("},");
     _sem.release();
 }
 
@@ -232,7 +232,7 @@ void JSONBuilder::points(const QPoint * points, int pointCount)
 {
     _sem.acquire();
     buffer.append("{\"t\":\"points\"")
-          .append("\"},");
+          .append("},");
     _sem.release();
 }
 
@@ -240,7 +240,7 @@ void JSONBuilder::polygon(const QPointF * points, int pointCount, QPaintEngine::
 {
     _sem.acquire();
     buffer.append("{\"t\":\"polygon\"")
-          .append("\"},");
+          .append("},");
     _sem.release();
 }
 
@@ -248,7 +248,7 @@ void JSONBuilder::polygon(const QPoint * points, int pointCount, QPaintEngine::P
 {
     _sem.acquire();
     buffer.append("{\"t\":\"polygon\"")
-          .append("\"},");
+          .append("},");
     _sem.release();
 }
 
@@ -282,7 +282,7 @@ void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
 {
     _sem.acquire();
     buffer.append("{\"t\":\"text\"")
-          .append("\"},");
+          .append("},");
     _sem.release();
 }
 
@@ -290,7 +290,7 @@ void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pixmap, const
 {
     _sem.acquire();
     buffer.append("{\"t\":\"tiledPixmap\"")
-          .append("\"},");
+          .append("},");
     _sem.release();
 }
 
