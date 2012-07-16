@@ -133,6 +133,14 @@ void JSONBuilder::ellipse(const QRectF & r)
     _sem.release();
 }
 
+void JSONBuilder::image(const QRectF & rectangle, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
+{
+    _sem.acquire();
+    buffer.append("{\"t\":\"image\"")
+          .append("\"},");
+    _sem.release();
+}
+
 void JSONBuilder::image(const QImage & i)
 {
     _sem.acquire();
@@ -173,6 +181,14 @@ void JSONBuilder::line(const QLineF & l)
     _sem.release();
 }
 
+void JSONBuilder::path(const QPainterPath & path)
+{
+    _sem.acquire();
+    buffer.append("{\"t\":\"path\"")
+          .append("\"},");
+    _sem.release();
+}
+
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
     _sem.acquire();
@@ -204,6 +220,38 @@ void JSONBuilder::pixmap(const QPixmap & pm)
     _sem.release();
 }
 
+void JSONBuilder::points(const QPointF * points, int pointCount)
+{
+    _sem.acquire();
+    buffer.append("{\"t\":\"points\"")
+          .append("\"},");
+    _sem.release();
+}
+
+void JSONBuilder::points(const QPoint * points, int pointCount)
+{
+    _sem.acquire();
+    buffer.append("{\"t\":\"points\"")
+          .append("\"},");
+    _sem.release();
+}
+
+void JSONBuilder::polygon(const QPointF * points, int pointCount, QPaintEngine::PolygonDrawMode mode)
+{
+    _sem.acquire();
+    buffer.append("{\"t\":\"polygon\"")
+          .append("\"},");
+    _sem.release();
+}
+
+void JSONBuilder::polygon(const QPoint * points, int pointCount, QPaintEngine::PolygonDrawMode mode)
+{
+    _sem.acquire();
+    buffer.append("{\"t\":\"polygon\"")
+          .append("\"},");
+    _sem.release();
+}
+
 void JSONBuilder::rect(const QRect & r)
 {
     _sem.acquire();
@@ -227,6 +275,22 @@ void JSONBuilder::rect(const QRectF & r)
           .append(",\"w\":").append(QString::number(r.width()))
           .append(",\"h\":").append(QString::number(r.height()))
           .append("},");
+    _sem.release();
+}
+
+void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
+{
+    _sem.acquire();
+    buffer.append("{\"t\":\"text\"")
+          .append("\"},");
+    _sem.release();
+}
+
+void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pixmap, const QPointF & p)
+{
+    _sem.acquire();
+    buffer.append("{\"t\":\"tiledPixmap\"")
+          .append("\"},");
     _sem.release();
 }
 

@@ -52,7 +52,7 @@ void PaintEngine::drawLines(const QLine * lines, int lineCount)
 
 void PaintEngine::drawPath(const QPainterPath & path)
 {
-    //qDebug() << "PaintEngine::drawPath(" << path << ")";
+    JSONBuilder::instance()->path(path);
 }
 
 void PaintEngine::drawPixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
@@ -62,22 +62,22 @@ void PaintEngine::drawPixmap(const QRectF & r, const QPixmap & pm, const QRectF 
 
 void PaintEngine::drawPoints(const QPointF * points, int pointCount)
 {
-    //qDebug() << "PaintEngine::drawPoints(" << points << pointCount << ")";
+    JSONBuilder::instance()->points(points, pointCount);
 }
 
 void PaintEngine::drawPoints(const QPoint * points, int pointCount)
 {
-    //qDebug() << "PaintEngine::drawPoints(" << points << pointCount << ")";
+    JSONBuilder::instance()->points(points, pointCount);
 }
 
 void PaintEngine::drawPolygon(const QPointF * points, int pointCount, PolygonDrawMode mode)
 {
-    //qDebug() << "PaintEngine::drawPolygon(" << points << pointCount << mode << ")";
+    JSONBuilder::instance()->polygon(points, pointCount, mode);
 }
 
 void PaintEngine::drawPolygon(const QPoint * points, int pointCount, PolygonDrawMode mode)
 {
-    //qDebug() << "PaintEngine::drawPolygon(" << points << pointCount << mode << ")";
+    JSONBuilder::instance()->polygon(points, pointCount, mode);
 }
 
 void PaintEngine::drawRects(const QRectF * rects, int rectCount)
@@ -94,12 +94,12 @@ void PaintEngine::drawRects(const QRect * rects, int rectCount)
 
 void PaintEngine::drawTextItem(const QPointF & p, const QTextItem & textItem)
 {
-    //qDebug() << "PaintEngine::drawTextItem(" << p.x() << p.y() << textItem.text() << ")";
+    JSONBuilder::instance()->text(p, textItem);
 }
 
 void PaintEngine::drawTiledPixmap(const QRectF & rect, const QPixmap & pixmap, const QPointF & p)
 {
-    //qDebug() << "PaintEngine::drawTiledPixmap(" << rect << pixmap << p << ")";
+    JSONBuilder::instance()->tiledPixmap(rect, pixmap, p);
 }
 
 bool PaintEngine::end()
