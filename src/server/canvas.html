@@ -149,7 +149,6 @@ function CanvasDrawer(canvasId) {
 
 CanvasDrawer.prototype = {
     draw:function (data, translation) {
-        //debug(data);
         var ctx = this.ctx;
         ctx.translate(translation.x, translation.y);
         switch (data.t) {
@@ -193,13 +192,7 @@ CanvasDrawer.prototype = {
         var img = new Image();
         img.src = data.pixmap;
         var ctx = this.ctx;
-        if(!img.complete) return;
-        //if(data.rect.h !=7 && data.rect.w != 7) return;
-        ctx.save();
-        ctx.rect(data.rect.x, data.rect.y, data.rect.w, data.rect.h);
-        ctx.fillStyle = ctx.createPattern(img, "no-repeat");
-        ctx.fill();
-        ctx.restore();
+        ctx.drawImage(img, data.rect.x, data.rect.y, data.rect.w, data.rect.h);
 
     },
     setupBrush:function (brush) {
