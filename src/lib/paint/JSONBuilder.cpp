@@ -281,17 +281,17 @@ void JSONBuilder::saveStatePriv()
         buffer.append("{\"t\":\"state\"")
               .append(",\"data\":{");
 
-//        if (f & QPaintEngine::DirtyPen)
-//        {
-//            pen(cur_state.pen);
-//            buffer.append(",");
-//        }
+        if (f & QPaintEngine::DirtyPen)
+        {
+            pen(cur_state.pen);
+            buffer.append(",");
+        }
 
-//        if (f & QPaintEngine::DirtyBrush)
-//        {
-//            brush(cur_state.brush);
-//            buffer.append(",");
-//        }
+        if (f & QPaintEngine::DirtyBrush)
+        {
+            brush(cur_state.brush);
+            buffer.append(",");
+        }
 
         if (f & QPaintEngine::DirtyFont)
         {
@@ -478,10 +478,8 @@ void JSONBuilder::gradient(const QGradient & g)
     foreach (QGradientStop stop, g.stops())
         buffer.append("[").append(QString::number(stop.first)).append(",").append(stop.second.name()).append("],");
     if (buffer[buffer.length()-1] == ',')
-        buffer[buffer.length()-1] = ']';
-    else
-        buffer.append("]");
-    buffer.append("}");
+        buffer.remove(buffer.length()-1, 1);
+    buffer.append("]}");
 }
 
 void JSONBuilder::transform(const QTransform & t)
