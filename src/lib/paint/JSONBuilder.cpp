@@ -417,12 +417,13 @@ void JSONBuilder::pen(const QPen & p)
 
 void JSONBuilder::brush(const QBrush & b)
 {
+
     buffer.append("\"brush\":{");
 
     switch (b.style())
     {
         case Qt::NoBrush:
-            return;
+            break;
         case Qt::SolidPattern:
             color(b.color());
             break;
@@ -461,11 +462,14 @@ void JSONBuilder::brush(const QBrush & b)
             break;
     }
 
-    if (!b.transform().isIdentity())
+    if (b.style() != Qt::NoBrush)
     {
-        if (buffer[buffer.length()-1] != '{')
-            buffer.append(',');
-        transform(b.transform());
+        if (!b.transform().isIdentity())
+        {
+            if (buffer[buffer.length()-1] != '{')
+                buffer.append(',');
+            transform(b.transform());
+        }
     }
 
     buffer.append('}');
