@@ -286,11 +286,24 @@ void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
     _sem.release();
 }
 
-void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pixmap, const QPointF & p)
+void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pm, const QPointF & p)
 {
     _sem.acquire();
+    QByteArray byteArray;
+    QBuffer buf(&byteArray);
+    pm.save(&buf, "PNG");
+    this->saveStatePriv();
     buffer.append("{\"t\":\"tiledPixmap\"")
-          .append("},");
+            .append(",\"rect\":{")
+            .append("\"x\":").append(QString::number(rect.x()).toAscii())
+            .append(",\"y\":").append(QString::number(rect.y()).toAscii())
+            .append(",\"w\":").append(QString::number(rect.width()).toAscii())
+            .append(",\"h\":").append(QString::number(rect.height()).toAscii())
+            .append("}")
+            .append(",\"x\":").append(QString::number(p.x()).toAscii())
+            .append(",\"y\":").append(QString::number(p.y()).toAscii())
+            .append(",\"pixmap\":\"data:image/png;base64,").append(byteArray.toBase64())
+          .append("\"},");
     _sem.release();
 }
 
