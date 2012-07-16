@@ -84,7 +84,6 @@ QtLogic.prototype = {
         }
     },
     addChildCommand: function(data) {
-        debug(data);
         this.addWidgetChild(data.id, data.child);
     },
     drawCommand:function (data) {
@@ -157,16 +156,21 @@ CanvasDrawer.prototype = {
             case "pixmap":
                 this.drawPixmap(data, ctx);
                 break;
+            case "rect":
+                this.drawRect(data,ctx);
+                break;
         }
         ctx.restore();
 
     },
     drawPixmap:function (data, ctx) {
         var img = new Image();
-
         img.src = data.data;
-
         ctx.drawImage(img, data.x, data.y, data.w, data.h);
+    },
+    drawRect: function(data,ctx) {
+        ctx.lineWidth = 0.2;
+        ctx.strokeRect(data.x, data.y, data.w, data.h);
     }
 };
 
