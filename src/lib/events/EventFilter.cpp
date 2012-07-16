@@ -330,7 +330,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::RequestSoftwareInputPanel" << recv;
                 break;
             case QEvent::Resize:
-                //qDebug() << "QEvent::Resize" << recv;
+                {
+                    QResizeEvent * re = (QResizeEvent*)e;
+                    JSONBuilder::instance()->resize(w, re->oldSize(), re->size());
+                }
                 break;
             case QEvent::Shortcut:
                 //qDebug() << "QEvent::Shortcut" << recv;
