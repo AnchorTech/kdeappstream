@@ -230,6 +230,22 @@ void JSONBuilder::rect(const QRectF & r)
     _sem.release();
 }
 
+void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSize)
+{
+    if (w->windowType() & Qt::Window)
+    {
+        buffer.append("{\"t\":\"resize\"")
+              .append(",\"id\":").append(QString::number((long long)w).toAscii())
+              .append(",\"old\":")
+                .append("{\"w\":").append(QString::number(oldSize.width()).toAscii())
+                .append(",\"h\":").append(QString::number(oldSize.height()).toAscii())
+              .append("},\"new\":")
+                .append("{\"w\":").append(QString::number(oldSize.width()).toAscii())
+                .append(",\"h\":").append(QString::number(oldSize.height()).toAscii())
+              .append("}},");
+    }
+}
+
 void JSONBuilder::state(const QPaintEngineState & s)
 {
     _sem.acquire();
@@ -494,5 +510,5 @@ void JSONBuilder::transform(const QTransform & t)
           .append(QString::number(t.m23())).append("],[")
           .append(QString::number(t.m31())).append(",")
           .append(QString::number(t.m32())).append(",")
-          .append(QString::number(t.m33())).append("]]");
+            .append(QString::number(t.m33())).append("]]");
 }

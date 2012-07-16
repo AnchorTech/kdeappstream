@@ -76,6 +76,7 @@ namespace KAppStream
             void pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr);
             void rect(const QRect & r);
             void rect(const QRectF & r);
+            void resize(QWidget * w, const QSize & oldSize, const QSize & newSize);
             void state(const QPaintEngineState & s);
             void saveState();
 
