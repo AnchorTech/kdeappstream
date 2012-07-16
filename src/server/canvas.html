@@ -175,6 +175,7 @@ CanvasDrawer.prototype = {
     drawRect:function (data) {
         this.ctx.lineWidth = 0.2;
         this.ctx.fillRect(data.x, data.y, data.w, data.h);
+        this.ctx.strokeRect(data.x, data.y, data.w, data.h);
     },
     drawState:function (data) {
         var brush = data.data.brush;
@@ -188,7 +189,7 @@ CanvasDrawer.prototype = {
         var ctx = this.ctx;
         switch (brush.t) {
             case 0: // Qt::NoBrush
-                ctx.fillStyle = "rgba(0,0,0,0)";
+                ctx.fillStyle = "rgba(0,0,0,0)"; // no filling
                 break;
             case 1: // Qt::SolidPattern
                 ctx.fillStyle = brush.color;
