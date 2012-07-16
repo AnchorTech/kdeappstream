@@ -79,11 +79,11 @@ QtLogic.prototype = {
                 this.drawCommand(data);
                 break;
             case "addChild":
-                    this.addChildCommand(data);
+                this.addChildCommand(data);
                 break;
         }
     },
-    addChildCommand: function(data) {
+    addChildCommand:function (data) {
         this.addWidgetChild(data.id, data.child);
     },
     drawCommand:function (data) {
@@ -104,73 +104,104 @@ QtLogic.prototype = {
             canvasDrawer.draw(value, translation);
         });
     },
-    getWidget: function(id) {
-        if(! this.widgets[id]) {
+    getWidget:function (id) {
+        if (!this.widgets[id]) {
             this.widgets[id] = {
-                id: id,
-                parent: null,
-                children: []
+                id:id,
+                parent:null,
+                children:[]
             }
         }
         return this.widgets[id];
     },
-    updateWidget: function(id, data) {
+    updateWidget:function (id, data) {
         $.extend(this.getWidget(id), data);
     },
-    addWidgetChild: function(id, childId) {
+    addWidgetChild:function (id, childId) {
         var children = this.getWidget(id).children;
         var found = false;
-        $.each(children, function(_,child) {
-           if(child.id == childId) {
-               found = true;
-               return false; // break
-           }
+        $.each(children, function (_, child) {
+            if (child.id == childId) {
+                found = true;
+                return false; // break
+            }
         });
-        if(!found) {
-           children.push(this.getWidget(childId));
-           this.updateWidget(childId,{parent: this.getWidget(id)});
+        if (!found) {
+            children.push(this.getWidget(childId));
+            this.updateWidget(childId, {parent:this.getWidget(id)});
         }
     },
-    calculateTranslation: function(widget) {
+    calculateTranslation:function (widget) {
         var x = 0, y = 0;
         var parent = widget;
-        while(parent) {
+        while (parent) {
             x += parent.x;
             y += parent.y;
             parent = parent.parent;
         }
-        return {x: x, y: y};
+        return {x:x, y:y};
     }
 };
 
 function CanvasDrawer(canvasId) {
     this.canvas = document.getElementById(canvasId);
+    this.ctx = this.canvas.getContext("2d");
+    ;
 }
 
 CanvasDrawer.prototype = {
     draw:function (data, translation) {
-        var ctx = this.canvas.getContext("2d");
-        ctx.save();
+        var ctx = this.ctx;
         ctx.translate(translation.x, translation.y);
         switch (data.t) {
             case "pixmap":
-                this.drawPixmap(data, ctx);
+                this.drawPixmap(data);
                 break;
             case "rect":
-                this.drawRect(data,ctx);
+                this.drawRect(data);
+                break;
+            case "state":
+                this.drawState(data);
                 break;
         }
-        ctx.restore();
+        ctx.translate(-translation.x, -translation.y);
 
     },
-    drawPixmap:function (data, ctx) {
+    drawPixmap:function (data) {
         var img = new Image();
         img.src = data.data;
-        ctx.drawImage(img, data.x, data.y, data.w, data.h);
+        this.ctx.drawImage(img, data.x, data.y, data.w, data.h);
     },
-    drawRect: function(data,ctx) {
-        ctx.lineWidth = 0.2;
-        ctx.strokeRect(data.x, data.y, data.w, data.h);
+    drawRect:function (data) {
+        this.ctx.lineWidth = 0.2;
+        this.ctx.fillRect(data.x, data.y, data.w, data.h);
+    },
+    drawState:function (data) {
+        var brush = data.data.brush;
+        var font = data.data.font;
+        var pen = data.data.pen;
+        var transform = data.data.transform;
+        if(pen) this.setupPen(pen);
+        if(brush) this.setupBrush(brush);
+    },
+    setupBrush:function (brush) {
+        var ctx = this.ctx;
+        switch (brush.t) {
+            case 0: // Qt::NoBrush
+                ctx.fillStyle = "rgba(0,0,0,0)";
+                break;
+            case 1: // Qt::SolidPattern
+                ctx.fillStyle = brush.color;
+                break;
+
+        }
+    },
+    setupPen: function(pen) {
+        var ctx = this.ctx;
+        ctx.strokeStyle = pen.color;
+        ctx.lineWidth = pen.width;
+        ctx.lineJoin = pen.join;
+        ctx.miterLimit = pen.miter;
     }
 };
 
