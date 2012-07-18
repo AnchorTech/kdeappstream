@@ -37,6 +37,7 @@ WSConnector.prototype = {
                 debug('Connected');
             };
             this.websocket.onmessage = function (evt) {
+                //$('.data').html(evt.data);
                 var data = jQuery.parseJSON(evt.data);
                 if (verbose)
                     debug(data);
@@ -86,6 +87,9 @@ QtLogic.prototype = {
     },
     addChildCommand:function (data) {
         this.addWidgetChild(data.id, data.child);
+    },
+    resizeCommand:function (data) {
+        // TODO
     },
     drawCommand:function (data) {
         widgety = this.widgets;
@@ -172,6 +176,9 @@ CanvasDrawer.prototype = {
             case "line":
                 this.drawLine(data);
                 break;
+            case "path":
+                this.drawPath(data);
+                break;
             default:
                 debug(data);
         }
@@ -207,7 +214,6 @@ CanvasDrawer.prototype = {
         var ctx = this.ctx;
         var fdata = data.data;
         //ctx.font = fdata.font;
-        debug(fdata.font);
         ctx.font = '9pt Helvetica';
         var fillOld = ctx.strokeStyle;
         ctx.fillStyle = ctx.strokeStyle;
@@ -217,8 +223,32 @@ CanvasDrawer.prototype = {
     drawLine:function (data) {
         var ctx = this.ctx;
         ctx.beginPath();
-        ctx.moveTo(data.xs,data.ys);
-        ctx.lineTo(data.xe,data.ye);
+        ctx.moveTo(data.xs, data.ys);
+        ctx.lineTo(data.xe, data.ye);
+        ctx.stroke();
+    },
+    drawPath:function (data) {
+        var ctx = this.ctx;
+        ctx.beginPath();
+        $.each(data.data, function (_, v) {
+            var type = v.t;
+            var points = v.p;
+            switch (type) {
+                case 0:
+                    ctx.moveTo(points[0][0], points[0][1]);
+                    break;
+                case 1:
+                    ctx.lineTo(points[0][0], points[0][1]);
+                    break;
+                case 2:
+                    if (points.lenght == 2) {
+                        ctx.quadraticCurveTo(points[0][0], points[0][1], points[1][0], points[1][1]);
+                    } else { // 3
+                        ctx.bezierCurveTo(points[0][0], points[0][1], points[1][0], points[1][1], points[2][0], points[2][1]);
+                    }
+            }
+        });
+        ctx.fill();
         ctx.stroke();
     },
     setupBrush:function (brush) {
