@@ -191,7 +191,7 @@ void JSONBuilder::path(const QPainterPath & path)
     {
         QPainterPath::Element e = path.elementAt(i);
         buffer.append("{\"t\":").append(QString::number(e.type).toAscii());
-        buffer.append("\"p\":[[")
+        buffer.append(",\"p\":[[")
                 .append(QString::number(e.x).toAscii())
                 .append(",")
                 .append(QString::number(e.y).toAscii())
