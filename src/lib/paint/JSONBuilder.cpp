@@ -185,7 +185,41 @@ void JSONBuilder::path(const QPainterPath & path)
 {
     _sem.acquire();
     buffer.append("{\"t\":\"path\"")
-          .append("},");
+            .append(",\"data\":[");
+
+    for (int i = 0; i < path.elementCount(); ++i)
+    {
+        QPainterPath::Element e = path.elementAt(i);
+        buffer.append("{\"t\":").append(QString::number(e.type).toAscii());
+        buffer.append("\"p\":[[")
+                .append(QString::number(e.x).toAscii())
+                .append(",")
+                .append(QString::number(e.y).toAscii())
+              .append("],");
+
+        if (e.type == QPainterPath::CurveToElement)
+        {
+            for (e = path.elementAt(++i); i < path.elementCount(); ++i)
+            {
+                buffer.append("[")
+                        .append(QString::number(e.x).toAscii())
+                        .append(",")
+                        .append(QString::number(e.y).toAscii())
+                        .append("],");
+                e = path.elementAt(i);
+                if (e.type != QPainterPath::CurveToDataElement)
+                {
+                    --i;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (buffer[buffer.length()-1] == ',')
+        buffer.remove(buffer.length()-1, 1);
+
+    buffer.append("]},");
     _sem.release();
 }
 
