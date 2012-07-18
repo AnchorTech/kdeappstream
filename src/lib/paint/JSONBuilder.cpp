@@ -651,7 +651,7 @@ void JSONBuilder::brush(const QBrush & b)
                     QByteArray byteArray;
                     QBuffer buf(&byteArray);
                     img.save(&buf, "PNG");
-                    buffer.append("\"image\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"");
+                    buffer.append("\"texture\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"");
                 }
                 else
                 {
@@ -661,7 +661,7 @@ void JSONBuilder::brush(const QBrush & b)
                         QByteArray byteArray;
                         QBuffer buf(&byteArray);
                         pix.save(&buf, "PNG");
-                        buffer.append("\"pixmap\":{ \"data\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"}");
+                        buffer.append("\"texture\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"");
                     }
                 }
             }
