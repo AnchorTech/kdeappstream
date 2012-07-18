@@ -110,7 +110,6 @@ bool PaintEngine::end()
 
 PaintEngine::Type PaintEngine::type() const
 {
-    qDebug() << "PaintEngine::type()";
     return QPaintEngine::SVG;
 }
 

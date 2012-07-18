@@ -92,8 +92,10 @@ namespace KAppStream
 
             void color(const QColor & c);
             void font(const QFont & f);
+            void opacity(qreal op);
             void pen(const QPen & p);
             void brush(const QBrush & b);
+            void bbrush(const QBrush & b);
             void gradient(const QGradient & g);
             void transform(const QTransform & t);
             void saveStatePriv();
