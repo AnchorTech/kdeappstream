@@ -214,6 +214,11 @@ void JSONBuilder::path(const QPainterPath & path)
                 }
             }
         }
+
+        if (buffer[buffer.length()-1] == ',')
+            buffer.remove(buffer.length()-1, 1);
+
+        buffer.append("]},");
     }
 
     if (buffer[buffer.length()-1] == ',')
