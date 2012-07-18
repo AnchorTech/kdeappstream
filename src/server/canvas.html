@@ -166,6 +166,12 @@ CanvasDrawer.prototype = {
             case "tiledPixmap":
                 this.drawTtiledPixmap(data);
                 break;
+            case "text":
+                this.drawText(data);
+                break;
+            case "line":
+                this.drawLine(data);
+                break;
             default:
                 debug(data);
         }
@@ -197,9 +203,22 @@ CanvasDrawer.prototype = {
         ctx.drawImage(img, data.rect.x, data.rect.y, data.rect.w, data.rect.h);
 
     },
+    drawText:function (data) {
+        var ctx = this.ctx;
+        ctx.font = data.data.font;
+        debug(data);
+
+    },
+    drawLine:function (data) {
+        var ctx = this.ctx;
+        ctx.beginPath();
+        ctx.moveTo(data.xs,data.ys);
+        ctx.lineTo(data.xe,data.ye);
+        ctx.stroke();
+    },
     setupBrush:function (brush) {
         var ctx = this.ctx;
-        switch (brush.t) {
+        switch (brush.style) {
             case 0: // Qt::NoBrush
                 ctx.fillStyle = "rgba(0,0,0,0)"; // no filling
                 break;
@@ -227,7 +246,9 @@ function init() {
 }
 
 $(document).ready(function () {
-    setTimeout(function(){ init(); }, 1500);
+    setTimeout(function () {
+        init();
+    }, 1500);
 })
 
 </script>
