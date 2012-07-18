@@ -205,9 +205,14 @@ CanvasDrawer.prototype = {
     },
     drawText:function (data) {
         var ctx = this.ctx;
-        ctx.font = data.data.font;
-        debug(data);
-
+        var fdata = data.data;
+        //ctx.font = fdata.font;
+        debug(fdata.font);
+        ctx.font = '9pt Helvetica';
+        var fillOld = ctx.strokeStyle;
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.fillText(fdata.text, fdata.x, fdata.y);
+        ctx.fillStyle = fillOld;
     },
     drawLine:function (data) {
         var ctx = this.ctx;
