@@ -14,28 +14,50 @@
    <string>TestWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>401</width>
-      <height>251</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTextEdit" name="textEdit"/>
-     </item>
-    </layout>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Tab 1</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="pushButton">
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTextEdit" name="textEdit"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Tab 2</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QGraphicsView" name="graphicsView"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -55,6 +77,7 @@
     <addaction name="actionExit"/>
     <addaction name="separator"/>
     <addaction name="actionDupa"/>
+    <addaction name="actionDupa2"/>
    </widget>
    <widget class="QMenu" name="menuKelpo">
     <property name="title">
@@ -103,6 +126,11 @@
   <action name="actionVbbvmvb">
    <property name="text">
     <string>vbbvmvb</string>
+   </property>
+  </action>
+  <action name="actionDupa2">
+   <property name="text">
+    <string>dupa2</string>
    </property>
   </action>
  </widget>

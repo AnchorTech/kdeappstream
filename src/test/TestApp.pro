@@ -21,7 +21,9 @@ SOURCES += \
     websocket/WebsocketThread.cpp \
     websocket/WebsocketServer.cpp \
     websocket/QWsSocket.cpp \
-    websocket/QWsServer.cpp
+    websocket/QWsServer.cpp \
+    main.cpp \
+    TestWindow.cpp
 
 HEADERS  += \
             test/TestWindow.h \
@@ -34,15 +36,21 @@ HEADERS  += \
     websocket/WebsocketThread.h \
     websocket/WebsocketServer.h \
     websocket/QWsSocket.h \
-    websocket/QWsServer.h
+    websocket/QWsServer.h \
+    TestWindow.h
 
 INCLUDEPATH += paint
 
 FORMS    += \
-            test/TestWindow.ui
+            test/TestWindow.ui \
+    TestWindow.ui
 
 OTHER_FILES += \
     websocket/index.html
+
+
+
+
 
 
 
