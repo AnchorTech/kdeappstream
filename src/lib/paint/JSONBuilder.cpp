@@ -135,10 +135,9 @@ void JSONBuilder::ellipse(const QRectF & r)
 
 void JSONBuilder::image(const QRectF & rectangle, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
 {
-    _sem.acquire();
-    buffer.append("{\"t\":\"image\"")
-          .append("},");
-    _sem.release();
+    QImage im = image.copy(sr.toRect());
+    im.setOffset(rectangle.topLeft().toPoint());
+    this->image( im.scaled(rectangle.size().toSize()) );
 }
 
 void JSONBuilder::image(const QImage & i)
@@ -149,7 +148,7 @@ void JSONBuilder::image(const QImage & i)
     QBuffer buf(&byteArray);
     i.save(&buf, "PNG");
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data:image/png;base64,")
+          .append(",\"data\":\"data:image/png;base64,")
           .append(byteArray.toBase64())
           .append("\"},");
     _sem.release();
@@ -218,7 +217,8 @@ void JSONBuilder::path(const QPainterPath & path)
         if (buffer[buffer.length()-1] == ',')
             buffer.remove(buffer.length()-1, 1);
 
-        buffer.append("]},");
+        buffer.append("],\"fill\":").append(QString::number(path.fillRule()).toAscii());
+        buffer.append("},");
     }
 
     if (buffer[buffer.length()-1] == ',')
@@ -230,19 +230,11 @@ void JSONBuilder::path(const QPainterPath & path)
 
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
-    _sem.acquire();
-    this->saveStatePriv();
+    QImage im = pm.copy(sr.toRect()).toImage();
+    im.setOffset(r.topLeft());
     QByteArray byteArray;
     QBuffer buf(&byteArray);
-    pm.copy(sr.toRect()).save(&buf, "PNG");
-    buffer.append("{\"t\":\"pixmap\"")
-          .append(",\"x\":").append(QString::number(r.x()))
-          .append(",\"y\":").append(QString::number(r.y()))
-          .append(",\"w\":").append(QString::number(r.width()))
-          .append(",\"h\":").append(QString::number(r.height()))
-          .append(",\"data\":\"data:image/png;base64,").append(byteArray.toBase64())
-          .append("\"},");
-    _sem.release();
+    this->image(im.scaled(r.size().toSize()).save(&buf, "PNG"));
 }
 
 void JSONBuilder::pixmap(const QPixmap & pm)
@@ -252,7 +244,7 @@ void JSONBuilder::pixmap(const QPixmap & pm)
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     pm.save(&buf, "PNG");
-    buffer.append("{\"t\":\"pixmap\"")
+    buffer.append("{\"t\":\"image\"")
           .append(",\"data\":\"data:image/png;base64,")
           .append(byteArray.toBase64())
           .append("\"},");
@@ -392,7 +384,7 @@ void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSi
 {
     //if (w->windowType() & Qt::Window)
     {
-        buffer.append("{\"t\":\"resize\"")
+        buffer.append("{\"command\":\"resize\"")
               .append(",\"id\":").append(QString::number((long long)w).toAscii())
               .append(",\"old\":")
                 .append("{\"w\":").append(QString::number(oldSize.width()).toAscii())
@@ -759,7 +751,7 @@ void JSONBuilder::bbrush(const QBrush & b)
                         QByteArray byteArray;
                         QBuffer buf(&byteArray);
                         pix.save(&buf, "PNG");
-                        buffer.append("\"pixmap\":{ \"data\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"}");
+                        buffer.append("\"image\":\"data:image/png;base64,").append(byteArray.toBase64()).append("\"");
                     }
                 }
             }
@@ -789,11 +781,11 @@ void JSONBuilder::gradient(const QGradient & g)
                     .append(QString::number(stop.first)).append(",\"")
                     .append(stop.second.name()).append("\"],");
     }
-    buffer.append(",\"spread\":").append(QString::number(g.spread()).toAscii());
-    buffer.append(",\"mode\":").append(QString::number(g.coordinateMode()).toAscii());
     if (buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
-    buffer.append("]}");
+    buffer.append("],\"spread\":").append(QString::number(g.spread()).toAscii());
+    buffer.append(",\"mode\":").append(QString::number(g.coordinateMode()).toAscii());
+    buffer.append("}");
 }
 
 void JSONBuilder::transform(const QTransform & t)

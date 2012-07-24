@@ -1,0 +1,311 @@
+[
+  // addChild
+  {
+    "command":"addChild",
+    "id":"12345678",
+    "child":"23456789"
+  },
+   
+  // removeChild
+  {   
+    "command":"removeChild",
+    "id":"12345678",
+    "child":"23456789"
+  },
+   
+  // resize
+  {
+    "command":"resize",
+    "id":"12345678",
+    "old":
+      {
+	"w":123, 
+        "h":123
+      },
+    "new":
+      {
+        "w":234, 
+        "h":234
+      }
+  },
+   
+  {
+    "command":"draw",
+    "widget":
+      {
+        "id":12345678,
+        "name":"QWidget",
+        "x":0,
+        "y":0,
+        "w":123,
+        "h":123,
+        "render":
+          [
+	    // ellipse
+            {
+              "t":"ellipse",
+              "x":0,
+              "y":0,
+              "w":10,
+              "h":10
+            },
+
+	    // ellipse
+            {
+              "t":"ellipse",
+              "x":0.0,
+              "y":0.0,
+              "w":10.0,
+              "h":10.0
+            },
+
+	    // image			http://doc.qt.nokia.com/4.7-snapshot/qimage.html
+            {
+              "t":"image",
+              "data":"data:image/png;base64,DIUSHFIUSHRIUDSHIFIUHI329859vdsy7vy87dv8sgv87sdgvgsd8gvyu)"
+            },
+
+	    // line			http://doc.qt.nokia.com/4.7-snapshot/qline.html
+            {
+              "t":"line",
+              "xs":0,
+              "ys":0,
+              "xe":10,
+              "ye":10
+            },
+
+	    // line			http://doc.qt.nokia.com/4.7-snapshot/qlinef.html
+            {
+              "t":"line",
+              "xs":0.0,
+              "ys":0.0,
+              "xe":10.0,
+              "ye":10.0
+            },
+
+            // path
+            {
+	      "t":"path",		http://doc.qt.nokia.com/4.7-snapshot/qpainterpath.html
+	      "data":			http://doc.qt.nokia.com/4.7-snapshot/qpainterpath.html#ElementType-enum
+		[
+		  ["t":0,"p":[[0,0]]],		// moveTo
+		  ["t":1,"p":[[10,10]]],	// lineTo
+		  ["t":2,"p":[[10,10],[100,100]]],	// quadTo
+		  ["t":2,"p":[[10,10],[100,100],[1000,1000]]],	// cubicTo
+		],
+	      "fill":0			http://doc.qt.nokia.com/4.7-snapshot/qt.html#FillRule-enum
+            }
+            
+	    // points			http://doc.qt.nokia.com/4.7-snapshot/qpoint.html
+            {
+              "t":"points",
+              "data":
+                [
+		  [0,0],
+		  [10,10],
+		  [123,123]
+                ]
+            },
+
+	    // points			http://doc.qt.nokia.com/4.7-snapshot/qpointf.html
+            {
+              "t":"points",
+              "data":
+                [
+		  [0.0,0.0],
+		  [10.0,10.0],
+		  [123.0,123.0]
+                ]
+            },
+
+	    // polygon                  http://doc.qt.nokia.com/4.7-snapshot/qpolygon.html
+	    {
+	      "t":"polygon",
+	      "mode":0,                  http://doc.qt.nokia.com/4.7-snapshot/qpaintengine.html#PolygonDrawMode-enum
+	      "data":
+		[
+		  [0,0],
+		  [10,10],
+		  [123,123]
+		]
+	    },
+	    
+	    // polygon                  http://doc.qt.nokia.com/4.7-snapshot/qpolygonf.html
+	    {
+	      "t":"polygon",
+	      "mode":0,                  http://doc.qt.nokia.com/4.7-snapshot/qpaintengine.html#PolygonDrawMode-enum
+	      "data":
+		[
+		  [0.0,0.0],
+		  [10.0,10.0],
+		  [123.0,123.0]
+		]
+	    },
+	    
+	    // rect			http://doc.qt.nokia.com/4.7-snapshot/qrect.html
+            {
+              "t":"rect",
+              "x":0,
+              "y":0,
+              "w":10,
+              "h":10
+            },
+
+	    // rect			http://doc.qt.nokia.com/4.7-snapshot/qrectf.html
+            {
+              "t":"rect",
+              "x":0.0,
+              "y":0.0,
+              "w":10.0,
+              "h":10.0
+            },
+
+	    // text			http://doc.qt.nokia.com/4.7-snapshot/qtextitem.html
+	    {
+	      "t":"text",
+	      "data":
+		{
+		  "text":"Jakiś tam sobie tekst",
+		  "ascent":0,
+		  "descent":0,
+		  "x":0,
+		  "y":0,
+		  "font":"CSS-format font string"
+		}
+	    }
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    // brush (all kinds of brushes)
+	    "brush":			http://doc.qt.nokia.com/4.7-snapshot/qbrush.html
+	    {
+	      "style":0,		http://doc.qt.nokia.com/4.7-snapshot/qt.html#BrushStyle-enum
+	    }
+	    "brush":			
+	    {
+	      "style":15|16|17,
+	      "gradient":
+		{
+		  "type":0,
+		  "stops":
+		    [
+		      [0,"#FFFFFF"],
+		      [1,"#000000"]
+		    ],
+		  "spread":0,
+		  "mode":0
+		}
+	      "transform":[[1,0,0],[0,1,0],[0,0,1]] // !!! optional
+	    }
+	    "brush":			
+	    {
+	      "style":24,
+	      "image":"data:image/png;base64,DIUSHFIUSHRIUDSHIFIUHI329859vdsy7vy87dv8sgv87sdgvgsd8gvyu)",
+	      "transform":[[1,0,0],[0,1,0],[0,0,1]] // !!! optional
+	    }
+	    "brush":			
+	    {
+	      "style":others,
+	      "color":"#FFFFFF",
+	      "transform":[[1,0,0],[0,1,0],[0,0,1]] // !!! optional
+	    }
+	    
+	    // bbrush (all kinds of brushes)
+	    "bbrush":			http://doc.qt.nokia.com/4.7-snapshot/qbrush.html
+	    {
+	      "style":0,		http://doc.qt.nokia.com/4.7-snapshot/qt.html#BrushStyle-enum
+	    }
+	    "bbrush":			
+	    {
+	      "style":15|16|17,
+	      "gradient":
+		{
+		  "type":0,
+		  "stops":
+		    [
+		      [0,"#FFFFFF"],
+		      [1,"#000000"]
+		    ],
+		  "spread":0,
+		  "mode":0
+		}
+	      "transform":[[1,0,0],[0,1,0],[0,0,1]] // !!! optional
+	    }
+	    "bbrush":			
+	    {
+	      "style":24,
+	      "image":"data:image/png;base64,DIUSHFIUSHRIUDSHIFIUHI329859vdsy7vy87dv8sgv87sdgvgsd8gvyu)",
+	      "transform":[[1,0,0],[0,1,0],[0,0,1]] // !!! optional
+	    }
+	    "bbrush":			
+	    {
+	      "style":others,
+	      "color":"#FFFFFF",
+	      "transform":[[1,0,0],[0,1,0],[0,0,1]] // !!! optional
+	    }
+	    
+	    "color":"#FFFFFF"
+	    
+	    "font":"italic small-caps lighter 15px Sans-Serif"
+	    
+	    "opacity":0.5
+	    
+	    "gradient":
+	    {  
+	      "type":0,			http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#Type-enum
+	      "stops":
+		[
+		  [0,"#FFFFFF"],
+		  [1,"#000000"]
+		],
+	      "spread":0,		http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#Spread-enum
+	      "mode":0			http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#CoordinateMode-enum
+	    }
+	    
+	    // pen
+	    "pen":
+	    {
+	      "brush": 
+	      {
+		// check "brush"
+	      },
+	      "cap":0,			http://doc.qt.nokia.com/4.7-snapshot/qt.html#PenCapStyle-enum
+	      "join":0,			http://doc.qt.nokia.com/4.7-snapshot/qt.html#PenJoinStyle-enum
+	      "miter":0.5,		// only when join == 0
+	      "width":10
+	    }
+	    "pen":
+	    {
+	      "color":"#FFFFFF",
+	      "cap":0,
+	      "join":1,
+	      "width":10
+	    }
+	    "pen":
+	    {
+	      "color":"#FFFFFF",
+	      "dash":		// !!! optional
+		{
+		  "offset":0.5,
+		  "pattern":[10,10,30,10,20,10]
+		},
+	      "cap":0,
+	      "join":1,
+	      "width":10
+	    }
+	    
+	    "transform":[[1,0,0],[0,1,0],[0,0,1]]
+	    
+	    
+          ]
+      }
+   },
+   
+   {
+   }
+]
