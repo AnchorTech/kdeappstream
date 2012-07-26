@@ -12,6 +12,9 @@
 #include <QBuffer>
 #include <QLocalSocket>
 #include <QCoreApplication>
+#include <QTabBar>
+#include <QToolButton>
+#include <QGradient>
 
 using namespace KAppStream;
 
@@ -64,10 +67,35 @@ void JSONBuilder::endRender()
     _sem.acquire();
     if (!context.length())
         return;
+
+    static long i = 0;
+    QTabBar * t = dynamic_cast<QTabBar*>(context.first());
+    QToolButton * t2 = dynamic_cast<QToolButton*>(context.first());
+    if (t)
+    {
+        foreach(QObject * o, t->children())
+        {
+            qDebug() << "c1: " << o;
+        }
+    }
+    qDebug() << "----------";
+    if (t2)
+    {
+        foreach(QObject * o, t2->children())
+        {
+            qDebug() << "c2: " << o;
+        }
+    }
+    qDebug() << "--------------------------------------------------";
+
     context.removeFirst();
     if (buffer.length() > 0 && buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
+
+    if (t)
+        qDebug() << QString(buffer).right(buffer.length() - i);
+    i = buffer.length();
     _sem.release();
 }
 
@@ -369,13 +397,14 @@ void JSONBuilder::rect(const QRectF & r)
 void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
 {
     _sem.acquire();
+    QPoint p2 = (context.first()->mapToParent(p.toPoint()));
     buffer.append("{\"t\":\"text\"")
             .append(",\"data\":{")
             .append("\"text\":\"").append(textItem.text().toAscii()).append("\"")
             .append(",\"ascent\":").append(QString::number(textItem.ascent()).toAscii())
             .append(",\"descent\":").append(QString::number(textItem.descent()).toAscii())
-            .append(",\"x\":").append(QString::number(p.x()).toAscii())
-            .append(",\"y\":").append(QString::number(p.y()).toAscii())
+            .append(",\"x\":").append(QString::number(p2.x()).toAscii())
+            .append(",\"y\":").append(QString::number(p2.y()).toAscii())
             .append(",");
     font(textItem.font());
     buffer.append("}},");
@@ -799,6 +828,29 @@ void JSONBuilder::gradient(const QGradient & g)
 {
     buffer.append("\"gradient\":{");
     buffer.append("\"type\":").append(QString::number(g.type()).toAscii());
+    if (g.type() & QGradient::LinearGradient)
+    {
+        const QLinearGradient & lg = (const QLinearGradient&)(g);
+        buffer.append(",\"xs\":").append(QString::number(lg.start().x()).toAscii());
+        buffer.append(",\"ys\":").append(QString::number(lg.start().y()).toAscii());
+        buffer.append(",\"xe\":").append(QString::number(lg.finalStop().x()).toAscii());
+        buffer.append(",\"ye\":").append(QString::number(lg.finalStop().y()).toAscii());
+    }
+    else if (g.type() & QGradient::RadialGradient)
+    {
+        const QRadialGradient & rg = (const QRadialGradient&)(g);
+        buffer.append(",\"xc\":").append(QString::number(rg.center().x()).toAscii());
+        buffer.append(",\"yc\":").append(QString::number(rg.center().y()).toAscii());
+        buffer.append(",\"xf\":").append(QString::number(rg.focalPoint().x()).toAscii());
+        buffer.append(",\"yf\":").append(QString::number(rg.focalPoint().y()).toAscii());
+    }
+    else if (g.type() & QGradient::ConicalGradient)
+    {
+        const QConicalGradient & cg = (const QConicalGradient&)(g);
+        buffer.append(",\"xc\":").append(QString::number(cg.center().x()).toAscii());
+        buffer.append(",\"yc\":").append(QString::number(cg.center().y()).toAscii());
+        buffer.append(",\"a\":").append(QString::number(cg.angle()).toAscii());
+    }
     buffer.append(",\"stops\":[");
     {
         foreach (QGradientStop stop, g.stops())
@@ -825,4 +877,6 @@ void JSONBuilder::transform(const QTransform & t)
           .append(QString::number(t.m31())).append(",")
           .append(QString::number(t.m32())).append(",")
             .append(QString::number(t.m33())).append("]]");
+
+    qDebug() << "\n\ntranslate " << t.dx() << t.dy() << "\n\n";
 }

@@ -35,8 +35,13 @@ WebRenderer * WebRenderer::instance(QObject * parent)
 void WebRenderer::queue(QWidget * widget)
 {
     _sem.acquire();
-    if (widget->isVisible() && !_render.contains(widget))
+    if (!_render.contains(widget))
+    {
+        qDebug() << widget << "ok";
         _render.enqueue(widget);
+    }
+    else
+        qDebug() << widget;
     _sem.release();
 }
 
