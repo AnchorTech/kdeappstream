@@ -828,7 +828,7 @@ void JSONBuilder::gradient(const QGradient & g)
 {
     buffer.append("\"gradient\":{");
     buffer.append("\"type\":").append(QString::number(g.type()).toAscii());
-    if (g.type() & QGradient::LinearGradient)
+    if (g.type() == QGradient::LinearGradient)
     {
         const QLinearGradient & lg = (const QLinearGradient&)(g);
         buffer.append(",\"xs\":").append(QString::number(lg.start().x()).toAscii());
@@ -836,7 +836,7 @@ void JSONBuilder::gradient(const QGradient & g)
         buffer.append(",\"xe\":").append(QString::number(lg.finalStop().x()).toAscii());
         buffer.append(",\"ye\":").append(QString::number(lg.finalStop().y()).toAscii());
     }
-    else if (g.type() & QGradient::RadialGradient)
+    else if (g.type() == QGradient::RadialGradient)
     {
         const QRadialGradient & rg = (const QRadialGradient&)(g);
         buffer.append(",\"xc\":").append(QString::number(rg.center().x()).toAscii());
@@ -844,7 +844,7 @@ void JSONBuilder::gradient(const QGradient & g)
         buffer.append(",\"xf\":").append(QString::number(rg.focalPoint().x()).toAscii());
         buffer.append(",\"yf\":").append(QString::number(rg.focalPoint().y()).toAscii());
     }
-    else if (g.type() & QGradient::ConicalGradient)
+    else if (g.type() == QGradient::ConicalGradient)
     {
         const QConicalGradient & cg = (const QConicalGradient&)(g);
         buffer.append(",\"xc\":").append(QString::number(cg.center().x()).toAscii());
