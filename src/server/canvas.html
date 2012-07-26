@@ -45,10 +45,14 @@ WSConnector.prototype = {
             };
             this.websocket.onmessage = function (evt) {
                 //$('.data').html(evt.data);
+                try {
                 var data = jQuery.parseJSON(evt.data);
                 if (verbose)
                     debug(data);
                 qtLogic.input(data);
+                } catch(e) {
+                    console.log(evt.data);
+                }
             };
             this.websocket.onerror = function (evt) {
                 debug('Error');
@@ -326,13 +330,23 @@ CanvasDrawer.prototype = {
             case 1: // Qt::SolidPattern
                 ctx.fillStyle = brush.color;
                 break;
+            case 15: // Qt::LinearGradientPattern
+                var gradient = brush.gradient;
+                   //ctx.fillStyle = CanvasHelper.createGradient(ctx, gradient,15);
+                break;
             default:
                 console.log('Unknown style: ' + brush.style);
         }
     },
     setupPen:function (pen) {
         var ctx = this.ctx;
+        if(pen.color) {
         ctx.strokeStyle = pen.color;
+        }
+        if(pen.brush) {
+           //ctx.strokeStyle = CanvasHelper.createGradient(ctx, pen.brush.gradient, pen.brush.style);
+
+        }
         ctx.lineWidth = pen.width;
         ctx.lineJoin = pen.join;
         ctx.miterLimit = pen.miter;
@@ -340,6 +354,18 @@ CanvasDrawer.prototype = {
     setupTransform:function(transform) {
         this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], this.currentTranslation.x,  this.currentTranslation.y);
         //this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0], transform[2][1]);
+    }
+};
+
+CanvasHelper = function() {}
+
+CanvasHelper.createGradient = function(ctx, gradient, style) {
+    if(style == 15) {
+    var lingrad = ctx.createLinearGradient(gradient.xs,gradient.ys,gradient.xe,gradient.ye);
+    $.each(gradient.stops,function(_,g) {
+        lingrad.addColorStop(g[0], g[1]);
+    });
+        return lingrad;
     }
 };
 
