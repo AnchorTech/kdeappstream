@@ -36,6 +36,8 @@ void JSONBuilder::beginRender(QWidget * widget)
     if (!widget)
         return;
 
+    _sem.acquire();
+
     QSize s = widget->size();
     QPoint p = widget->pos();
     if (!widget->parentWidget())
@@ -53,16 +55,20 @@ void JSONBuilder::beginRender(QWidget * widget)
           .append(",\"w\":").append(QString::number( s.width() ).toAscii())
           .append(",\"h\":").append(QString::number( s.height() ).toAscii())
           .append("},\"render\":[");
+
+    _sem.release();
 }
 
 void JSONBuilder::endRender()
 {
+    _sem.acquire();
     if (!context.length())
         return;
     context.removeFirst();
-    if (buffer[buffer.length()-1] == ',')
+    if (buffer.length() > 0 && buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
+    _sem.release();
 }
 
 void JSONBuilder::addChild(QWidget * child, QWidget * parent)
@@ -399,7 +405,8 @@ void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pm, const QPo
 
 void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSize)
 {
-    //if (w->windowType() & Qt::Window)
+    _sem.acquire();
+    if (w->windowType() & Qt::Window)
     {
         buffer.append("{\"command\":\"resize\"")
               .append(",\"id\":").append(QString::number((long long)w).toAscii())
@@ -411,6 +418,7 @@ void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSi
                 .append(",\"h\":").append(QString::number(newSize.height()).toAscii())
               .append("}},");
     }
+    _sem.release();
 }
 
 void JSONBuilder::state(const QPaintEngineState & s)
