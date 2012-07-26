@@ -58,13 +58,10 @@ void JSONBuilder::beginRender(QWidget * widget)
           .append(",\"w\":").append(QString::number( s.width() ).toAscii())
           .append(",\"h\":").append(QString::number( s.height() ).toAscii())
           .append("},\"render\":[");
-
-    _sem.release();
 }
 
 void JSONBuilder::endRender()
 {
-    _sem.acquire();
     if (!context.length())
         return;
     context.removeFirst();
@@ -118,7 +115,6 @@ void JSONBuilder::flush(QWsSocket * device)
 
 void JSONBuilder::ellipse(const QRect & r)
 {
-    _sem.acquire();
     this->saveStatePriv();
     buffer.append("{\"t\":\"ellipse\"")
           .append(",\"x\":").append(QString::number(r.x()))
@@ -126,12 +122,10 @@ void JSONBuilder::ellipse(const QRect & r)
           .append(",\"w\":").append(QString::number(r.width()))
           .append(",\"h\":").append(QString::number(r.height()))
           .append("},");
-    _sem.release();
 }
 
 void JSONBuilder::ellipse(const QRectF & r)
 {
-    _sem.acquire();
     this->saveStatePriv();
     buffer.append("{\"t\":\"ellipse\"")
           .append(",\"x\":").append(QString::number(r.x()))
@@ -139,12 +133,10 @@ void JSONBuilder::ellipse(const QRectF & r)
           .append(",\"w\":").append(QString::number(r.width()))
           .append(",\"h\":").append(QString::number(r.height()))
           .append("},");
-    _sem.release();
 }
 
 void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
 {
-    _sem.acquire();
     this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
@@ -155,12 +147,10 @@ void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & s
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())
           .append(",\"y\":").append(QString::number(r.top()).toAscii())
           .append("},");
-    _sem.release();
 }
 
 void JSONBuilder::image(const QImage & i)
 {
-    _sem.acquire();
     this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
@@ -169,12 +159,10 @@ void JSONBuilder::image(const QImage & i)
           .append(",\"data\":\"data:image/png;base64,")
           .append(byteArray.toBase64())
           .append("\"},");
-    _sem.release();
 }
 
 void JSONBuilder::line(const QLine & l)
 {
-    _sem.acquire();
     this->saveStatePriv();
     buffer.append("{\"t\":\"line\"")
           .append(",\"xs\":").append(QString::number(l.x1()))
@@ -182,12 +170,10 @@ void JSONBuilder::line(const QLine & l)
           .append(",\"xe\":").append(QString::number(l.x2()))
           .append(",\"ye\":").append(QString::number(l.y2()))
           .append("},");
-    _sem.release();
 }
 
 void JSONBuilder::line(const QLineF & l)
 {
-    _sem.acquire();
     this->saveStatePriv();
     buffer.append("{\"t\":\"line\"")
           .append(",\"xs\":").append(QString::number(l.x1()))
@@ -195,12 +181,10 @@ void JSONBuilder::line(const QLineF & l)
           .append(",\"xe\":").append(QString::number(l.x2()))
           .append(",\"ye\":").append(QString::number(l.y2()))
           .append("},");
-    _sem.release();
 }
 
 void JSONBuilder::path(const QPainterPath & path)
 {
-    _sem.acquire();
     buffer.append("{\"t\":\"path\"")
             .append(",\"data\":[");
 
@@ -243,12 +227,10 @@ void JSONBuilder::path(const QPainterPath & path)
         buffer.remove(buffer.length()-1, 1);
 
     buffer.append("]},");
-    _sem.release();
 }
 
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
-    _sem.acquire();
     this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
@@ -260,12 +242,10 @@ void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())
           .append(",\"y\":").append(QString::number(r.top()).toAscii())
           .append("},");
-    _sem.release();
 }
 
 void JSONBuilder::pixmap(const QPixmap & pm)
 {
-    _sem.acquire();
     this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
@@ -274,12 +254,10 @@ void JSONBuilder::pixmap(const QPixmap & pm)
           .append(",\"data\":\"data:image/png;base64,")
           .append(byteArray.toBase64())
           .append("\"},");
-    _sem.release();
 }
 
 void JSONBuilder::points(const QPointF * points, int pointCount)
 {
-    _sem.acquire();
     buffer.append("{\"t\":\"points\"")
             .append(",\"data\":[");
     while (pointCount--)
@@ -290,12 +268,10 @@ void JSONBuilder::points(const QPointF * points, int pointCount)
     if (buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
-    _sem.release();
 }
 
 void JSONBuilder::points(const QPoint * points, int pointCount)
 {
-    _sem.acquire();
     buffer.append("{\"t\":\"points\"")
             .append(",\"data\":[");
     while (pointCount--)
@@ -306,12 +282,10 @@ void JSONBuilder::points(const QPoint * points, int pointCount)
     if (buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
-    _sem.release();
 }
 
 void JSONBuilder::polygon(const QPointF * points, int pointCount, QPaintEngine::PolygonDrawMode mode)
 {
-    _sem.acquire();
     buffer.append("{\"t\":\"polygon\"")
             .append(",\"mode\":").append(QString::number(mode))
             .append(",\"data\":[");
@@ -323,12 +297,10 @@ void JSONBuilder::polygon(const QPointF * points, int pointCount, QPaintEngine::
     if (buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
-    _sem.release();
 }
 
 void JSONBuilder::polygon(const QPoint * points, int pointCount, QPaintEngine::PolygonDrawMode mode)
 {
-    _sem.acquire();
     buffer.append("{\"t\":\"polygon\"")
             .append(",\"mode\":").append(QString::number(mode))
             .append(",\"data\":[");
@@ -340,12 +312,10 @@ void JSONBuilder::polygon(const QPoint * points, int pointCount, QPaintEngine::P
     if (buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
-    _sem.release();
 }
 
 void JSONBuilder::rect(const QRect & r)
 {
-    _sem.acquire();
     this->saveStatePriv();
     buffer.append("{\"t\":\"rect\"")
           .append(",\"x\":").append(QString::number(r.x()))
@@ -353,12 +323,10 @@ void JSONBuilder::rect(const QRect & r)
           .append(",\"w\":").append(QString::number(r.width()))
           .append(",\"h\":").append(QString::number(r.height()))
           .append("},");
-    _sem.release();
 }
 
 void JSONBuilder::rect(const QRectF & r)
 {
-    _sem.acquire();
     this->saveStatePriv();
     buffer.append("{\"t\":\"rect\"")
           .append(",\"x\":").append(QString::number(r.x()))
@@ -366,12 +334,10 @@ void JSONBuilder::rect(const QRectF & r)
           .append(",\"w\":").append(QString::number(r.width()))
           .append(",\"h\":").append(QString::number(r.height()))
           .append("},");
-    _sem.release();
 }
 
 void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
 {
-    _sem.acquire();
     this->saveStatePriv();
     buffer.append("{\"t\":\"text\"")
             .append(",\"data\":{")
@@ -383,12 +349,10 @@ void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
             .append(",");
     font(textItem.font());
     buffer.append("}},");
-    _sem.release();
 }
 
 void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pm, const QPointF & p)
 {
-    _sem.acquire();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     pm.save(&buf, "PNG");
@@ -404,12 +368,10 @@ void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pm, const QPo
             .append(",\"y\":").append(QString::number(p.y()).toAscii())
             .append(",\"pixmap\":\"data:image/png;base64,").append(byteArray.toBase64())
           .append("\"},");
-    _sem.release();
 }
 
 void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSize)
 {
-    _sem.acquire();
     if (w->windowType() & Qt::Window)
     {
         buffer.append("{\"command\":\"resize\"")
@@ -422,12 +384,10 @@ void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSi
                 .append(",\"h\":").append(QString::number(newSize.height()).toAscii())
               .append("}},");
     }
-    _sem.release();
 }
 
 void JSONBuilder::state(const QPaintEngineState & s)
 {
-    _sem.acquire();
     QPaintEngine::DirtyFlags f = s.state();
     if (f & QPaintEngine::DirtyBackground)
         cur_state.backgroundBrush = s.backgroundBrush();
@@ -458,14 +418,11 @@ void JSONBuilder::state(const QPaintEngineState & s)
     if (f & QPaintEngine::DirtyTransform)
         cur_state.transform = s.transform();
     cur_state.state |= f & ~(QPaintEngine::DirtyHints | QPaintEngine::DirtyClipPath | QPaintEngine::DirtyClipEnabled | QPaintEngine::DirtyClipRegion);
-    _sem.release();
 }
 
 void JSONBuilder::saveState()
 {
-    _sem.acquire();
     saveStatePriv();
-    _sem.release();
 }
 
 void JSONBuilder::saveStatePriv()
