@@ -35,7 +35,7 @@ void PaintEngine::drawEllipse(const QRect & rect)
 
 void PaintEngine::drawImage(const QRectF & rectangle, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
 {
-    //qDebug() << "PaintEngine::drawImage(" << rectangle << image << sr << flags << ")";
+    JSONBuilder::instance()->image(rectangle, image, sr, flags);
 }
 
 void PaintEngine::drawLines(const QLineF * lines, int lineCount)
