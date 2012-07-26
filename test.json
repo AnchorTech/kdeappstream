@@ -310,6 +310,39 @@
 	    "gradient":
 	    {  
 	      "type":0,			http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#Type-enum
+	      "xs":0.0,
+	      "ys":0.0,
+	      "xe":0.0,
+	      "ye":0.0,
+	      "stops":
+		[
+		  [0,"#FFFFFF"],
+		  [1,"#000000"]
+		],
+	      "spread":0,		http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#Spread-enum
+	      "mode":0			http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#CoordinateMode-enum
+	    }
+	    "gradient":
+	    {  
+	      "type":1,			http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#Type-enum
+	      "xc":0.0,
+	      "yc":0.0,
+	      "xf":0.0,
+	      "yf":0.0,
+	      "stops":
+		[
+		  [0,"#FFFFFF"],
+		  [1,"#000000"]
+		],
+	      "spread":0,		http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#Spread-enum
+	      "mode":0			http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#CoordinateMode-enum
+	    }
+	    "gradient":
+	    {  
+	      "type":2,			http://doc.qt.nokia.com/4.7-snapshot/qgradient.html#Type-enum
+	      "xc":0.0,
+	      "yc":0.0,
+	      "a":0.0,
 	      "stops":
 		[
 		  [0,"#FFFFFF"],
