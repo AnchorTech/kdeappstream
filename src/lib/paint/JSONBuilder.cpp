@@ -426,7 +426,7 @@ void JSONBuilder::state(const QPaintEngineState & s)
         cur_state.renderHints = s.renderHints();
     if (f & QPaintEngine::DirtyTransform)
         cur_state.transform = s.transform();
-    cur_state.state |= f;
+    cur_state.state |= f & ~(QPaintEngine::DirtyHints | QPaintEngine::DirtyClipPath | QPaintEngine::DirtyClipEnabled | QPaintEngine::DirtyClipRegion);
     _sem.release();
 }
 

@@ -188,14 +188,42 @@
 		      // Check "brush" below
 		    },
 		  "font":"Check font for details",
-		  
+		  "brushorigin":
+		    {
+		      "x":0.0,
+		      "y":0.0
+		    },
+		  "transform":[[1,0,0],[0,1,0],[0,0,1]],
+		  // composition is compatible with HTML5 canvas - just pass it to the context
+		  "composition":"source-atop|source-in|source-out|source-over|destination-atop|destination-in|
+				 destination-out|destination-over|lighter|darker|xor|copy|source-over",
+		  "bbrush":
+		    {
+		      // Check "bbrush" below
+		    },
+		  "opacity":0.5
 		}
 	    }
 	    
+	    // tiledPixmap
+	    {
+	      "t":"tiledPixmap",
+	      "rect":
+		{
+		  "x":0.0,
+		  "y":0.0,
+		  "w":10.0,
+		  "h":10.0
+		},
+	      "x":0.0,
+	      "y":0.0,
+	      "pixmap":"data:image/png;base64,ASDIFHIUASHFYUGAUSFYGASUYFYUASGUYF"
+	    }
 	    
 	    
-	    
-	    
+	    //############################################
+	    // ELEMENTS OF "state" OBJECT
+	    //############################################
 	    
 	    // brush (all kinds of brushes)
 	    "brush":			http://doc.qt.nokia.com/4.7-snapshot/qbrush.html
