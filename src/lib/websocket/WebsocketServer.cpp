@@ -54,7 +54,6 @@ void WebsocketServer::onConnection()
     client = server->nextPendingConnection();
     if(client)
     {
-        qDebug() << client->write(QString("Hello"));
         qDebug() << "Client connected ";
         connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
         connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
