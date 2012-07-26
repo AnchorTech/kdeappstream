@@ -67,35 +67,10 @@ void JSONBuilder::endRender()
     _sem.acquire();
     if (!context.length())
         return;
-
-    static long i = 0;
-    QTabBar * t = dynamic_cast<QTabBar*>(context.first());
-    QToolButton * t2 = dynamic_cast<QToolButton*>(context.first());
-    if (t)
-    {
-        foreach(QObject * o, t->children())
-        {
-            qDebug() << "c1: " << o;
-        }
-    }
-    qDebug() << "----------";
-    if (t2)
-    {
-        foreach(QObject * o, t2->children())
-        {
-            qDebug() << "c2: " << o;
-        }
-    }
-    qDebug() << "--------------------------------------------------";
-
     context.removeFirst();
     if (buffer.length() > 0 && buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
-
-    if (t)
-        qDebug() << QString(buffer).right(buffer.length() - i);
-    i = buffer.length();
     _sem.release();
 }
 
@@ -397,14 +372,14 @@ void JSONBuilder::rect(const QRectF & r)
 void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
 {
     _sem.acquire();
-    QPoint p2 = (context.first()->mapToParent(p.toPoint()));
+    this->saveStatePriv();
     buffer.append("{\"t\":\"text\"")
             .append(",\"data\":{")
             .append("\"text\":\"").append(textItem.text().toAscii()).append("\"")
             .append(",\"ascent\":").append(QString::number(textItem.ascent()).toAscii())
             .append(",\"descent\":").append(QString::number(textItem.descent()).toAscii())
-            .append(",\"x\":").append(QString::number(p2.x()).toAscii())
-            .append(",\"y\":").append(QString::number(p2.y()).toAscii())
+            .append(",\"x\":").append(QString::number(p.x()).toAscii())
+            .append(",\"y\":").append(QString::number(p.y()).toAscii())
             .append(",");
     font(textItem.font());
     buffer.append("}},");
@@ -877,6 +852,4 @@ void JSONBuilder::transform(const QTransform & t)
           .append(QString::number(t.m31())).append(",")
           .append(QString::number(t.m32())).append(",")
             .append(QString::number(t.m33())).append("]]");
-
-    qDebug() << "\n\ntranslate " << t.dx() << t.dy() << "\n\n";
 }
