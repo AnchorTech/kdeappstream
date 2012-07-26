@@ -174,7 +174,23 @@
 		}
 	    }
 	    
-	    
+	    // state
+	    {
+	      "t":"state",
+	      "data":
+		{			// all are optional !!!
+		  "pen":
+		    {
+		      // Check "pen" below
+		    },
+		  "brush":
+		    {
+		      // Check "brush" below
+		    },
+		  "font":"Check font for details",
+		  
+		}
+	    }
 	    
 	    
 	    

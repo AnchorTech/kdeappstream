@@ -231,10 +231,8 @@ void JSONBuilder::path(const QPainterPath & path)
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
     QImage im = pm.copy(sr.toRect()).toImage();
-    im.setOffset(r.topLeft());
-    QByteArray byteArray;
-    QBuffer buf(&byteArray);
-    this->image(im.scaled(r.size().toSize()).save(&buf, "PNG"));
+    im.setOffset(r.topLeft().toPoint());
+    this->image( im.scaled(r.size().toSize()) );
 }
 
 void JSONBuilder::pixmap(const QPixmap & pm)
