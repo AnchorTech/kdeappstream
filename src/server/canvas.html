@@ -101,7 +101,9 @@ QtLogic.prototype = {
         this.addWidgetChild(data.id, data.child);
     },
     resizeCommand:function (data) {
-        // TODO
+        // TODO make generic
+        $('canvas').attr('height',data.new.h);
+        $('canvas').attr('width',data.new.w);
     },
     drawCommand:function (data) {
         widgety = this.widgets;
