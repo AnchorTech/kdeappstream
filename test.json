@@ -59,10 +59,18 @@
               "h":10.0
             },
 
-	    // image			http://doc.qt.nokia.com/4.7-snapshot/qimage.html
+	    // image [draw in (0,0)]			http://doc.qt.nokia.com/4.7-snapshot/qimage.html
             {
               "t":"image",
               "data":"data:image/png;base64,DIUSHFIUSHRIUDSHIFIUHI329859vdsy7vy87dv8sgv87sdgvgsd8gvyu)"
+            },
+
+	    // image [draw in (x,y)]			http://doc.qt.nokia.com/4.7-snapshot/qimage.html
+            {
+              "t":"image",
+              "data":"data:image/png;base64,DIUSHFIUSHRIUDSHIFIUHI329859vdsy7vy87dv8sgv87sdgvgsd8gvyu)",
+              "x":0.0,
+              "y":0.0
             },
 
 	    // line			http://doc.qt.nokia.com/4.7-snapshot/qline.html

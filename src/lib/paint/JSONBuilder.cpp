@@ -133,7 +133,7 @@ void JSONBuilder::ellipse(const QRectF & r)
     _sem.release();
 }
 
-void JSONBuilder::image(const QRectF & rectangle, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
+void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
 {
     QImage im = image.copy(sr.toRect());
     im.setOffset(rectangle.topLeft().toPoint());
@@ -146,11 +146,13 @@ void JSONBuilder::image(const QImage & i)
     this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
-    i.save(&buf, "PNG");
+    image.copy(sr.toRect()).toImage().scaled(r.size().toSize()).save(&buf, "PNG");
     buffer.append("{\"t\":\"image\"")
           .append(",\"data\":\"data:image/png;base64,")
           .append(byteArray.toBase64())
-          .append("\"},");
+          .append("\",\"x\":").append(QString::number(r.left()).toAscii())
+          .append(",\"y\":").append(QString::number(r.top()).toAscii())
+          .append("},");
     _sem.release();
 }
 
@@ -230,9 +232,19 @@ void JSONBuilder::path(const QPainterPath & path)
 
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
+    _sem.acquire();
+    this->saveStatePriv();
+    QByteArray byteArray;
+    QBuffer buf(&byteArray);
     QImage im = pm.copy(sr.toRect()).toImage();
-    im.setOffset(r.topLeft().toPoint());
-    this->image( im.scaled(r.size().toSize()) );
+    im.scaled(r.size().toSize()).save(&buf, "PNG");
+    buffer.append("{\"t\":\"image\"")
+          .append(",\"data\":\"data:image/png;base64,")
+          .append(byteArray.toBase64())
+          .append("\",\"x\":").append(QString::number(r.left()).toAscii())
+          .append(",\"y\":").append(QString::number(r.top()).toAscii())
+          .append("},");
+    _sem.release();
 }
 
 void JSONBuilder::pixmap(const QPixmap & pm)
