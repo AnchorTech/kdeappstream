@@ -352,7 +352,7 @@ CanvasDrawer.prototype = {
         ctx.miterLimit = pen.miter;
     },
     setupTransform:function(transform) {
-        this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], this.currentTranslation.x,  this.currentTranslation.y);
+        this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0] + this.currentTranslation.x, transform[2][1] +  this.currentTranslation.y);
         //this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0], transform[2][1]);
     }
 };
