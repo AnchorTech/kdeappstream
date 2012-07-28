@@ -596,8 +596,10 @@ void JSONBuilder::font(const QFont & f)
     else
         buffer.append("medium ");
 
-    buffer.append(f.key().toAscii()).append(",").append(f.family().toAscii()).append(",").append(f.defaultFamily().toAscii());
-
+    buffer.append(f.family().toAscii());
+    foreach (QString s, QFont::substitutes(f.family()))
+        buffer.append(",").append(s.toAscii());
+    buffer.append(",").append(f.defaultFamily().toAscii());
     buffer.append("\"");
 }
 
