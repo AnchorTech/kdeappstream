@@ -19,8 +19,11 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QTabWidget" name="tabWidget">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -44,6 +47,9 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tab_2">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <attribute name="title">
           <string>Tab 2</string>
          </attribute>
@@ -55,7 +61,7 @@
         </widget>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
-          <string>Tab 3</string>
+          <string>Tab 2</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
@@ -226,7 +232,7 @@
   </action>
   <action name="actionDupa">
    <property name="text">
-    <string>dupa</string>
+    <string>cos tam</string>
    </property>
   </action>
   <action name="actionAsfahm">
@@ -241,7 +247,7 @@
   </action>
   <action name="actionDupa2">
    <property name="text">
-    <string>dupa2</string>
+    <string>piwo</string>
    </property>
   </action>
  </widget>
