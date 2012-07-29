@@ -41,6 +41,7 @@ namespace KAppStream
                     Qt::ClipOperation clipOperation;
                     QPainterPath clipPath;
                     QRegion clipRegion;
+                    QPainterPath prevClipPath;
                     QPainter::CompositionMode compositionMode;
                     QFont font;
                     bool isClipEnabled;
@@ -90,6 +91,7 @@ namespace KAppStream
 
         private:
 
+            void clip();
             void color(const QColor & c);
             void font(const QFont & f);
             void opacity(qreal op);

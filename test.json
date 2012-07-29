@@ -209,7 +209,21 @@
 		    {
 		      // Check "bbrush" below
 		    },
-		  "opacity":0.5
+                  "opacity":0.5,
+                  // Sets the clipping
+                  "clip":
+                    {
+                      "data":			http://doc.qt.nokia.com/4.7-snapshot/qpainterpath.html#ElementType-enum
+                        [
+                          ["t":0,"p":[[0,0]]],		// moveTo
+                          ["t":1,"p":[[10,10]]],	// lineTo
+                          ["t":2,"p":[[10,10],[100,100]]],	// quadTo
+                          ["t":2,"p":[[10,10],[100,100],[1000,1000]]],	// cubicTo
+                        ],
+                      "fill":0			http://doc.qt.nokia.com/4.7-snapshot/qt.html#FillRule-enum
+                    }
+                  // Clears the clipping
+                  "clip":{}
 		}
 	    }
 	    

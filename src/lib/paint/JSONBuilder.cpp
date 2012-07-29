@@ -219,14 +219,14 @@ void JSONBuilder::path(const QPainterPath & path)
         if (buffer[buffer.length()-1] == ',')
             buffer.remove(buffer.length()-1, 1);
 
-        buffer.append("],\"fill\":").append(QString::number(path.fillRule()).toAscii());
-        buffer.append("},");
+        buffer.append("]},");
     }
 
     if (buffer[buffer.length()-1] == ',')
         buffer.remove(buffer.length()-1, 1);
 
-    buffer.append("]},");
+    buffer.append("],\"fill\":").append(QString::number(path.fillRule()).toAscii());
+    buffer.append("},");
 }
 
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
@@ -524,6 +524,11 @@ void JSONBuilder::saveStatePriv()
             buffer.append(",");
         }
 
+        if (cur_state.isClipEnabled)
+        {
+            this->clip();
+        }
+
         if (buffer[buffer.length()-1] == ',')
             buffer.remove(buffer.length()-1, 1);
         buffer.append("}},");
@@ -533,6 +538,91 @@ void JSONBuilder::saveStatePriv()
 }
 
 ////////////// HELPER FUNCTIONS BELOW - NOT COLON SEPARATED /////////////////
+
+void JSONBuilder::clip()
+{
+    QPainterPath r;
+    if (!cur_state.clipRegion.isEmpty())
+    {
+        r.addRegion(cur_state.clipRegion);
+    }
+
+    switch (cur_state.clipOperation)
+    {
+        case Qt::ReplaceClip:
+            if (!r.isEmpty())
+                cur_state.prevClipPath = r;
+            if (!cur_state.clipPath.isEmpty())
+                cur_state.prevClipPath = cur_state.clipPath;
+            break;
+        case Qt::IntersectClip:
+            if (!r.isEmpty())
+                cur_state.prevClipPath.intersects(r);
+            if (!cur_state.clipPath.isEmpty())
+                cur_state.prevClipPath.intersects(cur_state.clipPath);
+            break;
+        case Qt::UniteClip:
+            if (!r.isEmpty())
+                cur_state.prevClipPath = cur_state.prevClipPath.united(r);
+            if (!cur_state.clipPath.isEmpty())
+                cur_state.prevClipPath = cur_state.prevClipPath.united(cur_state.clipPath);
+            break;
+        default:
+            cur_state.prevClipPath = QPainterPath();
+    }
+
+    QPainterPath & path = cur_state.prevClipPath;
+
+    buffer.append("\"clip\":{");
+
+    if (!path.isEmpty())
+    {
+        buffer.append("\"data\":[");
+
+        for (int i = 0; i < path.elementCount(); ++i)
+        {
+            QPainterPath::Element e = path.elementAt(i);
+            buffer.append("{\"t\":").append(QString::number(e.type).toAscii());
+            buffer.append(",\"p\":[[")
+                    .append(QString::number(e.x).toAscii())
+                    .append(",")
+                    .append(QString::number(e.y).toAscii())
+                    .append("],");
+
+            if (e.type == QPainterPath::CurveToElement)
+            {
+                for (e = path.elementAt(++i); i < path.elementCount(); ++i)
+                {
+                    buffer.append("[")
+                            .append(QString::number(e.x).toAscii())
+                            .append(",")
+                            .append(QString::number(e.y).toAscii())
+                            .append("],");
+                    e = path.elementAt(i);
+                    if (e.type != QPainterPath::CurveToDataElement)
+                    {
+                        --i;
+                        break;
+                    }
+                }
+            }
+
+            if (buffer[buffer.length()-1] == ',')
+                buffer.remove(buffer.length()-1, 1);
+
+            buffer.append("]},");
+        }
+
+        if (buffer[buffer.length()-1] == ',')
+            buffer.remove(buffer.length()-1, 1);
+
+        buffer.append("],\"fill\":").append(QString::number(path.fillRule()).toAscii());
+    }
+
+    buffer.append("}");
+    cur_state.clipPath = QPainterPath();
+    cur_state.clipRegion = QRegion();
+}
 
 void JSONBuilder::color(const QColor & c)
 {
