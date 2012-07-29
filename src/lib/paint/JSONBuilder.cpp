@@ -116,7 +116,6 @@ void JSONBuilder::flush(QWsSocket * device)
 
 void JSONBuilder::ellipse(const QRect & r)
 {
-    this->saveStatePriv();
     buffer.append("{\"t\":\"ellipse\"")
           .append(",\"x\":").append(QString::number(r.x()))
           .append(",\"y\":").append(QString::number(r.y()))
@@ -127,7 +126,6 @@ void JSONBuilder::ellipse(const QRect & r)
 
 void JSONBuilder::ellipse(const QRectF & r)
 {
-    this->saveStatePriv();
     buffer.append("{\"t\":\"ellipse\"")
           .append(",\"x\":").append(QString::number(r.x()))
           .append(",\"y\":").append(QString::number(r.y()))
@@ -138,7 +136,6 @@ void JSONBuilder::ellipse(const QRectF & r)
 
 void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
 {
-    this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     image.copy(sr.toRect()).scaled(r.size().toSize()).save(&buf, "PNG");
@@ -152,7 +149,6 @@ void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & s
 
 void JSONBuilder::image(const QImage & i)
 {
-    this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     i.save(&buf, "PNG");
@@ -164,7 +160,6 @@ void JSONBuilder::image(const QImage & i)
 
 void JSONBuilder::line(const QLine & l)
 {
-    this->saveStatePriv();
     buffer.append("{\"t\":\"line\"")
           .append(",\"xs\":").append(QString::number(l.x1()))
           .append(",\"ys\":").append(QString::number(l.y1()))
@@ -175,7 +170,6 @@ void JSONBuilder::line(const QLine & l)
 
 void JSONBuilder::line(const QLineF & l)
 {
-    this->saveStatePriv();
     buffer.append("{\"t\":\"line\"")
           .append(",\"xs\":").append(QString::number(l.x1()))
           .append(",\"ys\":").append(QString::number(l.y1()))
@@ -232,7 +226,6 @@ void JSONBuilder::path(const QPainterPath & path)
 
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
-    this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     QImage im = pm.copy(sr.toRect()).toImage();
@@ -247,7 +240,6 @@ void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr
 
 void JSONBuilder::pixmap(const QPixmap & pm)
 {
-    this->saveStatePriv();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     pm.save(&buf, "PNG");
@@ -317,7 +309,6 @@ void JSONBuilder::polygon(const QPoint * points, int pointCount, QPaintEngine::P
 
 void JSONBuilder::rect(const QRect & r)
 {
-    this->saveStatePriv();
     buffer.append("{\"t\":\"rect\"")
           .append(",\"x\":").append(QString::number(r.x()))
           .append(",\"y\":").append(QString::number(r.y()))
@@ -328,7 +319,6 @@ void JSONBuilder::rect(const QRect & r)
 
 void JSONBuilder::rect(const QRectF & r)
 {
-    this->saveStatePriv();
     buffer.append("{\"t\":\"rect\"")
           .append(",\"x\":").append(QString::number(r.x()))
           .append(",\"y\":").append(QString::number(r.y()))
@@ -339,7 +329,6 @@ void JSONBuilder::rect(const QRectF & r)
 
 void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
 {
-    this->saveStatePriv();
     buffer.append("{\"t\":\"text\"")
             .append(",\"data\":{")
             .append("\"text\":\"").append(textItem.text().toAscii()).append("\"")
@@ -357,7 +346,6 @@ void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pm, const QPo
     QByteArray byteArray;
     QBuffer buf(&byteArray);
     pm.save(&buf, "PNG");
-    this->saveStatePriv();
     buffer.append("{\"t\":\"tiledPixmap\"")
             .append(",\"rect\":{")
             .append("\"x\":").append(QString::number(rect.x()).toAscii())
@@ -418,11 +406,8 @@ void JSONBuilder::state(const QPaintEngineState & s)
         cur_state.renderHints = s.renderHints();
     if (f & QPaintEngine::DirtyTransform)
         cur_state.transform = s.transform();
-    cur_state.state |= f & ~(QPaintEngine::DirtyHints | QPaintEngine::DirtyClipPath | QPaintEngine::DirtyClipEnabled | QPaintEngine::DirtyClipRegion);
-}
+    cur_state.state |= f & ~(QPaintEngine::DirtyHints);
 
-void JSONBuilder::saveState()
-{
     saveStatePriv();
 }
 
