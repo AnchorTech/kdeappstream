@@ -29,6 +29,7 @@ void EventFilter::connected()
 {
     hasConnection = true;
     qDebug() << "connection";
+
 }
 
 void EventFilter::disconnected()
@@ -40,6 +41,7 @@ void EventFilter::disconnected()
 bool EventFilter::eventFilter(QObject * recv, QEvent * e)
 {
     QWidget * w = dynamic_cast<QWidget*>(recv);
+
     if (w)
     {
         switch (e->type())
@@ -305,7 +307,8 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::Paint:
                 {
-                    WebRenderer::instance()->queue(w);
+                    QPaintEvent * pe = dynamic_cast<QPaintEvent*>(e);
+                    WebRenderer::instance()->queue(w, pe);
                 }
                 break;
             case QEvent::PaletteChange:

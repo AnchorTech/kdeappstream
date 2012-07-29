@@ -34,7 +34,7 @@ JSONBuilder * JSONBuilder::instance(QObject * parent)
     return m_instance;
 }
 
-void JSONBuilder::beginRender(QWidget * widget)
+void JSONBuilder::beginRender(QWidget * widget, const QRegion & region, QRect & rect)
 {
     if (!widget)
         return;
@@ -57,7 +57,12 @@ void JSONBuilder::beginRender(QWidget * widget)
           .append(",\"y\":").append(QString::number( p.y() ).toAscii())
           .append(",\"w\":").append(QString::number( s.width() ).toAscii())
           .append(",\"h\":").append(QString::number( s.height() ).toAscii())
-          .append("},\"render\":[");
+            .append(",\"r\":{")
+            .append("\"x\":").append(QString::number( rect.x() ).toAscii())
+            .append(",\"y\":").append(QString::number( rect.y() ).toAscii())
+            .append(",\"w\":").append(QString::number( rect.width() ).toAscii())
+            .append(",\"h\":").append(QString::number( rect.height() ).toAscii())
+          .append("}},\"render\":[");
 }
 
 void JSONBuilder::endRender()

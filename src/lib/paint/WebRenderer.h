@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QSemaphore>
 #include <QQueue>
+#include <QRegion>
+#include <QRect>
+#include <QPaintEvent>
 
 namespace KAppStream
 {
@@ -16,6 +19,8 @@ namespace KAppStream
             PaintDevice * pd;
             static WebRenderer * m_instance;
             QQueue<QWidget*> _render;
+            QQueue<QRegion> _regions;
+            QQueue<QRect> _rects;
             QSemaphore _sem;
             QString buffer;
 
@@ -24,7 +29,7 @@ namespace KAppStream
         public:
 
             static WebRenderer * instance(QObject * parent = 0);
-            void queue(QWidget * widget);
+            void queue(QWidget * widget, QPaintEvent * event);
 
         public slots:
 
