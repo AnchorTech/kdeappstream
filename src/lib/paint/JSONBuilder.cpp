@@ -77,6 +77,7 @@ void JSONBuilder::addChild(QWidget * child, QWidget * parent)
     buffer.append("{\"command\":\"addChild\"")
           .append(",\"id\":").append(QString::number((long long)parent).toAscii())
           .append(",\"child\":").append(QString::number((long long)child).toAscii())
+          .append(",\"type\":").append(QString::number(child->windowType()).toAscii())
           .append("},");
     _sem.release();
 }

@@ -3,7 +3,8 @@
   {
     "command":"addChild",
     "id":"12345678",
-    "child":"23456789"
+    "child":"23456789",
+    "type":0                // http://doc.qt.nokia.com/4.7-snapshot/qt.html#WindowType-enum
   },
    
   // removeChild
