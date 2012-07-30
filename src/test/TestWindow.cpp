@@ -2,6 +2,7 @@
 #include "ui_TestWindow.h"
 
 #include <QPen>
+#include <QMessageBox>
 
 TestWindow::TestWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,4 +28,9 @@ TestWindow::TestWindow(QWidget *parent) :
 TestWindow::~TestWindow()
 {
     delete ui;
+}
+
+void TestWindow::on_pushButton_clicked()
+{
+    QMessageBox::warning(this, "dupoza", "Dupa sraka... jakiś tam sobie tekst");
 }
