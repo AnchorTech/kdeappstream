@@ -15,6 +15,7 @@
 #include <QTabBar>
 #include <QToolButton>
 #include <QGradient>
+#include <QPainter>
 
 using namespace KAppStream;
 
@@ -63,6 +64,7 @@ void JSONBuilder::beginRender(QWidget * widget, const QRegion & region, QRect & 
             .append(",\"w\":").append(QString::number( rect.width() ).toAscii())
             .append(",\"h\":").append(QString::number( rect.height() ).toAscii())
           .append("}},\"render\":[");
+    //qDebug() << widget;
 }
 
 void JSONBuilder::endRender()
@@ -346,22 +348,41 @@ void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
     buffer.append("}},");
 }
 
-void JSONBuilder::tiledPixmap(const QRectF & rect, const QPixmap & pm, const QPointF & p)
+void JSONBuilder::tiledPixmap(const QRectF & r, const QPixmap & pm, const QPointF & p)
 {
+    QPixmap pixmap(r.size().toSize());
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    painter.drawTiledPixmap(QRectF(QPointF(), r.size()), pm, p);
+    painter.end();
     QByteArray byteArray;
     QBuffer buf(&byteArray);
-    pm.save(&buf, "PNG");
-    buffer.append("{\"t\":\"tiledPixmap\"")
-            .append(",\"rect\":{")
-            .append("\"x\":").append(QString::number(rect.x()).toAscii())
-            .append(",\"y\":").append(QString::number(rect.y()).toAscii())
-            .append(",\"w\":").append(QString::number(rect.width()).toAscii())
-            .append(",\"h\":").append(QString::number(rect.height()).toAscii())
-            .append("}")
-            .append(",\"x\":").append(QString::number(p.x()).toAscii())
-            .append(",\"y\":").append(QString::number(p.y()).toAscii())
-            .append(",\"pixmap\":\"data:image/png;base64,").append(byteArray.toBase64())
-          .append("\"},");
+    pixmap.save(&buf, "PNG");
+
+    buffer.append("{\"t\":\"image\"")
+          .append(",\"data\":\"data:image/png;base64,")
+          .append(byteArray.toBase64())
+          .append("\",\"x\":").append(QString::number(r.left()).toAscii())
+          .append(",\"y\":").append(QString::number(r.top()).toAscii())
+          .append("},");
+
+
+
+//    buffer.append("{\"t\":\"tiledPixmap\"")
+//            .append(",\"rect\":{")
+//            .append("\"x\":").append(QString::number(rect.x()).toAscii())
+//            .append(",\"y\":").append(QString::number(rect.y()).toAscii())
+//            .append(",\"w\":").append(QString::number(rect.width()).toAscii())
+//            .append(",\"h\":").append(QString::number(rect.height()).toAscii())
+//            .append("}")
+//            .append(",\"x\":").append(QString::number(p.x()).toAscii())
+//            .append(",\"y\":").append(QString::number(p.y()).toAscii())
+//            .append(",\"pixmap\":\"data:image/png;base64,").append(byteArray.toBase64())
+//          .append("\"},");
+    //static int i = 0;
+    //qDebug() << "~/d/img_" + QString::number(i) + ".png" << ": " << rect << pm.size() << p;
+    //pm.save("/home/coder89/d/img" + QString::number(i) + ".png", "PNG");
+    //++i;
 }
 
 void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSize)

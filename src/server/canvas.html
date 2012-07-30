@@ -241,9 +241,8 @@ CanvasDrawer.prototype = {
         img.src = data.pixmap;
         var ctx = this.ctx;
         ctx.drawImage(img, data.rect.x, data.rect.y, data.rect.w, data.rect.h);
-
     },
-        drawText:function (data) {
+    drawText:function (data) {
         var ctx = this.ctx;
         var fdata = data.data;
         //ctx.font = fdata.font;
