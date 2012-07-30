@@ -99,6 +99,24 @@ void JSONBuilder::removeChild(QWidget * child, QWidget * parent)
     _sem.release();
 }
 
+void JSONBuilder::hideWidget(QWidget * widget)
+{
+    _sem.acquire();
+    buffer.append("{\"command\":\"hide\"")
+          .append(",\"id\":").append(QString::number((long long)widget).toAscii())
+          .append("},");
+    _sem.release();
+}
+
+void JSONBuilder::showWidget(QWidget * widget)
+{
+    _sem.acquire();
+    buffer.append("{\"command\":\"show\"")
+          .append(",\"id\":").append(QString::number((long long)widget).toAscii())
+          .append("},");
+    _sem.release();
+}
+
 void JSONBuilder::finish()
 {
     emit readyRead();
