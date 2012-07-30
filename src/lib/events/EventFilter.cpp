@@ -216,7 +216,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::GraphicsSceneWheel" << recv;
                 break;
             case QEvent::Hide:
-                //qDebug() << "QEvent::Hide" << recv;
+                JSONBuilder::instance()->hideWidget(w);
                 break;
             case QEvent::HideToParent:
                 //qDebug() << "QEvent::HideToParent" << recv;
@@ -345,7 +345,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ShortcutOverride" << recv;
                 break;
             case QEvent::Show:
-                //qDebug() << "QEvent::Show" << recv;
+                JSONBuilder::instance()->showWidget(w);
                 break;
             case QEvent::ShowToParent:
                 //qDebug() << "QEvent::ShowToParent" << recv;
