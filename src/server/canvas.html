@@ -117,11 +117,14 @@ QtLogic.prototype = {
             case "addChild":
                 this.addChildCommand(data);
                 break;
-            case "removeChild":
-                this.removeChildCommand(data);
+            case "show":
+                this.showElement(data);
                 break;
             case "resize":
                 this.resizeCommand(data);
+                break;
+            case "hide":
+                this.hideElement(data);
                 break;
             default:
                 debug(data);
@@ -132,6 +135,12 @@ QtLogic.prototype = {
     },
     removeChildCommand:function(data) {
       console.log(data);
+    },
+    showElement: function(data) {
+        this.widgets[data.id].canvas.show();
+    },
+    hideElement: function(data) {
+        this.widgets[data.id].canvas.hide();
     },
     resizeCommand:function (data) {
         var canvasElement = this.widgets[data.id].canvas;
