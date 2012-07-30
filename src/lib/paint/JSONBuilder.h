@@ -66,6 +66,9 @@ namespace KAppStream
             void addChild(QWidget * child, QWidget * parent);
             void removeChild(QWidget * child, QWidget * parent);
 
+            void hideWidget(QWidget * widget);
+            void showWidget(QWidget * widget);
+
             void finish();
             void flush(QWsSocket * device);
             void ellipse(const QRect & r);

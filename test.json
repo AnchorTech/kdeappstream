@@ -14,6 +14,18 @@
     "child":"23456789"
   },
    
+  // hide
+  {
+    "command":"hide",
+    "id":"12345678"
+  },
+   
+  // show
+  {   
+    "command":"show",
+    "id":"12345678"
+  },
+  
   // resize
   {
     "command":"resize",
