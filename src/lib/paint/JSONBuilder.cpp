@@ -35,7 +35,7 @@ JSONBuilder * JSONBuilder::instance(QObject * parent)
     return m_instance;
 }
 
-void JSONBuilder::beginRender(QWidget * widget, const QRegion & region, QRect & rect)
+void JSONBuilder::beginRender(QWidget * widget, const QRegion & region, const QRect & rect)
 {
     if (!widget)
         return;

@@ -32,5 +32,5 @@ TestWindow::~TestWindow()
 
 void TestWindow::on_pushButton_clicked()
 {
-    QMessageBox::warning(this, "dupoza", "Dupa sraka... jakiś tam sobie tekst");
+    QMessageBox::information(this, "dupoza", "Dupa sraka... jakiś tam sobie tekst");
 }

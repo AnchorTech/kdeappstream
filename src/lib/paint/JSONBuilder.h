@@ -60,7 +60,7 @@ namespace KAppStream
 
             static JSONBuilder * instance(QObject * parent = 0);
 
-            void beginRender(QWidget * widget, const QRegion & region, QRect & rect);
+            void beginRender(QWidget * widget, const QRegion & region, const QRect & rect);
             void endRender();
 
             void addChild(QWidget * child, QWidget * parent);

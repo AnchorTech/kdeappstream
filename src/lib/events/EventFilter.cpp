@@ -68,7 +68,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ActionRemoved" << recv;
                 break;
             case QEvent::ActivationChange:
-                //qDebug() << "QEvent::ActivationChange" << recv;
+                //qDebug() << "QEvent::ActivationChange" << recv << e;
                 break;
             case QEvent::ApplicationActivate:
                 //qDebug() << "QEvent::ApplicationActivate ApplicationActivated" << recv;
@@ -89,6 +89,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ApplicationWindowIconChange" << recv;
                 break;
             case QEvent::ChildAdded:
+                //qDebug() << "QEvent::ChildAdded" << (long long) recv;
                 {
                     QChildEvent * ce = (QChildEvent*)e;
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
@@ -97,24 +98,30 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 }
                 break;
             case QEvent::ChildPolished:
-                //qDebug() << "QEvent::ChildPolished" << recv;
+                //qDebug() << "QEvent::ChildPolished" << (long long) recv;
                 break;
             case QEvent::ChildRemoved:
+                //qDebug() << "QEvent::ChildRemoved" << (long long) recv << e;
                 {
                     QChildEvent * ce = (QChildEvent*)e;
+                    qDebug() << (long long) ce->child();
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
                     if (cw)
-                        JSONBuilder::instance()->removeChild(cw, w);
+                    {
+                        WebRenderer::instance()->dequeue(cw);
+                        //JSONBuilder::instance()->removeChild(cw, w);
+                    }
                 }
                 break;
             case QEvent::Clipboard:
                 //qDebug() << "QEvent::Clipboard" << recv;
                 break;
             case QEvent::Close:
-                //qDebug() << "QEvent::Close" << recv;
+                qDebug() << "QEvent::Close" << recv;
+                WebRenderer::instance()->dequeue(w);
                 break;
             case QEvent::CloseSoftwareInputPanel:
-                //qDebug() << "QEvent::CloseSoftwareInputPanel" << recv;
+                qDebug() << "QEvent::CloseSoftwareInputPanel" << recv;
                 break;
             case QEvent::ContentsRectChange:
                 //qDebug() << "QEvent::ContentsRectChange" << recv;
@@ -126,7 +133,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::CursorChange" << recv;
                 break;
             case QEvent::DeferredDelete:
-                //qDebug() << "QEvent::DeferredDelete" << recv;
+                qDebug() << "QEvent::DeferredDelete" << recv;
                 break;
             case QEvent::DragEnter:
                 //qDebug() << "QEvent::DragEnter" << recv;
@@ -216,10 +223,14 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::GraphicsSceneWheel" << recv;
                 break;
             case QEvent::Hide:
+                qDebug() << "QEvent::Hide" << recv;
+                WebRenderer::instance()->dequeue(w);
                 JSONBuilder::instance()->hideWidget(w);
                 break;
             case QEvent::HideToParent:
-                //qDebug() << "QEvent::HideToParent" << recv;
+                qDebug() << "QEvent::HideToParent" << recv;
+                WebRenderer::instance()->dequeue(w);
+                JSONBuilder::instance()->hideWidget(w);
                 break;
             case QEvent::HoverEnter:
                 //qDebug() << "QEvent::HoverEnter" << recv;
@@ -426,13 +437,13 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::WindowBlocked" << recv;
                 break;
             case QEvent::WindowDeactivate:
-                //qDebug() << "QEvent::WindowDeactivate" << recv;
+                qDebug() << "QEvent::WindowDeactivate" << recv << e;
                 break;
             case QEvent::WindowIconChange:
                 //qDebug() << "QEvent::WindowIconChange" << recv;
                 break;
             case QEvent::WindowStateChange:
-                ///qDebug() << "QEvent::WindowStateChange" << recv;
+                qDebug() << "QEvent::WindowStateChange" << recv << e;
                 break;
             case QEvent::WindowTitleChange:
                 //qDebug() << "QEvent::WindowTitleChange" << recv;

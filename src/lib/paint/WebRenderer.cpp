@@ -23,8 +23,9 @@ WebRenderer::WebRenderer(QObject * parent) :
     pd(new PaintDevice),
     _sem(1)
 {
-    QTimer * t = new QTimer(this);
-    t->setInterval(100);
+    t = new QTimer(this);
+    t->setInterval(10);
+    //t->setSingleShot(true);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
     t->start();
 }
@@ -38,43 +39,72 @@ WebRenderer * WebRenderer::instance(QObject * parent)
 
 void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
 {
-    _sem.acquire();
-    if (widget->isVisible() && !_render.contains(widget))
+    if (!widget->isVisible())
     {
-        _render.enqueue(widget);
-        _regions.enqueue(event->region());
-        _rects.enqueue(event->rect());
+        qDebug() << "not visible";
+        return;
     }
-    _sem.release();
+    //_sem.acquire();
+    Widget w(widget, event->region(), event->rect());
+    if (!_render.contains(w))
+    {
+        _render.enqueue(w);
+        if (!t->isActive())
+            t->start(10);
+    }
+    else
+        qDebug() << "fail";
+    //_sem.release();
+}
+
+void WebRenderer::dequeue(QWidget * widget)
+{
+    qDebug() << "remove " << (long long) widget;
+    _render.removeAll(Widget(widget));
 }
 
 void WebRenderer::render()
 {
-    if (!_sem.tryAcquire())
-        return;
-    QQueue<QWidget*> tmp = _render;
-    QQueue<QRegion> tmp1 = _regions;
-    QQueue<QRect> tmp2 = _rects;
-    _render.clear();
-    _regions.clear();
-    _rects.clear();
-    _sem.release();
-    if (!tmp.isEmpty())
+    QPainter p;
+    bool first = true;
+int i = 10;
+    while (--i)
     {
-        QPainter p(this->pd);
-        do
+        qDebug() << "try acquire";
+        if (!_sem.tryAcquire())
+            break;
+        if (_render.isEmpty())
         {
-            QWidget * w = tmp.first();
-            JSONBuilder::instance()->beginRender(w, tmp1.first(), tmp2.first());
-            w->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
-            tmp.dequeue();
-            tmp1.dequeue();
-            tmp2.dequeue();
-            JSONBuilder::instance()->endRender();
+            qDebug() << "its empty";
+            _sem.release();
+            break;
+        }
 
-//            static bool f = true;
-//            QFrame * frame = dynamic_cast<QFrame*>(w);
-//            if (f && frame)
+        if (first)
+        {
+            p.begin(this->pd);
+            first = false;
+        }
+
+        Widget w = _render.dequeue();
+        if (w.w->isVisible())
+        {
+            _sem.release();
+            JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
+            w.w->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+            JSONBuilder::instance()->endRender();
+        }
+        _sem.release();
+    }
+
+    if (!first)
+        p.end();
+    JSONBuilder::instance()->finish();
+    //t->start();
+
+    //            static bool f = true;
+    //            QFrame * frame = dynamic_cast<QFrame*>(w);
+    //            if (f && frame)
 //            {
 //                qDebug() << QApplication::style() << frame->frameRect() << frame->rect();
 //                for (int i = 0; i < 60; ++i)
@@ -100,9 +130,4 @@ void WebRenderer::render()
 //                }
 //                f = false;
 //            }
-        }
-        while (!tmp.isEmpty());
-        p.end();
-        JSONBuilder::instance()->finish();
-    }
 }
