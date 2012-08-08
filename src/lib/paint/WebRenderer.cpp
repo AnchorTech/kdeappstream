@@ -20,14 +20,12 @@ WebRenderer * WebRenderer::m_instance = 0;
 
 WebRenderer::WebRenderer(QObject * parent) :
     QObject(parent),
-    pd(new PaintDevice),
-    _sem(1)
+    pd(new PaintDevice)
 {
     t = new QTimer(this);
     t->setInterval(10);
-    //t->setSingleShot(true);
+    t->setSingleShot(true);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
-    t->start();
 }
 
 WebRenderer * WebRenderer::instance(QObject * parent)
@@ -39,27 +37,18 @@ WebRenderer * WebRenderer::instance(QObject * parent)
 
 void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
 {
-    if (!widget->isVisible())
-    {
-        qDebug() << "not visible";
-        return;
-    }
-    //_sem.acquire();
     Widget w(widget, event->region(), event->rect());
-    if (!_render.contains(w))
+    if (_render.isEmpty() || !(_render.first() == w))
     {
+        //qDebug() << "dodane";
         _render.enqueue(w);
         if (!t->isActive())
-            t->start(10);
+            t->start();
     }
-    else
-        qDebug() << "fail";
-    //_sem.release();
 }
 
 void WebRenderer::dequeue(QWidget * widget)
 {
-    qDebug() << "remove " << (long long) widget;
     _render.removeAll(Widget(widget));
 }
 
@@ -67,18 +56,10 @@ void WebRenderer::render()
 {
     QPainter p;
     bool first = true;
-int i = 10;
-    while (--i)
+
+    while (!_render.isEmpty())
     {
-        qDebug() << "try acquire";
-        if (!_sem.tryAcquire())
-            break;
-        if (_render.isEmpty())
-        {
-            qDebug() << "its empty";
-            _sem.release();
-            break;
-        }
+        //qDebug() << "try acquire";
 
         if (first)
         {
@@ -86,15 +67,14 @@ int i = 10;
             first = false;
         }
 
-        Widget w = _render.dequeue();
-        if (w.w->isVisible())
+        Widget w = _render.first();
+        //if (w.w->isVisible())
         {
-            _sem.release();
             JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
             w.w->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
             JSONBuilder::instance()->endRender();
         }
-        _sem.release();
+        _render.dequeue();
     }
 
     if (!first)
