@@ -23,6 +23,7 @@ WebRenderer::WebRenderer(QObject * parent) :
     pd(new PaintDevice)
 {
     t = new QTimer(this);
+    t->setInterval(100);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
     t->start();
 }
@@ -65,7 +66,7 @@ void WebRenderer::render()
 
     while (!_render.isEmpty())
     {
-        Widget w = _render.first();
+        Widget w = _render.dequeue();
         //if (w.w->isVisible())
         {
             JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
@@ -74,7 +75,6 @@ void WebRenderer::render()
             JSONBuilder::instance()->endRender();
             ++i;
         }
-        _render.dequeue();
     }
 
     if (i)
