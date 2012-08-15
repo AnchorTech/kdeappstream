@@ -12,9 +12,22 @@
         left: 0;
         right: 0;
     }
+    canvas:not([data-name]) {
+        display: none;
+    }
 </style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript">
+var delayCallback = function (num, callback) {
+    function finished() {
+        num -= 1;
+        if (num == 0 && callback) {
+            callback();
+        }
+    }
+
+    return finished;
+};
 
 // sylvester.js
 eval(function (p, a, c, k, e, r) {
@@ -99,28 +112,40 @@ WSConnector.prototype = {
 
 function QtLogic() {
     this.widgets = {}
+    this.bindGlobalEvents();
 }
 
 QtLogic.prototype = {
-    loadImages: function(data) {
-        $.each(data, function(_,d) {
-            if(d.command == 'draw') {
-                    $.each(d.render, function (_, r) {
-                        if(r.t == 'image') {
-                            var img = new Image();
-                            img.src = r.data;
-                        }
-                    });
+    /*
+        Collect all images information and preload them.
+        Affected by issue: http://stackoverflow.com/questions/4776670/should-setting-an-image-src-to-data-url-be-available-immediately
+     */
+    loadImages:function (data, callback) {
+        var images_data = [];
+        $.each(data, function (_, d) {
+            if (d.command == 'draw') {
+                $.each(d.render, function (_, r) {
+                    if (r.t == 'image') {
+                        images_data.push(r.data);
+                    }
+                });
             }
+        });
+        var delayer = delayCallback(images_data.length, callback);
+        $.each(images_data, function (_, img) {
+            var image = new Image();
+            image.src = img;
+            image.onload = delayer;
         });
     },
     input:function (data) {
-        this.loadImages(data);
         var self = this;
-        setTimeout(function() { $.each(data, function (_, value) {
-            self.singleInput(value);
-        });
-        },10);
+        var afterLoad = function () {
+            $.each(data, function (_, value) {
+                self.singleInput(value);
+            });
+        };
+        this.loadImages(data, afterLoad);
     },
     singleInput:function (data) {
         var self = this;
@@ -147,13 +172,13 @@ QtLogic.prototype = {
     addChildCommand:function (data) {
         this.addWidgetChild(data.id, data.child);
     },
-    removeChildCommand:function(data) {
-      console.log(data);
+    removeChildCommand:function (data) {
+        console.log(data);
     },
-    showElement: function(data) {
+    showElement:function (data) {
         this.widgets[data.id].canvas.show();
     },
-    hideElement: function(data) {
+    hideElement:function (data) {
         this.widgets[data.id].canvas.hide();
     },
     resizeCommand:function (data) {
@@ -177,7 +202,7 @@ QtLogic.prototype = {
         current_widget = widget;
         var renders = data.render;
         var translation = this.calculateTranslation(widget);
-        widget.canvas.css({left: translation.x, top: translation.y});
+        widget.canvas.css({left:translation.x, top:translation.y});
         var canvasDrawer = widget.canvasDrawer;
         canvasDrawer.ctx.save();
         canvasDrawer.setup(region, translation);
@@ -195,7 +220,9 @@ QtLogic.prototype = {
                 children:[]
             };
             var widget = this.widgets[id];
-            widget.canvas = $('<canvas></canvas>').appendTo($('#widgets'));
+            widget.canvas = $('<canvas></canvas>')
+                    .data('widget',widget)
+                    .appendTo($('#widgets'));
             widget.canvasDrawer = new CanvasDrawer(widget.canvas);
         }
         return this.widgets[id];
@@ -211,8 +238,8 @@ QtLogic.prototype = {
             if (canvasElement.attr('width') != data.w)
                 canvasElement.attr('width', data.w);
             canvasElement.css({
-                left: data.x,
-                top: data.y
+                left:data.x,
+                top:data.y
             });
         } else {
             console.log(widget);
@@ -242,6 +269,15 @@ QtLogic.prototype = {
             parent = parent.parent;
         }
         return {x:x, y:y};
+    },
+    bindGlobalEvents: function() {
+        $('#widgets').on('click','canvas',function(evt) {
+            var offset = $(this).offset();
+            var position = {x: evt.pageX - offset.left, y: evt.pageY - offset.top};
+            console.log('Clicked widget:');
+            console.log($(this).data());
+            console.log(position);
+        });
     }
 };
 
@@ -486,7 +522,7 @@ CanvasDrawer.prototype = {
 };
 
 CanvasHelper = function () {
-}
+};
 
 CanvasHelper.createGradient = function (ctx, gradient, style) {
     if (style == 15) {
@@ -507,15 +543,12 @@ function init() {
 }
 
 $(document).ready(function () {
-    setTimeout(function () {
-        init();
-    }, 1500);
-})
+    init();
+});
 
 </script>
 </head>
 <body>
-<canvas id="canvas" width="800" height="600">Your browser doesn't support canvas.</canvas>
 <div id="widgets"></div>
 <div class="data"></div>
 </body>
