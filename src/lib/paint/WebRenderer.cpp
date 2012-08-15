@@ -72,6 +72,7 @@ void WebRenderer::render()
             JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
             dupa2 = w.w;
             w.w->render(pd, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+            w.w->update();
             JSONBuilder::instance()->endRender();
             ++i;
         }
