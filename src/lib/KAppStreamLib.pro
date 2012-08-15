@@ -33,7 +33,9 @@ HEADERS  += \
     websocket/HttpServer.h \
     paint/JSONBuilder.h \
     paint/WebRenderer.h \
-    websocket/WebsocketThread.h
+    websocket/WebsocketThread.h \
+    events/EventFilter.h \
+    events/EventDispather.h
 
 unix {
     LIBS += -ldl
@@ -42,3 +44,4 @@ unix {
 OTHER_FILES += \
     websocket/index.html \
     ../CMakeLists.txt
+

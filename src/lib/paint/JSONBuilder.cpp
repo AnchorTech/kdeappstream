@@ -76,6 +76,7 @@ void JSONBuilder::endRender()
         buffer.remove(buffer.length()-1, 1);
     buffer.append("]},");
     _sem.release();
+    finish();
 }
 
 void JSONBuilder::addChild(QWidget * child, QWidget * parent)
