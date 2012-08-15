@@ -102,11 +102,25 @@ function QtLogic() {
 }
 
 QtLogic.prototype = {
+    loadImages: function(data) {
+        $.each(data, function(_,d) {
+            if(d.command == 'draw') {
+                    $.each(d.render, function (_, r) {
+                        if(r.t == 'image') {
+                            var img = new Image();
+                            img.src = r.data;
+                        }
+                    });
+            }
+        });
+    },
     input:function (data) {
+        this.loadImages(data);
         var self = this;
-        $.each(data, function (_, value) {
+        setTimeout(function() { $.each(data, function (_, value) {
             self.singleInput(value);
         });
+        },10);
     },
     singleInput:function (data) {
         var self = this;
