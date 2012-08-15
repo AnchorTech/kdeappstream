@@ -124,6 +124,7 @@ void JSONBuilder::finish()
 
 void JSONBuilder::flush(QWsSocket * device)
 {
+    static int i = 0;
     _sem.acquire();
     if (device)
     {
@@ -131,11 +132,10 @@ void JSONBuilder::flush(QWsSocket * device)
         {
             if (buffer[buffer.length()-1] == ',')
                 buffer.remove(buffer.length()-1, 1);
-            device->write(QString('[' + buffer + ']'));
-            device->waitForBytesWritten(1000);
+            device->write(QString('[' + buffer + ",{\"i\":" + QString::number(++i).toAscii() + "}]"));
         }
+        buffer.clear();
     }
-    buffer.clear();
     _sem.release();
 }
 
