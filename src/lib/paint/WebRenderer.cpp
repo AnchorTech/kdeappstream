@@ -23,10 +23,11 @@ WebRenderer::WebRenderer(QObject * parent) :
     pd(new PaintDevice)
 {
     t = new QTimer(this);
-    //t->setInterval(100);
-    t->setSingleShot(true);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
+    t->start();
 }
+
+QSemaphore sem(1);
 
 WebRenderer * WebRenderer::instance(QObject * parent)
 {
@@ -43,14 +44,11 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
     {
         Widget w(widget, event->region(), event->rect());
         _render.enqueue(w);
-        t->start();
-        //if (dupa)
-    //    event->setAccepted(true);
     }
-    //else
-    //    qDebug() << "start render " << w.w;
-    //else
-    //    event->setAccepted(false);
+    else
+    {
+        dupa2 = 0;
+    }
 }
 
 void WebRenderer::dequeue(QWidget * widget)
@@ -60,26 +58,29 @@ void WebRenderer::dequeue(QWidget * widget)
 
 void WebRenderer::render()
 {
-    qDebug() << "timer start";
+    if (!sem.tryAcquire())
+        return;
+
+    int i = 0;
 
     while (!_render.isEmpty())
     {
         Widget w = _render.first();
-        if (w.w->isVisible())
+        //if (w.w->isVisible())
         {
             JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
             dupa2 = w.w;
             w.w->render(pd, QPoint(), QRegion(), QWidget::DrawWindowBackground);
-            dupa2 = 0;
             JSONBuilder::instance()->endRender();
+            ++i;
         }
         _render.dequeue();
     }
 
-    JSONBuilder::instance()->finish();
+    if (i)
+        JSONBuilder::instance()->finish();
 
-    qDebug() << "timer end";
-
+    sem.release();
 
     //            static bool f = true;
     //            QFrame * frame = dynamic_cast<QFrame*>(w);
