@@ -26,7 +26,6 @@ WebRenderer::WebRenderer(QObject * parent) :
     //t->setInterval(100);
     t->setSingleShot(true);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
-    //t->start();
 }
 
 WebRenderer * WebRenderer::instance(QObject * parent)
@@ -36,17 +35,16 @@ WebRenderer * WebRenderer::instance(QObject * parent)
     return m_instance;
 }
 
-bool dupa = true;
+QWidget * dupa2 = 0;
 
 void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
 {
-    Widget w(widget, event->region(), event->rect());
-    if (_render.isEmpty() || !(_render.first() == w))
+    if (dupa2 != widget)
     {
-        //qDebug() << "dodane";
+        Widget w(widget, event->region(), event->rect());
         _render.enqueue(w);
+        t->start();
         //if (dupa)
-            t->start();
     //    event->setAccepted(true);
     }
     //else
@@ -62,21 +60,26 @@ void WebRenderer::dequeue(QWidget * widget)
 
 void WebRenderer::render()
 {
+    qDebug() << "timer start";
+
     while (!_render.isEmpty())
     {
-        //qDebug() << "try acquire";
-
         Widget w = _render.first();
         if (w.w->isVisible())
         {
             JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
+            dupa2 = w.w;
             w.w->render(pd, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+            dupa2 = 0;
             JSONBuilder::instance()->endRender();
         }
         _render.dequeue();
     }
 
     JSONBuilder::instance()->finish();
+
+    qDebug() << "timer end";
+
 
     //            static bool f = true;
     //            QFrame * frame = dynamic_cast<QFrame*>(w);

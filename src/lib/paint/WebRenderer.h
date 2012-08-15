@@ -43,144 +43,59 @@ namespace KAppStream
 
             typedef class _RenderQueue
             {
-                typedef struct QueueNode
-                    {
-                            QueueNode(const Widget & widget) :
-                                next(0),
-                                prev(0),
-                                node(widget)
-                            {}
+                QQueue<Widget> queue;
 
-                            QueueNode * next;
-                            QueueNode * prev;
-
-                            Widget node;
-
-                    } QueueNode;
-
-                QueueNode * start;
-                QueueNode * end;
                 QSemaphore _sem;
 
                 public:
 
                 _RenderQueue() :
-                    start(0),
-                    end(0),
                     _sem(1)
                 {}
 
                 void enqueue(Widget & node)
                 {
                     _sem.acquire();
-                    QueueNode * tmp = new QueueNode(node);
-                    if (end)
-                    {
-                        end->next = tmp;
-                        end = end->next;
-                    }
-                    else
-                    {
-                        start = end = tmp;
-                    }
+                    queue.enqueue(node);
                     _sem.release();
                 }
 
                 Widget dequeue()
                 {
                     _sem.acquire();
-                    if (start)
-                    {
-                        Widget result = start->node;
-                        QueueNode * tmp = start;
-                        start = start->next;
-                        if (tmp == end)
-                            end = start;
-                        delete tmp;
-                        _sem.release();
-                        return result;
-                    }
-                    else
-                    {
-                        Q_ASSERT(start == 0);
-                        return Widget(0);
-                    }
+                    Widget result = queue.dequeue();
+                    _sem.release();
+                    return result;
                 }
 
                 Widget & first()
                 {
-                    return start->node;
+                    _sem.acquire();
+                    Widget result = queue.first();
+                    _sem.release();
+                    return result;
                 }
 
                 bool isEmpty()
                 {
                     _sem.acquire();
-                    if (start)
-                    {
-                        _sem.release();
-                        return false;
-                    }
+                    bool result = queue.isEmpty();
                     _sem.release();
-                    return true;
+                    return result;
                 }
 
                 bool contains(const Widget & widget)
                 {
                     _sem.acquire();
-                    QueueNode * tmp = start;
-                    while (tmp)
-                    {
-                        if (widget == tmp->node)
-                        {
-                            _sem.release();
-                            return true;
-                        }
-                        tmp = tmp->next;
-                    }
+                    bool result = queue.contains(widget);
                     _sem.release();
-                    return false;
+                    return result;
                 }
 
                 void removeAll(const Widget & widget)
                 {
                     _sem.acquire();
-                    QueueNode * tmp = start;
-                    while (tmp)
-                    {
-                        if (tmp->node == widget)
-                        {
-                            if (tmp == start)
-                            {
-                                start = tmp->next;
-                                delete tmp;
-                                if (!start)
-                                {
-                                    end = 0;
-                                    break;
-                                }
-                                else
-                                {
-                                    start->prev = 0;
-                                }
-                            }
-                            else if (tmp == end)
-                            {
-                                end = tmp->prev;
-                                delete tmp;
-                                break;
-                            }
-                            else
-                            {
-                                QueueNode * tmp2 = tmp;
-                                if (tmp->prev)
-                                    tmp->prev->next = tmp->next;
-                                if (tmp->next)
-                                    tmp->next->prev = tmp->prev;
-                            }
-                            continue;
-                        }
-                        tmp = tmp->next;
-                    }
+                    queue.removeAll(widget);
                     _sem.release();
                 }
 
