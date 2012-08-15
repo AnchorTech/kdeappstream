@@ -320,6 +320,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 {
                     QPaintEvent * pe = dynamic_cast<QPaintEvent*>(e);
                     WebRenderer::instance()->queue(w, pe);
+                    //return pe->isAccepted();
                 }
                 break;
             case QEvent::PaletteChange:

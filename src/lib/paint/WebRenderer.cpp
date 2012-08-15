@@ -23,9 +23,10 @@ WebRenderer::WebRenderer(QObject * parent) :
     pd(new PaintDevice)
 {
     t = new QTimer(this);
-    t->setInterval(10);
+    //t->setInterval(100);
     t->setSingleShot(true);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
+    t->start();
 }
 
 WebRenderer * WebRenderer::instance(QObject * parent)
@@ -42,9 +43,14 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
     {
         //qDebug() << "dodane";
         _render.enqueue(w);
-        if (!t->isActive())
+        //if (!t->isActive())
             t->start();
+    //    event->setAccepted(true);
     }
+    else
+        qDebug() << "start render " << w.w;
+    //else
+    //    event->setAccepted(false);
 }
 
 void WebRenderer::dequeue(QWidget * widget)
@@ -70,6 +76,7 @@ void WebRenderer::render()
         Widget w = _render.first();
         //if (w.w->isVisible())
         {
+            qDebug() << "init render " << w.w;
             JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
             w.w->render(&p, QPoint(), QRegion(), QWidget::DrawWindowBackground);
             JSONBuilder::instance()->endRender();
@@ -79,8 +86,8 @@ void WebRenderer::render()
 
     if (!first)
         p.end();
+
     JSONBuilder::instance()->finish();
-    //t->start();
 
     //            static bool f = true;
     //            QFrame * frame = dynamic_cast<QFrame*>(w);
