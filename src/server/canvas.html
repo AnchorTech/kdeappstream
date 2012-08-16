@@ -422,6 +422,24 @@ QtLogic.prototype = {
                         });
                     }
                 })
+                .on('mousemove', 'canvas', function(evt) {
+                    var widget = $(this).data('widget');
+                    if (widget) {
+                        var eventData = parseMouseEvent(evt);
+                        wsConnector.sendEvent({
+                            command:"mouse",
+                            type:"move",
+                            id:widget.id,
+                            btn: 0,
+                            x: eventData.x,
+                            y: eventData.y,
+                            modifiers: eventData.modifiers
+                        });
+                    }
+                });
+                $(document).keydown(function(evt) {
+                    console.log(evt);
+                })
 
     }
 };
@@ -440,10 +458,13 @@ function parseMouseEvent(evt) {
         default:
             data.button = 0;
     }
+    var modifiers = 0;
+    if(evt.ctrlKey)
+        ;
     var offset = $(evt.currentTarget).offset();
     data.x = evt.pageX - offset.left;
     data.y = evt.pageY - offset.top;
-    data.modifiers = 0;
+    data.modifiers = modifiers;
     data.orientation = 2;
 
     return data;
