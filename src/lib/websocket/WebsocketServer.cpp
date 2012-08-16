@@ -1,10 +1,13 @@
 #include "WebsocketServer.h"
 #include "paint/JSONBuilder.h"
 #include <QDebug>
+#include <QSemaphore>
 
 using namespace KAppStream;
 
 WebsocketServer * WebsocketServer::m_instance = 0;
+
+QSemaphore sem2(0);
 
 WebsocketServer::WebsocketServer(QObject *parent) :
     QObject(parent),
@@ -41,31 +44,35 @@ quint16 WebsocketServer::serverPort()
 
 bool WebsocketServer::waitForConnected(int wait)
 {
-    if (client)
-        return true;
-    return server->waitForNewConnection(wait);
+    int i = 10;
+    int time = wait / 10 * 1000;
+    while(--i && !sem2.available())
+        usleep(time);
+    return sem2.available();
 }
 
 void WebsocketServer::onConnection()
 {
-    if(client)
-        return;
-
     client = server->nextPendingConnection();
     if(client)
     {
         qDebug() << "Client connected ";
         connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
         connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
+        if (!sem2.available())
+            sem2.release();
+        emit connected();
     }
     else
-        qDebug() << "error " << client->errorString();
-
-    emit connected();
+    {
+        qDebug() << "error " << server->errorString();
+    }
 }
 
 void WebsocketServer::onDisconnection()
 {
+    if (sem2.available())
+        sem2.acquire();
     disconnect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
     disconnect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
     client->deleteLater();

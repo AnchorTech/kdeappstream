@@ -33,7 +33,9 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
     WebsocketThread * websocketService = new WebsocketThread(0);
     websocketService->start();
     while (!websocketService->serverPort())
-        sleep(0);
+    {
+        usleep(100000);
+    }
 
     QLocalSocket socket;
     int i = 0;
@@ -53,16 +55,19 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
         }
     }
     while(!socket.waitForConnected());
+
+    installUIExtractorEventFilter();
+
     socket.write(QString::number(websocketService->serverPort()).toAscii());
     if (!socket.waitForBytesWritten(30000))
         exit(-1);
     socket.close();
+
     if (!websocketService->waitForConnected(10000))
         exit(-1);
 
     qDebug("Connected!");
 
-    installUIExtractorEventFilter();
     //QObject::connect(websocketService, SIGNAL(connected()), evFilter, SLOT(connected()));
     //QObject::connect(websocketService, SIGNAL(disconnected()), evFilter, SLOT(disconnected()));
 

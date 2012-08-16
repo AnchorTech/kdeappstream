@@ -23,9 +23,8 @@ WebRenderer::WebRenderer(QObject * parent) :
     pd(new PaintDevice)
 {
     t = new QTimer(this);
-    t->setInterval(100);
+    t->setSingleShot(true);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
-    t->start();
 }
 
 QSemaphore sem(1);
@@ -45,6 +44,10 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
     {
         Widget w(widget, event->region(), event->rect());
         _render.enqueue(w);
+        if (sem.available())
+        {
+            t->start();
+        }
     }
     else
     {
@@ -72,16 +75,18 @@ void WebRenderer::render()
             JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
             dupa2 = w.w;
             w.w->render(pd, QPoint(), QRegion(), QWidget::DrawWindowBackground);
-            //w.w->update();
             JSONBuilder::instance()->endRender();
             ++i;
         }
     }
 
-    if (i)
-        JSONBuilder::instance()->finish();
-
     sem.release();
+
+    if (i)
+    {
+        JSONBuilder::instance()->finish();
+    }
+
 
     //            static bool f = true;
     //            QFrame * frame = dynamic_cast<QFrame*>(w);
