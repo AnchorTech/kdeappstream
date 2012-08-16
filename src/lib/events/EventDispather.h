@@ -4,17 +4,13 @@
 #include <QThread>
 #include <QLocalServer>
 
-class EventDispather : public QLocalServer
+class EventDispather : public QObject
 {
         Q_OBJECT
 
         static EventDispather * m_instance;
 
-        QLocalSocket * socket;
-
-        QString name;
-
-        EventDispather(const QString & sName, QObject * parent);
+        EventDispather();
 
         Q_DISABLE_COPY(EventDispather)
 
@@ -22,11 +18,11 @@ class EventDispather : public QLocalServer
 
         virtual ~EventDispather();
 
-        static EventDispather * instance(const QString & sName, QObject * parent);
+        static EventDispather * instance();
 
     public slots:
 
-        void run();
+        void parse(const QString & message);
 
 };
 

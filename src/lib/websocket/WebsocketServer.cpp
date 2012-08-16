@@ -1,5 +1,6 @@
 #include "WebsocketServer.h"
 #include "paint/JSONBuilder.h"
+#include "events/EventDispather.h"
 #include <QDebug>
 
 using namespace KAppStream;
@@ -87,9 +88,7 @@ void WebsocketServer::sendMessage(QString message)
 
 void WebsocketServer::onDataReceived(QString data)
 {
-    qDebug() << "Received data: " << data;
-    sendMessage(data); // pong
-    emit dataReceived(data);
+    EventDispather::instance()->parse(data);
 }
 
 void WebsocketServer::readData()
