@@ -1,3 +1,129 @@
+// EVENTS
+[
+  // enter - Mouse enters widget's boundaries.
+  {
+    "command":"mouse",
+    "type":"enter",
+    "id":12345678            // widget's id
+  }
+
+  // leave - Mouse leaves widget's boundaries.
+  {
+    "command":"mouse",
+    "type":"leave",
+    "id":12345678            // widget's id
+  }
+
+
+  // dbclick - Mouse press again (QMouseEvent).
+  {
+    "command":"mouse",
+    "type":"dbclick",
+    "id":12345678,           // widget's id
+    "modifiers":0,           // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
+    "btn",1|2|4|8|16,        // http://doc.qt.nokia.com/4.7-snapshot/qt.html#MouseButton-enum (may be bitwise alternative)
+    "x":12.3,                // in widgets coordinates !
+    "y":12.3
+  }
+  // press - Mouse press (QMouseEvent).
+  {
+    "command":"mouse",
+    "type":"press",
+    "id":12345678,           // widget's id
+    "modifiers":0,           // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
+    "btn",1|2|4|8|16,        // http://doc.qt.nokia.com/4.7-snapshot/qt.html#MouseButton-enum (may be bitwise alternative)
+    "x":12.3,                // in widgets coordinates !
+    "y":12.3
+  }
+  // release - Mouse release (QMouseEvent).
+  {
+    "command":"mouse",
+    "type":"release",
+    "id":12345678,           // widget's id
+    "modifiers":0,           // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
+    "btn",1|2|4|8|16,        // http://doc.qt.nokia.com/4.7-snapshot/qt.html#MouseButton-enum (may be bitwise alternative)
+    "x":12.3,                // in widgets coordinates !
+    "y":12.3
+  }
+  // move - Mouse move (QMouseEvent).
+  {
+    "command":"mouse",
+    "type":"move",
+    "id":12345678 ,          // widget's id
+    "modifiers":0,           // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
+    "btn",1|2|4|8|16,        // http://doc.qt.nokia.com/4.7-snapshot/qt.html#MouseButton-enum (may be bitwise alternative)
+    "x":12.3,                // in widgets coordinates !
+    "y":12.3
+  }
+
+  // wheel - Mouse wheel move (QWheelEvent).  http://doc.qt.nokia.com/4.7-snapshot/qwheelevent.html
+  {
+    "command":"wheel",
+    "type":"move",
+    "id":12345678 ,          // widget's id
+    "modifiers":0,           // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
+    "btn",1|2|4|8|16,        // http://doc.qt.nokia.com/4.7-snapshot/qt.html#MouseButton-enum (may be bitwise alternative)
+    "delta":12,
+    "orientation":1|2,       // http://doc.qt.nokia.com/4.7-snapshot/qt.html#Orientation-enum
+    "x":12.3,                // in widgets coordinates !
+    "y":12.3
+  }
+
+  //
+
+
+  // resize - Widget resized (only for windows/dialogs with frames!)
+  {
+    "command":"resize",
+    "id":12345678           // widget's id
+    "ow":12,                 // old size
+    "oh":12,
+    "nw":12,                 // new size
+    "nh":12
+  }
+  // move - Widgets move (QMoveEvent).
+  {
+    "command":"move",
+    "id":12345678 ,          // widget's id
+    "ox":12,                 // old pos in widgets coordinates !
+    "oy":12,
+    "nx":12,                 // new pos in widgets coordinates !
+    "ny":12
+  }
+
+    QEvent::ZOrderChange
+
+
+
+  // press - Key press (QKeyEvent).
+  {
+    "command":"key",
+    "type":"press",
+    "id":12345678,            // widget's id
+    "key":214,                // http://doc.qt.nokia.com/4.7-snapshot/qt.html#Key-enum
+    "modifiers":0,            // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
+    "text":"safasf",          // Unicode text that the key generated (usually only single unicode character)
+    "autorep":"true"|"false", // http://doc.qt.nokia.com/4.7-snapshot/qkeyevent.html#isAutoRepeat
+    "count":1                 // count is the number of keys involved in the event.
+  }
+
+  // release - Key release (QKeyEvent).
+  {
+    "command":"key",
+    "type":"release",
+    "id":12345678,           // widget's id
+    "key":214,               // http://doc.qt.nokia.com/4.7-snapshot/qt.html#Key-enum
+    "modifiers":0,           // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
+    "text":"safasf",          // Unicode text that the key generated (usually only single unicode character)
+    "autorep":"true"|"false", // http://doc.qt.nokia.com/4.7-snapshot/qkeyevent.html#isAutoRepeat
+    "count":1                 // count is the number of keys involved in the event.
+  }
+
+]
+
+
+// RENDERING
+
 [
   // addChild
   {
