@@ -278,6 +278,17 @@ QtLogic.prototype = {
             console.log($(this).data());
             console.log(position);
         });
+        $('#widgets').on('mouseenter','canvas',function(evt) {
+            var widget = $(this).data('widget');
+            if(widget) {
+                var event = {
+                    command:"mouse",
+                    type:"enter",
+                    id:widget.id
+                };
+                wsConnector.websocket.send(JSON.stringify(event));
+            }
+        });
     }
 };
 
