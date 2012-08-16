@@ -40,6 +40,7 @@ void EventDispather::parse(const QString & message)
     QString command = value.property("command").toString();
 
     qDebug() << "Received data: " << message;
+
     if (command == "mouse")
     {
         // TODO: widget id validation
@@ -47,16 +48,25 @@ void EventDispather::parse(const QString & message)
         QString type = value.property("type").toString();
         if (type == "move")
         {
+            int x = value.property("x").toInt32();
+            int y = value.property("y").toInt32();
+            int buttons = value.property("btn").toInt32();
+            int modifiers = value.property("modifiers").toInt32();
+            QMouseEvent * e = new QMouseEvent(QEvent::MouseMove, QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers);
+            e->setAccepted(false);
+            QCoreApplication::postEvent((QWidget*)id, e, INT_MAX);
         }
         else if (type == "enter")
         {
             QEvent * e = new QEvent(QEvent::Enter);
-            QCoreApplication::sendEvent((QWidget*)id, e);
+            e->setAccepted(false);
+            QCoreApplication::postEvent((QWidget*)id, e, INT_MAX);
         }
         else if (type == "leave")
         {
             QEvent * e = new QEvent(QEvent::Leave);
-            QCoreApplication::sendEvent((QWidget*)id, e);
+            e->setAccepted(false);
+            QCoreApplication::postEvent((QWidget*)id, e, INT_MAX);
         }
         else if (type == "press")
         {
@@ -90,5 +100,4 @@ void EventDispather::parse(const QString & message)
         {
         }
     }
-
 }
