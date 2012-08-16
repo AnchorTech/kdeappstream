@@ -3,12 +3,15 @@
 
 #include <QThread>
 #include <QLocalServer>
+#include <QScriptEngine>
 
 class EventDispather : public QObject
 {
         Q_OBJECT
 
         static EventDispather * m_instance;
+
+        QScriptEngine engine;
 
         EventDispather();
 

@@ -59,7 +59,6 @@
   // wheel - Mouse wheel move (QWheelEvent).  http://doc.qt.nokia.com/4.7-snapshot/qwheelevent.html
   {
     "command":"wheel",
-    "type":"move",
     "id":12345678 ,          // widget's id
     "modifiers":0,           // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
     "btn",1|2|4|8|16,        // http://doc.qt.nokia.com/4.7-snapshot/qt.html#MouseButton-enum (may be bitwise alternative)
@@ -68,9 +67,6 @@
     "x":12.3,                // in widgets coordinates !
     "y":12.3
   }
-
-  //
-
 
   // resize - Widget resized (only for windows/dialogs with frames!)
   {
@@ -99,7 +95,6 @@
   {
     "command":"key",
     "type":"press",
-    "id":12345678,            // widget's id
     "key":214,                // http://doc.qt.nokia.com/4.7-snapshot/qt.html#Key-enum
     "modifiers":0,            // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
     "text":"safasf",          // Unicode text that the key generated (usually only single unicode character)
@@ -111,7 +106,6 @@
   {
     "command":"key",
     "type":"release",
-    "id":12345678,           // widget's id
     "key":214,               // http://doc.qt.nokia.com/4.7-snapshot/qt.html#Key-enum
     "modifiers":0,           // http://doc.qt.nokia.com/4.7-snapshot/qt.html#KeyboardModifier-enum
     "text":"safasf",          // Unicode text that the key generated (usually only single unicode character)
