@@ -12,6 +12,7 @@
         left: 0;
         right: 0;
     }
+
     canvas:not([data-name]) {
         display: none;
     }
@@ -28,6 +29,80 @@ var delayCallback = function (num, callback) {
 
     return finished;
 };
+
+// Mouse wheel plugin
+(function($) {
+
+    var types = ['DOMMouseScroll', 'mousewheel'];
+
+    if ($.event.fixHooks) {
+        for ( var i=types.length; i; ) {
+            $.event.fixHooks[ types[--i] ] = $.event.mouseHooks;
+        }
+    }
+
+    $.event.special.mousewheel = {
+        setup: function() {
+            if ( this.addEventListener ) {
+                for ( var i=types.length; i; ) {
+                    this.addEventListener( types[--i], handler, false );
+                }
+            } else {
+                this.onmousewheel = handler;
+            }
+        },
+
+        teardown: function() {
+            if ( this.removeEventListener ) {
+                for ( var i=types.length; i; ) {
+                    this.removeEventListener( types[--i], handler, false );
+                }
+            } else {
+                this.onmousewheel = null;
+            }
+        }
+    };
+
+    $.fn.extend({
+        mousewheel: function(fn) {
+            return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
+        },
+
+        unmousewheel: function(fn) {
+            return this.unbind("mousewheel", fn);
+        }
+    });
+
+
+    function handler(event) {
+        var orgEvent = event || window.event, args = [].slice.call( arguments, 1 ), delta = 0, returnValue = true, deltaX = 0, deltaY = 0;
+        event = $.event.fix(orgEvent);
+        event.type = "mousewheel";
+
+        // Old school scrollwheel delta
+        if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta/120; }
+        if ( orgEvent.detail ) { delta = -orgEvent.detail/3; }
+
+        // New school multidimensional scroll (touchpads) deltas
+        deltaY = delta;
+
+        // Gecko
+        if ( orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS ) {
+            deltaY = 0;
+            deltaX = -1*delta;
+        }
+
+        // Webkit
+        if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY/120; }
+        if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = -1*orgEvent.wheelDeltaX/120; }
+
+        // Add event and delta to the front of the arguments
+        args.unshift(event, delta, deltaX, deltaY);
+
+        return ($.event.dispatch || $.event.handle).apply(this, args);
+    }
+
+})(jQuery);
 
 // sylvester.js
 eval(function (p, a, c, k, e, r) {
@@ -107,18 +182,22 @@ WSConnector.prototype = {
     helloMessage:function () {
         this.websocket.send(sessionID);
         console.log('sent');
+    },
+    sendEvent:function (event) {
+        this.websocket.send(JSON.stringify(event));
     }
 };
 
-function QtLogic() {
+function QtLogic(container) {
+    this.container = container;
     this.widgets = {}
     this.bindGlobalEvents();
 }
 
 QtLogic.prototype = {
     /*
-        Collect all images information and preload them.
-        Affected by issue: http://stackoverflow.com/questions/4776670/should-setting-an-image-src-to-data-url-be-available-immediately
+     Collect all images information and preload them.
+     Affected by issue: http://stackoverflow.com/questions/4776670/should-setting-an-image-src-to-data-url-be-available-immediately
      */
     loadImages:function (data, callback) {
         var images_data = [];
@@ -221,7 +300,7 @@ QtLogic.prototype = {
             };
             var widget = this.widgets[id];
             widget.canvas = $('<canvas></canvas>')
-                    .data('widget',widget)
+                    .data('widget', widget)
                     .appendTo($('#widgets'));
             widget.canvasDrawer = new CanvasDrawer(widget.canvas);
         }
@@ -270,27 +349,105 @@ QtLogic.prototype = {
         }
         return {x:x, y:y};
     },
-    bindGlobalEvents: function() {
-        $('#widgets').on('click','canvas',function(evt) {
-            var offset = $(this).offset();
-            var position = {x: evt.pageX - offset.left, y: evt.pageY - offset.top};
-            console.log('Clicked widget:');
-            console.log($(this).data());
-            console.log(position);
-        });
-        $('#widgets').on('mouseenter','canvas',function(evt) {
-            var widget = $(this).data('widget');
-            if(widget) {
-                var event = {
-                    command:"mouse",
-                    type:"enter",
-                    id:widget.id
-                };
-                wsConnector.websocket.send(JSON.stringify(event));
-            }
-        });
+    bindGlobalEvents:function () {
+
+        this.container
+                .on('mouseenter', 'canvas', function (evt) {
+                    var widget = $(this).data('widget');
+                    if (widget) {
+                        wsConnector.sendEvent({
+                            command:"mouse",
+                            type:"enter",
+                            id:widget.id
+                        });
+                    }
+                })
+                .on('mouseleave', 'canvas', function (evt) {
+                    var widget = $(this).data('widget');
+                    if (widget) {
+                        wsConnector.sendEvent({
+                            command:"mouse",
+                            type:"leave",
+                            id:widget.id
+                        });
+                    }
+                })
+                .on('mousedown', 'canvas', function(evt) {
+                    console.log(evt);
+                    var widget = $(this).data('widget');
+                    if (widget) {
+                        var eventData = parseMouseEvent(evt);
+
+                        wsConnector.sendEvent({
+                            command:"mouse",
+                            type:"press",
+                            id:widget.id,
+                            btn: eventData.button,
+                            x: eventData.x,
+                            y: eventData.y,
+                            modifiers: eventData.modifiers
+                        });
+                    }
+                })
+                .on('mouseup', 'canvas', function(evt) {
+                    var widget = $(this).data('widget');
+                    if (widget) {
+                        var eventData = parseMouseEvent(evt);
+
+                        wsConnector.sendEvent({
+                            command:"mouse",
+                            type:"release",
+                            id:widget.id,
+                            btn: eventData.button,
+                            x: eventData.x,
+                            y: eventData.y,
+                            modifiers: eventData.modifiers
+                        });
+                    }
+                })
+                .on('mousewheel', 'canvas', function(evt, delta) {
+                    var widget = $(this).data('widget');
+                    if (widget) {
+                        var eventData = parseMouseEvent(evt);
+                        wsConnector.sendEvent({
+                            command:"wheel",
+                            type:"move",
+                            id:widget.id,
+                            btn: 0,
+                            x: eventData.x,
+                            y: eventData.y,
+                            modifiers: eventData.modifiers,
+                            delta: delta,
+                            orientation: eventData.orientation
+                        });
+                    }
+                })
+
     }
 };
+
+function parseMouseEvent(evt) {
+    var data = {};
+    switch(evt.button) {
+        case 0: // left
+            data.button = 1;
+            break;
+        case 3: // right
+            data.button = 2;
+            break;
+        case 2: // midle
+            data.button = 4;
+        default:
+            data.button = 0;
+    }
+    var offset = $(evt.currentTarget).offset();
+    data.x = evt.pageX - offset.left;
+    data.y = evt.pageY - offset.top;
+    data.modifiers = 0;
+    data.orientation = 2;
+
+    return data;
+}
 
 function CanvasDrawer(canvas) {
     this.canvas = canvas[0];
@@ -548,7 +705,7 @@ CanvasHelper.createGradient = function (ctx, gradient, style) {
 
 function init() {
     wsConnector = new WSConnector('ws://localhost:' + portNumber);
-    qtLogic = new QtLogic();
+    qtLogic = new QtLogic($('#widgets'));
 
     wsConnector.init();
 }
