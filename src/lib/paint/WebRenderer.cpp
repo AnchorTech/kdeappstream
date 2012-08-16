@@ -20,14 +20,14 @@ WebRenderer * WebRenderer::m_instance = 0;
 
 WebRenderer::WebRenderer(QObject * parent) :
     QObject(parent),
-    pd(new PaintDevice)
+    pd(new PaintDevice),
+    renderSemaphore(1),
+    currentRenderingWidget(0)
 {
     t = new QTimer(this);
     t->setSingleShot(true);
     connect(t, SIGNAL(timeout()), this, SLOT(render()));
 }
-
-QSemaphore sem(1);
 
 WebRenderer * WebRenderer::instance(QObject * parent)
 {
@@ -36,22 +36,20 @@ WebRenderer * WebRenderer::instance(QObject * parent)
     return m_instance;
 }
 
-QWidget * dupa2 = 0;
-
 void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
 {
-    if (dupa2 != widget)
+    if (currentRenderingWidget != widget)
     {
         Widget w(widget, event->region(), event->rect());
         _render.enqueue(w);
-        if (sem.available())
+        if (renderSemaphore.available())
         {
             t->start();
         }
     }
     else
     {
-        dupa2 = 0;
+        currentRenderingWidget = 0;
     }
 }
 
@@ -62,7 +60,7 @@ void WebRenderer::dequeue(QWidget * widget)
 
 void WebRenderer::render()
 {
-    if (!sem.tryAcquire())
+    if (!renderSemaphore.tryAcquire())
         return;
 
     int i = 0;
@@ -73,14 +71,14 @@ void WebRenderer::render()
         //if (w.w->isVisible())
         {
             JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
-            dupa2 = w.w;
+            currentRenderingWidget = w.w;
             w.w->render(pd, QPoint(), QRegion(), QWidget::DrawWindowBackground);
             JSONBuilder::instance()->endRender();
             ++i;
         }
     }
 
-    sem.release();
+    renderSemaphore.release();
 
     if (i)
     {

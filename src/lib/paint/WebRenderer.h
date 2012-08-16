@@ -108,6 +108,8 @@ namespace KAppStream
             RenderQueue _render;
             QString buffer;
             QTimer * t;
+            QSemaphore renderSemaphore;
+            QWidget * currentRenderingWidget;
 
             explicit WebRenderer(QObject * parent = 0);
 

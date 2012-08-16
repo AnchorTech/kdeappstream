@@ -4,6 +4,7 @@
 #include <QObject>
 #include "QWsServer.h"
 #include "QWsSocket.h"
+#include <QSemaphore>
 
 class WebsocketServer : public QObject
 {
@@ -11,6 +12,7 @@ class WebsocketServer : public QObject
 
         QWsServer * server;
         QWsSocket * client;
+        QSemaphore connectionSemaphore;
 
         static WebsocketServer * m_instance;
         WebsocketServer(QObject * parent = 0);

@@ -1,18 +1,16 @@
 #include "WebsocketServer.h"
 #include "paint/JSONBuilder.h"
 #include <QDebug>
-#include <QSemaphore>
 
 using namespace KAppStream;
 
 WebsocketServer * WebsocketServer::m_instance = 0;
 
-QSemaphore sem2(0);
-
 WebsocketServer::WebsocketServer(QObject *parent) :
     QObject(parent),
     server(new QWsServer(this)),
-    client(0)
+    client(0),
+    connectionSemaphore(0)
 {
     server->listen(QHostAddress::Any); // returns boolean
     server->setMaxPendingConnections(1);
@@ -46,9 +44,9 @@ bool WebsocketServer::waitForConnected(int wait)
 {
     int i = 10;
     int time = wait / 10 * 1000;
-    while(--i && !sem2.available())
+    while(--i && !connectionSemaphore.available())
         usleep(time);
-    return sem2.available();
+    return connectionSemaphore.available();
 }
 
 void WebsocketServer::onConnection()
@@ -59,8 +57,8 @@ void WebsocketServer::onConnection()
         qDebug() << "Client connected ";
         connect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
         connect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
-        if (!sem2.available())
-            sem2.release();
+        if (!connectionSemaphore.available())
+            connectionSemaphore.release();
         emit connected();
     }
     else
@@ -71,8 +69,8 @@ void WebsocketServer::onConnection()
 
 void WebsocketServer::onDisconnection()
 {
-    if (sem2.available())
-        sem2.acquire();
+    if (connectionSemaphore.available())
+        connectionSemaphore.acquire();
     disconnect(client,SIGNAL(disconnected()),this,SLOT(onDisconnection()));
     disconnect(client,SIGNAL(frameReceived(QString)),this,SLOT(onDataReceived(QString)));
     client->deleteLater();
