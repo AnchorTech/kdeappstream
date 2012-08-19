@@ -52,12 +52,17 @@ void EventDispather::parse(const QString & message)
         QString type = value.property("type").toString();
         if (type == "move")
         {
-//            int buttons = value.property("btn").toInt32();
-//            int modifiers = value.property("modifiers").toInt32();
-//            QMouseEvent * e = new QMouseEvent(QEvent::MouseMove, QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers);
-//            QCoreApplication::postEvent(w, e, INT_MAX);
+            if (w->isEnabled())
+            {
+                int buttons = value.property("btn").toInt32();
+                int modifiers = value.property("modifiers").toInt32();
+                if (w->isEnabled() && (buttons || w->hasMouseTracking()))
+                    QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseMove, QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
+            }
+            int ox = value.property("ox").toInt32();
+            int oy = value.property("oy").toInt32();
             if (w->windowFlags() & Qt::WA_Hover)
-                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverMove, QPoint(x,y), QPoint(x,y)));
+                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverMove, QPoint(x,y), QPoint(ox,oy)));
         }
         else if (type == "enter")
         {
@@ -67,9 +72,9 @@ void EventDispather::parse(const QString & message)
         }
         else if (type == "leave")
         {
-            QCoreApplication::postEvent(w, new QEvent(QEvent::Leave));
-            if (w->testAttribute(Qt::WA_Hover))
-                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverLeave, QPoint(-1,-1), QPoint(5,5)));
+            //QCoreApplication::postEvent(w, new QEvent(QEvent::Leave));
+            //if (w->testAttribute(Qt::WA_Hover))
+            //    QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverLeave, QPoint(-1,-1), QPoint(5,5)));
         }
         else if (type == "press")
         {
