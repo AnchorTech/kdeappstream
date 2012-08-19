@@ -45,28 +45,41 @@ void EventDispather::parse(const QString & message)
     {
         // TODO: widget id validation
         long long id = value.property("id").toNumber();
+        int x = value.property("x").toInt32();
+        int y = value.property("y").toInt32();
+        QWidget * w = (QWidget*) id;
         QString type = value.property("type").toString();
         if (type == "move")
         {
-            int x = value.property("x").toInt32();
-            int y = value.property("y").toInt32();
             int buttons = value.property("btn").toInt32();
             int modifiers = value.property("modifiers").toInt32();
             QMouseEvent * e = new QMouseEvent(QEvent::MouseMove, QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers);
-            e->setAccepted(false);
-            QCoreApplication::postEvent((QWidget*)id, e, INT_MAX);
+            QCoreApplication::postEvent(w, e, INT_MAX);
+            if (w->windowFlags() & Qt::WA_Hover)
+            {
+                QEvent * e = new QHoverEvent(QEvent::HoverMove, QPoint(x,y), QPoint(x,y));
+                QCoreApplication::postEvent(w, e, INT_MAX);
+            }
         }
         else if (type == "enter")
         {
             QEvent * e = new QEvent(QEvent::Enter);
-            e->setAccepted(false);
-            QCoreApplication::postEvent((QWidget*)id, e, INT_MAX);
+            QCoreApplication::postEvent(w, e, INT_MAX);
+            if (w->windowFlags() & Qt::WA_Hover)
+            {
+                QEvent * e = new QHoverEvent(QEvent::HoverEnter, QPoint(x,y), QPoint(-1,-1));
+                QCoreApplication::postEvent(w, e, INT_MAX);
+            }
         }
         else if (type == "leave")
         {
             QEvent * e = new QEvent(QEvent::Leave);
-            e->setAccepted(false);
-            QCoreApplication::postEvent((QWidget*)id, e, INT_MAX);
+            QCoreApplication::postEvent(w, e, INT_MAX);
+            if (w->windowFlags() & Qt::WA_Hover)
+            {
+                QEvent * e = new QHoverEvent(QEvent::HoverLeave, QPoint(-1,-1), QPoint(x,y));
+                QCoreApplication::postEvent(w, e, INT_MAX);
+            }
         }
         else if (type == "press")
         {

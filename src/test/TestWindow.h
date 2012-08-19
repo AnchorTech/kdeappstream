@@ -16,6 +16,10 @@ class TestWindow : public QMainWindow
         explicit TestWindow(QWidget *parent = 0);
         ~TestWindow();
 
+    protected:
+
+        virtual bool event(QEvent * event);
+
     private slots:
 
         void on_pushButton_clicked();

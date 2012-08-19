@@ -3,6 +3,7 @@
 
 #include <QPen>
 #include <QMessageBox>
+#include <QDebug>
 
 TestWindow::TestWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -33,4 +34,12 @@ TestWindow::~TestWindow()
 void TestWindow::on_pushButton_clicked()
 {
     QMessageBox::information(this, "dupoza", "Dupa sraka... jakiś tam sobie tekst");
+}
+
+bool TestWindow::event(QEvent *event)
+{
+    bool isa = event->isAccepted();
+    bool r = QMainWindow::event(event);
+    qDebug() << event->type() << isa << r << event->isAccepted();
+    return r;
 }
