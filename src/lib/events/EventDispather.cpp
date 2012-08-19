@@ -1,4 +1,5 @@
 #include "EventDispather.h"
+#include "events/EventFilter.h"
 
 #include <QDebug>
 #include <QWidget>
@@ -39,7 +40,7 @@ void EventDispather::parse(const QString & message)
 
     QString command = value.property("command").toString();
 
-    qDebug() << "Received data: " << message;
+    qDebug() << "\033[35;1mReceived data: \033[0m" << message;
 
     if (command == "mouse")
     {
@@ -51,35 +52,24 @@ void EventDispather::parse(const QString & message)
         QString type = value.property("type").toString();
         if (type == "move")
         {
-            int buttons = value.property("btn").toInt32();
-            int modifiers = value.property("modifiers").toInt32();
-            QMouseEvent * e = new QMouseEvent(QEvent::MouseMove, QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers);
-            QCoreApplication::postEvent(w, e, INT_MAX);
+//            int buttons = value.property("btn").toInt32();
+//            int modifiers = value.property("modifiers").toInt32();
+//            QMouseEvent * e = new QMouseEvent(QEvent::MouseMove, QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers);
+//            QCoreApplication::postEvent(w, e, INT_MAX);
             if (w->windowFlags() & Qt::WA_Hover)
-            {
-                QEvent * e = new QHoverEvent(QEvent::HoverMove, QPoint(x,y), QPoint(x,y));
-                QCoreApplication::postEvent(w, e, INT_MAX);
-            }
+                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverMove, QPoint(x,y), QPoint(x,y)));
         }
         else if (type == "enter")
         {
-            QEvent * e = new QEvent(QEvent::Enter);
-            QCoreApplication::postEvent(w, e, INT_MAX);
-            if (w->windowFlags() & Qt::WA_Hover)
-            {
-                QEvent * e = new QHoverEvent(QEvent::HoverEnter, QPoint(x,y), QPoint(-1,-1));
-                QCoreApplication::postEvent(w, e, INT_MAX);
-            }
+            QCoreApplication::postEvent(w, new QEvent(QEvent::Enter));
+            if (w->testAttribute(Qt::WA_Hover))
+                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverEnter, QPoint(5,5), QPoint(-1,-1)));
         }
         else if (type == "leave")
         {
-            QEvent * e = new QEvent(QEvent::Leave);
-            QCoreApplication::postEvent(w, e, INT_MAX);
-            if (w->windowFlags() & Qt::WA_Hover)
-            {
-                QEvent * e = new QHoverEvent(QEvent::HoverLeave, QPoint(-1,-1), QPoint(x,y));
-                QCoreApplication::postEvent(w, e, INT_MAX);
-            }
+            QCoreApplication::postEvent(w, new QEvent(QEvent::Leave));
+            if (w->testAttribute(Qt::WA_Hover))
+                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverLeave, QPoint(-1,-1), QPoint(5,5)));
         }
         else if (type == "press")
         {

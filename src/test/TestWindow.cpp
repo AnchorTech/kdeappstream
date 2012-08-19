@@ -43,3 +43,8 @@ bool TestWindow::event(QEvent *event)
     qDebug() << event->type() << isa << r << event->isAccepted();
     return r;
 }
+
+QWidget * TestWindow::edit()
+{
+    return ui->textEdit;
+}

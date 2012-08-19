@@ -1,7 +1,12 @@
 #include "WebsocketServer.h"
 #include "paint/JSONBuilder.h"
 #include "events/EventDispather.h"
+#include "events/EventFilter.h"
+
 #include <QDebug>
+#include <QCoreApplication>
+#include <QHoverEvent>
+#include <QWidget>
 
 using namespace KAppStream;
 
@@ -89,6 +94,18 @@ void WebsocketServer::sendMessage(QString message)
 void WebsocketServer::onDataReceived(QString data)
 {
     EventDispather::instance()->parse(data);
+//    static bool flag = true;
+//    if (EventFilter::www && flag)
+//    {
+//        flag = false;
+//        qDebug() << "lipa2";
+//        QCoreApplication::postEvent(EventFilter::www, new QEvent(QEvent::Enter));
+//        QCoreApplication::postEvent(EventFilter::www, new QHoverEvent(QEvent::HoverEnter, QPoint(5,5), QPoint(-1,-1)));
+//    }
+//    else
+//    {
+//        qDebug() << "lipa";
+//    }
 }
 
 void WebsocketServer::readData()

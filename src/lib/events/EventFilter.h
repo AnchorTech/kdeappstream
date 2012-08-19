@@ -16,6 +16,7 @@ namespace KAppStream
             explicit EventFilter(QObject * parent = 0);
             virtual ~EventFilter();
             bool eventFilter(QObject * recv, QEvent * e);
+            static QWidget * www;
 
         public slots:
 

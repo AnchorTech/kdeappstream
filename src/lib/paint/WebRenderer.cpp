@@ -13,6 +13,7 @@
 #include <QStyle>
 #include <QApplication>
 #include <QPaintEvent>
+#include <QTextEdit>
 
 using namespace KAppStream;
 
@@ -43,12 +44,12 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
         Widget w(widget, event->region(), event->rect());
         _render.enqueue(w);
         if (renderSemaphore.available())
-        {
             t->start();
-        }
     }
     else
     {
+        if (dynamic_cast<QTextEdit*>(currentRenderingWidget))
+            qDebug() << "Disable render current widget";
         currentRenderingWidget = 0;
     }
 }
@@ -68,14 +69,13 @@ void WebRenderer::render()
     while (!_render.isEmpty())
     {
         Widget w = _render.dequeue();
-        //if (w.w->isVisible())
-        {
-            JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
-            currentRenderingWidget = w.w;
-            w.w->render(pd, QPoint(), QRegion(), QWidget::DrawWindowBackground);
-            JSONBuilder::instance()->endRender();
-            ++i;
-        }
+        JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
+        currentRenderingWidget = w.w;
+        if (dynamic_cast<QTextEdit*>(currentRenderingWidget))
+            qDebug() << "Render current widget";
+        w.w->render(pd, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+        JSONBuilder::instance()->endRender();
+        ++i;
     }
 
     renderSemaphore.release();

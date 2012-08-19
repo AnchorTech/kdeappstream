@@ -2,6 +2,7 @@
 #define TESTWINDOW_H
 
 #include <QMainWindow>
+#include <QHoverEvent>
 
 namespace Ui {
     class TestWindow;
@@ -15,6 +16,8 @@ class TestWindow : public QMainWindow
 
         explicit TestWindow(QWidget *parent = 0);
         ~TestWindow();
+
+        QWidget * edit();
 
     protected:
 
