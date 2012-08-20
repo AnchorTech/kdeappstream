@@ -31,31 +31,31 @@ var delayCallback = function (num, callback) {
 };
 
 // Mouse wheel plugin
-(function($) {
+(function ($) {
 
     var types = ['DOMMouseScroll', 'mousewheel'];
 
     if ($.event.fixHooks) {
-        for ( var i=types.length; i; ) {
+        for (var i = types.length; i;) {
             $.event.fixHooks[ types[--i] ] = $.event.mouseHooks;
         }
     }
 
     $.event.special.mousewheel = {
-        setup: function() {
-            if ( this.addEventListener ) {
-                for ( var i=types.length; i; ) {
-                    this.addEventListener( types[--i], handler, false );
+        setup:function () {
+            if (this.addEventListener) {
+                for (var i = types.length; i;) {
+                    this.addEventListener(types[--i], handler, false);
                 }
             } else {
                 this.onmousewheel = handler;
             }
         },
 
-        teardown: function() {
-            if ( this.removeEventListener ) {
-                for ( var i=types.length; i; ) {
-                    this.removeEventListener( types[--i], handler, false );
+        teardown:function () {
+            if (this.removeEventListener) {
+                for (var i = types.length; i;) {
+                    this.removeEventListener(types[--i], handler, false);
                 }
             } else {
                 this.onmousewheel = null;
@@ -64,37 +64,45 @@ var delayCallback = function (num, callback) {
     };
 
     $.fn.extend({
-        mousewheel: function(fn) {
+        mousewheel:function (fn) {
             return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
         },
 
-        unmousewheel: function(fn) {
+        unmousewheel:function (fn) {
             return this.unbind("mousewheel", fn);
         }
     });
 
 
     function handler(event) {
-        var orgEvent = event || window.event, args = [].slice.call( arguments, 1 ), delta = 0, returnValue = true, deltaX = 0, deltaY = 0;
+        var orgEvent = event || window.event, args = [].slice.call(arguments, 1), delta = 0, returnValue = true, deltaX = 0, deltaY = 0;
         event = $.event.fix(orgEvent);
         event.type = "mousewheel";
 
         // Old school scrollwheel delta
-        if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta/120; }
-        if ( orgEvent.detail ) { delta = -orgEvent.detail/3; }
+        if (orgEvent.wheelDelta) {
+            delta = orgEvent.wheelDelta / 120;
+        }
+        if (orgEvent.detail) {
+            delta = -orgEvent.detail / 3;
+        }
 
         // New school multidimensional scroll (touchpads) deltas
         deltaY = delta;
 
         // Gecko
-        if ( orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS ) {
+        if (orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS) {
             deltaY = 0;
-            deltaX = -1*delta;
+            deltaX = -1 * delta;
         }
 
         // Webkit
-        if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY/120; }
-        if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = -1*orgEvent.wheelDeltaX/120; }
+        if (orgEvent.wheelDeltaY !== undefined) {
+            deltaY = orgEvent.wheelDeltaY / 120;
+        }
+        if (orgEvent.wheelDeltaX !== undefined) {
+            deltaX = -1 * orgEvent.wheelDeltaX / 120;
+        }
 
         // Add event and delta to the front of the arguments
         args.unshift(event, delta, deltaX, deltaY);
@@ -350,7 +358,7 @@ QtLogic.prototype = {
         return {x:x, y:y};
     },
     bindGlobalEvents:function () {
-
+        
         this.container
                 .on('mouseenter', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
@@ -372,8 +380,7 @@ QtLogic.prototype = {
                         });
                     }
                 })
-                .on('mousedown', 'canvas', function(evt) {
-                    console.log(evt);
+                .on('mousedown', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
@@ -382,14 +389,14 @@ QtLogic.prototype = {
                             command:"mouse",
                             type:"press",
                             id:widget.id,
-                            btn: eventData.button,
-                            x: eventData.x,
-                            y: eventData.y,
-                            modifiers: eventData.modifiers
+                            btn:eventData.button,
+                            x:eventData.x,
+                            y:eventData.y,
+                            modifiers:eventData.modifiers
                         });
                     }
                 })
-                .on('mouseup', 'canvas', function(evt) {
+                .on('mouseup', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
@@ -398,14 +405,14 @@ QtLogic.prototype = {
                             command:"mouse",
                             type:"release",
                             id:widget.id,
-                            btn: eventData.button,
-                            x: eventData.x,
-                            y: eventData.y,
-                            modifiers: eventData.modifiers
+                            btn:eventData.button,
+                            x:eventData.x,
+                            y:eventData.y,
+                            modifiers:eventData.modifiers
                         });
                     }
                 })
-                .on('mousewheel', 'canvas', function(evt, delta) {
+                .on('mousewheel', 'canvas', function (evt, delta) {
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
@@ -413,16 +420,16 @@ QtLogic.prototype = {
                             command:"wheel",
                             type:"move",
                             id:widget.id,
-                            btn: 0,
-                            x: eventData.x,
-                            y: eventData.y,
-                            modifiers: eventData.modifiers,
-                            delta: delta,
-                            orientation: eventData.orientation
+                            btn:0,
+                            x:eventData.x,
+                            y:eventData.y,
+                            modifiers:eventData.modifiers,
+                            delta:delta,
+                            orientation:eventData.orientation
                         });
                     }
                 })
-                .on('mousemove', 'canvas', function(evt) {
+                .on('mousemove', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
@@ -430,23 +437,26 @@ QtLogic.prototype = {
                             command:"mouse",
                             type:"move",
                             id:widget.id,
-                            btn: 0,
-                            x: eventData.x,
-                            y: eventData.y,
-                            modifiers: eventData.modifiers
+                            btn:0,
+                            x:eventData.x,
+                            y:eventData.y,
+                            modifiers:eventData.modifiers
                         });
                     }
                 });
-                $(document).keydown(function(evt) {
-                    console.log(evt);
+        $(document)
+                .keydown(function (evt) {
                 })
+                .keyup(function (evt) {
+                });
+
 
     }
 };
 
 function parseMouseEvent(evt) {
     var data = {};
-    switch(evt.button) {
+    switch (evt.button) {
         case 0: // left
             data.button = 1;
             break;
@@ -459,8 +469,14 @@ function parseMouseEvent(evt) {
             data.button = 0;
     }
     var modifiers = 0;
-    if(evt.ctrlKey)
-        ;
+    if (evt.ctrlKey)
+        modifiers += 0x04000000;
+    if (evt.shiftKey)
+        modifiers += 0x02000000;
+    if (evt.altKey)
+        modifiers += 0x08000000;
+    if (evt.metaKey)
+        modifiers += 0x10000000;
     var offset = $(evt.currentTarget).offset();
     data.x = evt.pageX - offset.left;
     data.y = evt.pageY - offset.top;
