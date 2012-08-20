@@ -363,21 +363,35 @@ QtLogic.prototype = {
                 .on('mouseenter', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
                     if (widget) {
+                        var eventData = parseMouseEvent(evt);
+
                         wsConnector.sendEvent({
                             command:"mouse",
                             type:"enter",
-                            id:widget.id
+                            id:widget.id,
+                            x:eventData.x,
+                            y:eventData.y
                         });
+
+                        widget.mousePositionX = eventData.x;
+                        widget.mousePositionY = eventData.y;
                     }
                 })
                 .on('mouseleave', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
                     if (widget) {
+                        var eventData = parseMouseEvent(evt);
+
                         wsConnector.sendEvent({
                             command:"mouse",
                             type:"leave",
-                            id:widget.id
+                            id:widget.id,
+                            x:eventData.x,
+                            y:eventData.y
                         });
+
+                        widget.mousePositionX = undefined;
+                        widget.mousePositionY = undefined;
                     }
                 })
                 .on('mousedown', 'canvas', function (evt) {
@@ -416,6 +430,7 @@ QtLogic.prototype = {
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
+
                         wsConnector.sendEvent({
                             command:"wheel",
                             type:"move",
@@ -433,6 +448,7 @@ QtLogic.prototype = {
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
+
                         wsConnector.sendEvent({
                             command:"mouse",
                             type:"move",
@@ -442,6 +458,9 @@ QtLogic.prototype = {
                             y:eventData.y,
                             modifiers:eventData.modifiers
                         });
+
+                        widget.mousePositionX = eventData.x;
+                        widget.mousePositionY = eventData.y;
                     }
                 });
         $(document)

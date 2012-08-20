@@ -38,9 +38,9 @@ void TestWindow::on_pushButton_clicked()
 
 bool TestWindow::event(QEvent *event)
 {
-    bool isa = event->isAccepted();
+    //bool isa = event->isAccepted();
     bool r = QMainWindow::event(event);
-    qDebug() << event->type() << isa << r << event->isAccepted();
+    //qDebug() << event->type() << isa << r << event->isAccepted();
     return r;
 }
 
