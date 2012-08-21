@@ -56,8 +56,8 @@ void EventDispather::parse(const QString & message)
             {
                 int buttons = value.property("btn").toInt32();
                 int modifiers = value.property("modifiers").toInt32();
-                if (w->isEnabled() && (buttons || w->hasMouseTracking()))
-                    QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseMove, QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
+                if (w->isEnabled())// && (buttons || w->hasMouseTracking()))
+                    QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseMove, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
             }
             int ox = value.property("ox").toInt32();
             int oy = value.property("oy").toInt32();
