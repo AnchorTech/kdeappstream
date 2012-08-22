@@ -56,6 +56,7 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
 
 void WebRenderer::dequeue(QWidget * widget)
 {
+    QCoreApplication::removePostedEvents(widget);
     _render.removeAll(Widget(widget));
 }
 

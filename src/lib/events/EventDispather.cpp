@@ -11,6 +11,7 @@
 #include <QScriptEngine>
 #include <QMouseEvent>
 #include <QApplication>
+#include "hooking/WidgetsCollection.h"
 
 EventDispather * EventDispather::m_instance = 0;
 
@@ -44,11 +45,17 @@ void EventDispather::parse(const QString & message)
 
     if (command == "mouse")
     {
-        // TODO: widget id validation
         long long id = value.property("id").toNumber();
         int x = value.property("x").toInt32();
         int y = value.property("y").toInt32();
         QWidget * w = (QWidget*) id;
+
+        if (!WidgetsCollection::instance()->contains(w))
+        {
+            qDebug() << "ni ma";
+            return;
+        }
+
         QString type = value.property("type").toString();
         if (type == "move")
         {
@@ -56,7 +63,7 @@ void EventDispather::parse(const QString & message)
             {
                 int buttons = value.property("btn").toInt32();
                 int modifiers = value.property("modifiers").toInt32();
-                if (w->isEnabled())// && (buttons || w->hasMouseTracking()))
+                if (w->isEnabled() && (buttons || w->hasMouseTracking()))
                     QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseMove, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
             }
             int ox = value.property("ox").toInt32();
@@ -72,15 +79,23 @@ void EventDispather::parse(const QString & message)
         }
         else if (type == "leave")
         {
-            //QCoreApplication::postEvent(w, new QEvent(QEvent::Leave));
-            //if (w->testAttribute(Qt::WA_Hover))
-            //    QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverLeave, QPoint(-1,-1), QPoint(5,5)));
+            QCoreApplication::postEvent(w, new QEvent(QEvent::Leave));
+            if (w->testAttribute(Qt::WA_Hover))
+                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverLeave, QPoint(-1,-1), QPoint(5,5)));
         }
         else if (type == "press")
         {
+            int button = value.property("btn").toInt32();
+            int modifiers = value.property("modifiers").toInt32();
+            if (w->isEnabled() && button)
+                QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseButtonPress, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "release")
         {
+            int button = value.property("btn").toInt32();
+            int modifiers = value.property("modifiers").toInt32();
+            if (w->isEnabled() && button)
+                QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseButtonRelease, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "dbclick")
         {

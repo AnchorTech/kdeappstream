@@ -3,6 +3,7 @@ SET( KAPPSTREAM_LIB_SRCS
      ${CMAKE_CURRENT_SOURCE_DIR}/hooking/FunctionOverwriterFactory.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/hooking/Probe.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/hooking/UnixFunctionOverwriter.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/hooking/WidgetsCollection.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/events/EventDispather.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/events/EventFilter.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/paint/JSONBuilder.cpp
