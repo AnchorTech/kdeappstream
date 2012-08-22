@@ -3,6 +3,7 @@
 #include "WebRenderer.h"
 #include "websocket/WebsocketServer.h"
 #include "paint/JSONBuilder.h"
+#include "hooking/WidgetsCollection.h"
 
 #include <QEvent>
 #include <QDebug>
@@ -101,10 +102,14 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
             case QEvent::ChildAdded:
                 //qDebug() << "QEvent::ChildAdded" << (long long) recv;
                 {
+                    WidgetsCollection::instance()->add(w);
                     QChildEvent * ce = (QChildEvent*)e;
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
                     if (cw)
+                    {
+                        WidgetsCollection::instance()->add(cw);
                         JSONBuilder::instance()->addChild(cw, w);
+                    }
                 }
                 break;
             case QEvent::ChildPolished:
@@ -117,6 +122,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
                     if (cw)
                     {
+                        WidgetsCollection::instance()->remove(cw);
                         WebRenderer::instance()->dequeue(cw);
                         JSONBuilder::instance()->removeChild(cw, w);
                     }
@@ -127,6 +133,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::Close:
                 //qDebug() << "QEvent::Close" << recv;
+                WidgetsCollection::instance()->remove(w);
                 WebRenderer::instance()->dequeue(w);
                 break;
             case QEvent::CloseSoftwareInputPanel:
@@ -232,12 +239,14 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::GraphicsSceneWheel" << recv;
                 break;
             case QEvent::Hide:
-                //qDebug() << "QEvent::Hide" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Hide" << recv;
+                WidgetsCollection::instance()->remove(w);
                 WebRenderer::instance()->dequeue(w);
                 JSONBuilder::instance()->hideWidget(w);
                 break;
             case QEvent::HideToParent:
-                //qDebug() << "QEvent::HideToParent" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HideToParent" << recv;
+                WidgetsCollection::instance()->remove(w);
                 WebRenderer::instance()->dequeue(w);
                 JSONBuilder::instance()->hideWidget(w);
                 break;
@@ -367,9 +376,11 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::Show:
                 //qDebug() << "QEvent::Show" << recv;
+                WidgetsCollection::instance()->add(w);
                 JSONBuilder::instance()->showWidget(w);
                 break;
             case QEvent::ShowToParent:
+                WidgetsCollection::instance()->add(w);
                 //qDebug() << "QEvent::ShowToParent" << recv;
                 break;
             case QEvent::SockAct:
