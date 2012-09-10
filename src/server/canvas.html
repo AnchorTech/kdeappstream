@@ -358,6 +358,7 @@ QtLogic.prototype = {
         return {x:x, y:y};
     },
     bindGlobalEvents:function () {
+        this.enterQue = [];
         
         this.container
                 .on('mouseenter', 'canvas', function (evt) {
@@ -455,7 +456,9 @@ QtLogic.prototype = {
                             id:widget.id,
                             btn:0,
                             x:eventData.x,
+                            ox:eventData.ox,
                             y:eventData.y,
+                            oy:eventData.oy,
                             modifiers:eventData.modifiers
                         });
 
@@ -497,6 +500,8 @@ function parseMouseEvent(evt) {
     if (evt.metaKey)
         modifiers += 0x10000000;
     var offset = $(evt.currentTarget).offset();
+    data.ox = evt.pageX;
+    data.oy = evt.pageY;
     data.x = evt.pageX - offset.left;
     data.y = evt.pageY - offset.top;
     data.modifiers = modifiers;
@@ -760,7 +765,7 @@ CanvasHelper.createGradient = function (ctx, gradient, style) {
 
 
 function init() {
-    wsConnector = new WSConnector('ws://localhost:' + portNumber);
+    wsConnector = new WSConnector('ws://' + window.document.location.hostname + ':' + portNumber);
     qtLogic = new QtLogic($('#widgets'));
 
     wsConnector.init();
