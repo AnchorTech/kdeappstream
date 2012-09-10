@@ -30,6 +30,13 @@ var delayCallback = function (num, callback) {
     return finished;
 };
 
+Array.prototype.pushFront = function(data) {
+  this.reverse();
+    this.push(data);
+    this.reverse();
+
+};
+
 // Mouse wheel plugin
 (function ($) {
 
@@ -363,9 +370,18 @@ QtLogic.prototype = {
         this.container
                 .on('mouseenter', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
-                    if (widget) {
-                        var eventData = parseMouseEvent(evt);
-
+                    var parent = widget.parent;
+                    var array = [widget];
+                    while(parent) {
+                        array.pushFront(parent);
+                        parent = parent.parent;
+                    }
+                    this.enterQue = array;
+                    var len =  array.length;
+                    for(var i = 0; i < len; i++) {
+                        for(var j = 0; j <= i; j++)  {
+                        widget = array[j];
+                        var eventData = parseMouseEvent(evt,widget.canvas);
                         wsConnector.sendEvent({
                             command:"mouse",
                             type:"enter",
@@ -373,26 +389,35 @@ QtLogic.prototype = {
                             x:eventData.x,
                             y:eventData.y
                         });
-
                         widget.mousePositionX = eventData.x;
                         widget.mousePositionY = eventData.y;
+                        }
                     }
                 })
                 .on('mouseleave', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
-                    if (widget) {
-                        var eventData = parseMouseEvent(evt);
-
-                        wsConnector.sendEvent({
-                            command:"mouse",
-                            type:"leave",
-                            id:widget.id,
-                            x:eventData.x,
-                            y:eventData.y
-                        });
-
-                        widget.mousePositionX = undefined;
-                        widget.mousePositionY = undefined;
+                    var parent = widget.parent;
+                    var array = [widget];
+                    while(parent) {
+                        array.pushFront(parent);
+                        parent = parent.parent;
+                    }
+                    this.enterQue = array;
+                    var len =  array.length;
+                    for(var i = 0; i < len; i++) {
+                        for(var j = 0; j <= i; j++)  {
+                            widget = array[j];
+                            var eventData = parseMouseEvent(evt,widget.canvas);
+                            wsConnector.sendEvent({
+                                command:"mouse",
+                                type:"leave",
+                                id:widget.id,
+                                x:eventData.x,
+                                y:eventData.y
+                            });
+                            widget.mousePositionX = undefined;
+                            widget.mousePositionY = undefined;
+                        }
                     }
                 })
                 .on('mousedown', 'canvas', function (evt) {
@@ -476,7 +501,7 @@ QtLogic.prototype = {
     }
 };
 
-function parseMouseEvent(evt) {
+function parseMouseEvent(evt,widget) {
     var data = {};
     switch (evt.button) {
         case 0: // left
@@ -499,7 +524,7 @@ function parseMouseEvent(evt) {
         modifiers += 0x08000000;
     if (evt.metaKey)
         modifiers += 0x10000000;
-    var offset = $(evt.currentTarget).offset();
+    var offset = $(widget || evt.currentTarget).offset();
     data.ox = evt.pageX;
     data.oy = evt.pageY;
     data.x = evt.pageX - offset.left;
