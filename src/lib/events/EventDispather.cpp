@@ -1,5 +1,6 @@
 #include "EventDispather.h"
 #include "events/EventFilter.h"
+#include "hooking/WidgetsCollection.h"
 
 #include <QDebug>
 #include <QWidget>
@@ -11,7 +12,7 @@
 #include <QScriptEngine>
 #include <QMouseEvent>
 #include <QApplication>
-#include "hooking/WidgetsCollection.h"
+#include <QStack>
 
 EventDispather * EventDispather::m_instance = 0;
 
@@ -35,6 +36,8 @@ EventDispather * EventDispather::instance()
 
 void EventDispather::parse(const QString & message)
 {
+    QStack<QEvent*> eventStack;
+    QStack<QWidget*> widgetStack;
     QScriptValue value = engine.evaluate("(" + message + ")");
     if (!value.isObject())
         return;
@@ -69,7 +72,27 @@ void EventDispather::parse(const QString & message)
             int ox = value.property("ox").toInt32();
             int oy = value.property("oy").toInt32();
             if (w->windowFlags() & Qt::WA_Hover)
-                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverMove, QPoint(x,y), QPoint(ox,oy)));
+            {
+                QPoint p = QPoint(x,y);
+                QPoint op = QPoint(ox,oy);
+//                QWidget * _w = w;
+//                do
+//                {
+//                    eventStack.push(new QHoverEvent(QEvent::HoverMove, p, op));
+//                    widgetStack.push(_w);
+//                    QWidget * tmp = _w;
+//                    _w = _w->parentWidget();
+//                    if (_w)
+//                    {
+//                        p = tmp->mapToParent(p);
+//                        op = tmp->mapToParent(op);
+//                    }
+//                }
+//                while (_w);
+
+                while (!eventStack.isEmpty())
+                    QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverMove, p, op));
+            }
         }
         else if (type == "enter")
         {
