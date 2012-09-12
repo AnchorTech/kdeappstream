@@ -62,15 +62,17 @@ void EventDispather::parse(const QString & message)
         QString type = value.property("type").toString();
         if (type == "move")
         {
-            if (w->isEnabled())
-            {
-                int buttons = value.property("btn").toInt32();
-                int modifiers = value.property("modifiers").toInt32();
-                if (w->isEnabled() && (buttons || w->hasMouseTracking()))
-                    QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseMove, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
-            }
             int ox = value.property("ox").toInt32();
             int oy = value.property("oy").toInt32();
+            int buttons = value.property("btn").toInt32();
+            int modifiers = value.property("modifiers").toInt32();
+            if (w->isEnabled())
+            {
+
+                if (w->isEnabled() && (buttons || w->hasMouseTracking()))
+                    QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseMove, QPoint(x,y), QPoint(5,5), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
+            }
+
             if (w->windowFlags() & Qt::WA_Hover)
             {
                 QPoint p = QPoint(x,y);
