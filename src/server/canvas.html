@@ -479,7 +479,7 @@ QtLogic.prototype = {
                             command:"mouse",
                             type:"move",
                             id:widget.id,
-                            btn:0,
+                            btn:eventData.button,
                             x:eventData.x,
                             ox:eventData.ox,
                             y:eventData.y,
@@ -493,8 +493,24 @@ QtLogic.prototype = {
                 });
         $(document)
                 .keydown(function (evt) {
+                    var eventData = parseKeyEvent(evt);
+
+                    wsConnector.sendEvent({
+                        command:"key",
+                        type:"press",
+                        key:eventData.key,
+                        modifiers:eventData.modifiers
+                    });
                 })
                 .keyup(function (evt) {
+                    var eventData = parseKeyEvent(evt);
+
+                    wsConnector.sendEvent({
+                        command:"key",
+                        type:"press",
+                        key:eventData.key,
+                        modifiers:eventData.modifiers
+                    });
                 });
 
 
@@ -531,6 +547,25 @@ function parseMouseEvent(evt,widget) {
     data.y = evt.pageY - offset.top;
     data.modifiers = modifiers;
     data.orientation = 2;
+
+    return data;
+}
+
+function parseKeyEvent(evt) {
+    var data = {};
+
+    data.key = evt.keyCode;
+
+    var modifiers = 0;
+    if (evt.ctrlKey)
+        modifiers += 0x04000000;
+    if (evt.shiftKey)
+        modifiers += 0x02000000;
+    if (evt.altKey)
+        modifiers += 0x08000000;
+    if (evt.metaKey)
+        modifiers += 0x10000000;
+    data.modifiers = modifiers;
 
     return data;
 }

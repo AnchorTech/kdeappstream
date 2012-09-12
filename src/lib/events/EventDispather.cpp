@@ -54,10 +54,7 @@ void EventDispather::parse(const QString & message)
         QWidget * w = (QWidget*) id;
 
         if (!WidgetsCollection::instance()->contains(w))
-        {
-            qDebug() << "ni ma";
             return;
-        }
 
         QString type = value.property("type").toString();
         if (type == "move")
@@ -68,12 +65,11 @@ void EventDispather::parse(const QString & message)
             int modifiers = value.property("modifiers").toInt32();
             if (w->isEnabled())
             {
-
-                if (w->isEnabled() && (buttons || w->hasMouseTracking()))
+                if (buttons || w->hasMouseTracking())
                     QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseMove, QPoint(x,y), QPoint(5,5), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
             }
 
-            if (w->windowFlags() & Qt::WA_Hover)
+            if (w->testAttribute(Qt::WA_Hover))
             {
                 QPoint p = QPoint(x,y);
                 QPoint op = QPoint(ox,oy);
@@ -92,8 +88,8 @@ void EventDispather::parse(const QString & message)
 //                }
 //                while (_w);
 
-                while (!eventStack.isEmpty())
-                    QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverMove, p, op));
+                //while (!eventStack.isEmpty())
+                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverMove, p, op));
             }
         }
         else if (type == "enter")
@@ -113,7 +109,23 @@ void EventDispather::parse(const QString & message)
             int button = value.property("btn").toInt32();
             int modifiers = value.property("modifiers").toInt32();
             if (w->isEnabled() && button)
+            {
                 QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseButtonPress, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
+                if (w->focusProxy())
+                {
+                    QWidget * prevW = QApplication::focusWidget();
+                    if (prevW)
+                        QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
+                    QCoreApplication::postEvent(w->focusProxy(), new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
+                }
+                else if (w->focusPolicy() & Qt::ClickFocus)
+                {
+                    QWidget * prevW = QApplication::focusWidget();
+                    if (prevW)
+                        QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
+                    QCoreApplication::postEvent(w, new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
+                }
+            }
         }
         else if (type == "release")
         {
@@ -140,12 +152,25 @@ void EventDispather::parse(const QString & message)
     }
     else if (command == "key")
     {
+
+        QWidget * w = QApplication::focusWidget();
+        if (!w)
+            return;
+        if (w->focusProxy())
+            w = w->focusProxy();
+
+        char key = (char) value.property("key").toInteger();
+        int modifiers = value.property("modifiers").toInteger();
+
         QString type = value.property("type").toString();
         if (type == "press")
         {
+            char t[] = { key, '\0' };
+            QCoreApplication::postEvent(w, new QKeyEvent(QEvent::KeyPress, key, (Qt::KeyboardModifier)modifiers, QString::fromAscii(t)));
         }
         else if (type == "release")
         {
+            QCoreApplication::postEvent(w, new QKeyEvent(QEvent::KeyRelease, key, (Qt::KeyboardModifier)modifiers));
         }
     }
 }
