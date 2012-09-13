@@ -456,7 +456,6 @@ QtLogic.prototype = {
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
-
                         wsConnector.sendEvent({
                             command:"wheel",
                             type:"move",
@@ -494,23 +493,24 @@ QtLogic.prototype = {
         $(document)
                 .keydown(function (evt) {
                     var eventData = parseKeyEvent(evt);
-
                     wsConnector.sendEvent({
                         command:"key",
                         type:"press",
                         key:eventData.key,
+                        text: eventData.text,
                         modifiers:eventData.modifiers,
                         count: 1,
                         "autorep": false
                     });
                 })
                 .keyup(function (evt) {
+                    debug(evt)
                     var eventData = parseKeyEvent(evt);
-
                     wsConnector.sendEvent({
                         command:"key",
                         type:"release",
                         key:eventData.key,
+                        text: eventData.text,
                         modifiers:eventData.modifiers,
                         count: 1,
                         "autorep": false
@@ -559,12 +559,15 @@ function parseKeyEvent(evt) {
     var data = {};
 
     data.key = evt.keyCode;
+    data.text = $.trim(String.fromCharCode(evt.which)).toLowerCase();
 
     var modifiers = 0;
     if (evt.ctrlKey)
         modifiers += 0x04000000;
-    if (evt.shiftKey)
+    if (evt.shiftKey) {
         modifiers += 0x02000000;
+        data.text = data.text.toUpperCase();
+    }
     if (evt.altKey)
         modifiers += 0x08000000;
     if (evt.metaKey)
