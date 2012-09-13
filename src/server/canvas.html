@@ -499,7 +499,9 @@ QtLogic.prototype = {
                         command:"key",
                         type:"press",
                         key:eventData.key,
-                        modifiers:eventData.modifiers
+                        modifiers:eventData.modifiers,
+                        count: 1,
+                        "autorep": false
                     });
                 })
                 .keyup(function (evt) {
@@ -507,9 +509,11 @@ QtLogic.prototype = {
 
                     wsConnector.sendEvent({
                         command:"key",
-                        type:"press",
+                        type:"release",
                         key:eventData.key,
-                        modifiers:eventData.modifiers
+                        modifiers:eventData.modifiers,
+                        count: 1,
+                        "autorep": false
                     });
                 });
 
