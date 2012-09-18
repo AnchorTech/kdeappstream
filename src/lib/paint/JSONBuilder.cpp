@@ -54,6 +54,7 @@ void JSONBuilder::beginRender(QWidget * widget, const QRegion & region, const QR
           .append(",\"widget\":{")
           .append("\"id\":").append(QString::number((long long)widget).toAscii())
           .append(",\"name\":\"").append(widget->metaObject()->className()).append("\"")
+          .append(",\"flags\":").append(QString::number(widget->windowFlags()).toAscii())
           .append(",\"x\":").append(QString::number( p.x() ).toAscii())
           .append(",\"y\":").append(QString::number( p.y() ).toAscii())
           .append(",\"w\":").append(QString::number( s.width() ).toAscii())
@@ -84,7 +85,7 @@ void JSONBuilder::addChild(QWidget * child, QWidget * parent)
     buffer.append("{\"command\":\"addChild\"")
           .append(",\"id\":").append(QString::number((long long)parent).toAscii())
           .append(",\"child\":").append(QString::number((long long)child).toAscii())
-          .append(",\"type\":").append(QString::number(child->windowType()).toAscii())
+          .append(",\"flags\":").append(QString::number(child->windowFlags()).toAscii())
           .append("},");
     _sem.release();
 }
