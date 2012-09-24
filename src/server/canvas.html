@@ -43,6 +43,15 @@
         cursor: se-resize;
     }
 
+.XButton {
+    right: 5px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    position: absolute;
+}
+
 .LT, .LB, .RT, .RB {
     width: 9px;
     height: 9px;
@@ -406,7 +415,7 @@ QtLogic.prototype = {
     },
     updateWidget:function (id, data) {
         var WINDOW_LT = {x: 5, y: 20};
-        var WINDOW_RB= {x: 5, y: 5 }
+        var WINDOW_RB= {x: 5, y: 5 };
 
         var widget = this.getWidget(id);
         $.extend(widget, data);
@@ -484,10 +493,18 @@ QtLogic.prototype = {
         if (!found) {
             var newChildWidget = this.getWidget(childId);
             if((flags & 3) === 3) {
-                console.log(flags);
-                console.log(newChildWidget.canvas);
-               var container = $('<div class="Dialog"><div class="Bar"></div><div class="Left ui-resizable-handle ui-resizable-w"></div><div class="Bottom ui-resizable-handle ui-resizable-s"></div><div class="Right ui-resizable-handle ui-resizable-e"></div><div class="LT ui-resizable-handle ui-resizable-nw"></div><div class="LB ui-resizable-handle ui-resizable-sw"></div><div class="RT ui-resizable-handle ui-resizable-ne"></div><div class="RB ui-resizable-handle ui-resizable-se"></div></div>')
-                       .appendTo($('#widgets'));
+               var container = $('<div class="Dialog">' +
+                       '<div class="Bar"></div>' +
+                       '<div class="Left ui-resizable-handle ui-resizable-w"></div>' +
+                       '<div class="Bottom ui-resizable-handle ui-resizable-s"></div>' +
+                       '<div class="Right ui-resizable-handle ui-resizable-e"></div>' +
+                       '<div class="LT ui-resizable-handle ui-resizable-nw"></div>' +
+                       '<div class="LB ui-resizable-handle ui-resizable-sw"></div>' +
+                       '<div class="RT ui-resizable-handle ui-resizable-ne"></div>' +
+                       '<div class="RB ui-resizable-handle ui-resizable-se"></div>' +
+                       '<div class="XButton"></div>' +
+                       '</div>')
+                       .appendTo($('#dialogs'));
                 container.attr('data-flags',flags);
                 newChildWidget.canvas
                         .addClass("DialogCanvas")
@@ -514,7 +531,7 @@ QtLogic.prototype = {
     bindGlobalEvents:function () {
         this.enterQue = [];
         
-        this.container
+        $('#widgets, #dialogs')
                 .on('mouseenter', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
                     var parent = widget.parent;
@@ -571,7 +588,6 @@ QtLogic.prototype = {
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
-
                         wsConnector.sendEvent({
                             command:"mouse",
                             type:"press",
@@ -636,6 +652,12 @@ QtLogic.prototype = {
                         widget.mousePositionX = eventData.x;
                         widget.mousePositionY = eventData.y;
                     }
+                });
+        $('#dialogs')
+                .on('click', '.XButton', function(evt) {
+                    var widget = $(this).nextAll('canvas:first').data('widget');
+                    console.log("Closing:");
+                    console.log(widget);
                 });
         $(document)
                 .keydown(function (evt) {
@@ -999,7 +1021,6 @@ $(document).ready(function () {
 </head>
 <body>
 <div id="widgets"></div>
-<div class="data"></div>
-<input type="text" id="dupa"></input>
+<div id="dialogs"></div>
 </body>
 </html>
