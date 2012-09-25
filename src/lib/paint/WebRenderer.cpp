@@ -74,7 +74,7 @@ void WebRenderer::render()
         currentRenderingWidget = w.w;
         if (dynamic_cast<QTextEdit*>(currentRenderingWidget))
             qDebug() << "Render current widget";
-        w.w->render(pd, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+        w.w->render(pd, QPoint(), QRegion(), 0);
         JSONBuilder::instance()->endRender();
         ++i;
     }

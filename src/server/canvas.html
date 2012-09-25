@@ -390,6 +390,7 @@ QtLogic.prototype = {
         canvasDrawer.ctx.save();
 
         canvasDrawer.setup(region, translation);
+        canvasDrawer.clearWidget(widget);
         //canvasDrawer.setupBrush({style: 0}); // Clear brush
         //canvasDrawer.setupPen('none'); // Clear brush
         $.each(renders, function (_, value) {
@@ -761,6 +762,10 @@ CanvasDrawer.prototype = {
         //this.ctx.rect(translation.x, translation.y, r.w, r.h);
         //this.ctx.clip();
         //this.ctx.translate(translation.x, translation.y);
+    },
+    clearWidget: function(widget) {
+        var c = widget.canvas;
+        this.ctx.clearRect(0,0, c.width(), c.height());
     },
     draw:function (data, translation) {
         var ctx = this.ctx;
