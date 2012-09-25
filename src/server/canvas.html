@@ -531,6 +531,7 @@ QtLogic.prototype = {
     },
     bindGlobalEvents:function () {
         this.enterQue = [];
+        var currentButton = 0;
         
         $('#widgets, #dialogs')
                 .on('mouseenter', 'canvas', function (evt) {
@@ -586,6 +587,8 @@ QtLogic.prototype = {
                     }
                 })
                 .on('mousedown', 'canvas', function (evt) {
+                    currentButton |= evt.which;
+                    console.log(currentButton);
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
@@ -601,6 +604,8 @@ QtLogic.prototype = {
                     }
                 })
                 .on('mouseup', 'canvas', function (evt) {
+                    currentButton ^= evt.which;
+                    console.log(currentButton);
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
@@ -636,8 +641,8 @@ QtLogic.prototype = {
                 .on('mousemove', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
                     if (widget) {
+                        evt.which = currentButton;
                         var eventData = parseMouseEvent(evt);
-
                         wsConnector.sendEvent({
                             command:"mouse",
                             type:"move",
@@ -693,14 +698,14 @@ QtLogic.prototype = {
 
 function parseMouseEvent(evt,widget) {
     var data = {};
-    switch (evt.button) {
-        case 0: // left
+    switch (evt.which) {
+        case 1: // left
             data.button = 1;
             break;
-        case 3: // right
+        case 2: // right
             data.button = 2;
             break;
-        case 2: // midle
+        case 3: // midle
             data.button = 4;
         default:
             data.button = 0;
