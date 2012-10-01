@@ -13,6 +13,7 @@
 #include <QMouseEvent>
 #include <QApplication>
 #include <QStack>
+#include <QSizeGrip>
 
 EventDispather * EventDispather::m_instance = 0;
 
@@ -36,8 +37,6 @@ EventDispather * EventDispather::instance()
 
 void EventDispather::parse(const QString & message)
 {
-    QStack<QEvent*> eventStack;
-    QStack<QWidget*> widgetStack;
     QScriptValue value = engine.evaluate("(" + message + ")");
     if (!value.isObject())
         return;
@@ -55,6 +54,9 @@ void EventDispather::parse(const QString & message)
 
         if (!WidgetsCollection::instance()->contains(w))
             return;
+
+        //if (dynamic_cast<QSizeGrip*>(w))
+        //    return;
 
         QString type = value.property("type").toString();
         if (type == "move")
@@ -204,6 +206,7 @@ void EventDispather::parse(const QString & message)
         int height = value.property("h").toInt32();
         if (w->minimumHeight() > height || w->maximumHeight() < height)
             return;
-        QCoreApplication::postEvent(w, new QResizeEvent(QSize(w, h), w->size()));
+        //w->resize(width, height);
+        QCoreApplication::postEvent(w, new QResizeEvent(QSize(width, height), w->size()));
     }
 }

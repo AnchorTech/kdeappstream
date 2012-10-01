@@ -72,5 +72,5 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
 #endif
 
     qDebug("Connected!");
-    qDebug() << (QLibrary("/usr/lib64/libkappstreamhook.so").load());
+    //qDebug() << (QLibrary("/usr/lib64/libkappstreamhook.so").load());
 }

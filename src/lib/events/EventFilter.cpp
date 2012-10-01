@@ -13,6 +13,7 @@
 #include <QPaintEvent>
 #include <QTextEdit>
 #include <QMouseEvent>
+#include <QSizeGrip>
 
 using namespace KAppStream;
 
@@ -53,7 +54,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
             www = te;
     }
 
-    if (w)
+    if (w && !dynamic_cast<QSizeGrip*>(w))
     {
         switch (e->type())
         {
@@ -133,8 +134,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::Close:
                 qDebug() << "QEvent::Close" << recv;
-                WidgetsCollection::instance()->remove(w);
-                WebRenderer::instance()->dequeue(w);
+                {
+                    WidgetsCollection::instance()->remove(w);
+                    WebRenderer::instance()->dequeue(w);
+                }
                 break;
             case QEvent::CloseSoftwareInputPanel:
                 //qDebug() << "QEvent::CloseSoftwareInputPanel" << recv;
