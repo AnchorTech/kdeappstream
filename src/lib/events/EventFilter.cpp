@@ -132,7 +132,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::Clipboard" << recv;
                 break;
             case QEvent::Close:
-                //qDebug() << "QEvent::Close" << recv;
+                qDebug() << "QEvent::Close" << recv;
                 WidgetsCollection::instance()->remove(w);
                 WebRenderer::instance()->dequeue(w);
                 break;
@@ -149,7 +149,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::CursorChange" << recv;
                 break;
             case QEvent::DeferredDelete:
-                //qDebug() << "QEvent::DeferredDelete" << recv;
+                qDebug() << "QEvent::DeferredDelete" << recv;
                 break;
             case QEvent::DragEnter:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::DragEnter" << recv;
@@ -176,19 +176,19 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::FileOpen" << recv;
                 break;
             case QEvent::FocusIn:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::FocusIn" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusIn\033[0m" << recv << QApplication::focusWidget();
                 break;
             case QEvent::FocusOut:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::FocusOut" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusOut\033[0m" << recv << QApplication::focusWidget();
                 break;
             case QEvent::FontChange:
-                //qDebug() << "QEvent::FontChange" << recv;
+                qDebug() << "QEvent::FontChange" << recv;
                 break;
             case QEvent::GrabKeyboard:
-                //qDebug() << "QEvent::GrabKeyboard" << recv;
+                qDebug() << "\033[31;1m QEvent::GrabKeyboard \033[0m" << recv;
                 break;
             case QEvent::GrabMouse:
-                //qDebug() << "QEvent::GrabMouse" << recv;
+                qDebug() << "\033[31;1m QEvent::GrabMouse \033[0m" << recv;
                 break;
             case QEvent::GraphicsSceneContextMenu:
                 //qDebug() << "QEvent::GraphicsSceneContextMenu" << recv;
@@ -260,19 +260,19 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverMove" << recv;
                 break;
             case QEvent::IconDrag:
-                //qDebug() << "QEvent::IconDrag" << recv;
+                qDebug() << "QEvent::IconDrag" << recv;
                 break;
             case QEvent::IconTextChange:
-                //qDebug() << "QEvent::IconTextChange" << recv;
+                qDebug() << "QEvent::IconTextChange" << recv;
                 break;
             case QEvent::InputMethod:
-                //qDebug() << "QEvent::InputMethod" << recv;
+                qDebug() << "QEvent::InputMethod" << recv;
                 break;
             case QEvent::KeyPress:
-                //qDebug() << "QEvent::KeyPress" << recv;
+                qDebug() << "\033[32;1m QEvent::KeyPress \033[0m" << recv << QWidget::keyboardGrabber() << QApplication::activeWindow();
                 break;
             case QEvent::KeyRelease:
-                //qDebug() << "QEvent::KeyRelease" << recv;
+                qDebug() << "\033[32;1m QEvent::KeyRelease \033[0m" << recv << QWidget::keyboardGrabber() << QApplication::activeWindow();
                 break;
             case QEvent::LanguageChange:
                 //qDebug() << "QEvent::LanguageChange" << recv;
@@ -320,10 +320,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseButtonDblClick" << recv;
                 break;
             case QEvent::MouseButtonPress:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseButtonPress" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonPress \033[0m" << recv;
                 break;
             case QEvent::MouseButtonRelease:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseButtonRelease" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonRelease \033[0m" << recv;
                 break;
             case QEvent::MouseMove:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseMove" << recv;
@@ -345,10 +345,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::PaletteChange" << recv;
                 break;
             case QEvent::ParentAboutToChange:
-                //qDebug() << "QEvent::ParentAboutToChange" << recv;
+                qDebug() << "QEvent::ParentAboutToChange" << recv;
                 break;
             case QEvent::ParentChange:
-                //qDebug() << "QEvent::ParentChange" << recv;
+                qDebug() << "QEvent::ParentChange" << recv;
                 break;
             case QEvent::Polish:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Polish" << recv;
@@ -429,10 +429,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ToolTipChange" << recv;
                 break;
             case QEvent::UngrabKeyboard:
-                //qDebug() << "QEvent::UngrabKeyboard" << recv;
+                qDebug() << "\033[36;1m QEvent::UngrabKeyboard \033[0m" << recv;
                 break;
             case QEvent::UngrabMouse:
-                //qDebug() << "QEvent::UngrabMouse" << recv;
+                qDebug() << "\033[36;1m QEvent::UngrabMouse \033[0m" << recv;
                 break;
             case QEvent::UpdateLater:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::UpdateLater" << recv;

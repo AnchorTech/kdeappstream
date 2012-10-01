@@ -110,21 +110,31 @@ void EventDispather::parse(const QString & message)
             int modifiers = value.property("modifiers").toInt32();
             if (w->isEnabled() && button)
             {
-                QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseButtonPress, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
                 if (w->focusProxy())
-                {
-                    QWidget * prevW = QApplication::focusWidget();
-                    if (prevW)
-                        QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
-                    QCoreApplication::postEvent(w->focusProxy(), new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
-                }
-                else if (w->focusPolicy() & Qt::ClickFocus)
+                    w = w->focusProxy();
+                if (w->focusPolicy() & Qt::ClickFocus)
                 {
                     QWidget * prevW = QApplication::focusWidget();
                     if (prevW)
                         QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
                     QCoreApplication::postEvent(w, new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
                 }
+                QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseButtonPress, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
+
+//                {
+//                    w->focusProxy()->setFocus(Qt::MouseFocusReason);
+//                    QWidget * prevW = QApplication::focusWidget();
+//                    if (prevW)
+//                        QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
+//                    QCoreApplication::postEvent(w->focusProxy(), new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
+//                }
+//                else if (w->focusPolicy() & Qt::ClickFocus)
+//                {
+//                    QWidget * prevW = QApplication::focusWidget();
+//                    if (prevW)
+//                        QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
+//                    QCoreApplication::postEvent(w, new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
+//                }
             }
         }
         else if (type == "release")
@@ -152,12 +162,21 @@ void EventDispather::parse(const QString & message)
     }
     else if (command == "key")
     {
-
         QWidget * w = QApplication::focusWidget();
         if (!w)
+        {
+            qDebug() << "No focusWidget() !";
             return;
+        }
         if (w->focusProxy())
+        {
             w = w->focusProxy();
+            qDebug() << "focusProxy() ! << w";
+        }
+        else
+        {
+            qDebug() << "No focusProxy() !";
+        }
 
         char key = (char) value.property("key").toInteger();
         int modifiers = value.property("modifiers").toInteger();
@@ -172,5 +191,19 @@ void EventDispather::parse(const QString & message)
         {
             QCoreApplication::postEvent(w, new QKeyEvent(QEvent::KeyRelease, key, (Qt::KeyboardModifier)modifiers));
         }
+    }
+    else if (command == "resize")
+    {
+        long long id = value.property("id").toNumber();
+        QWidget * w = (QWidget*) id;
+        if (!WidgetsCollection::instance()->contains(w))
+            return;
+        int width = value.property("w").toInt32();
+        if (w->minimumWidth() > width || w->maximumWidth() < width)
+            return;
+        int height = value.property("h").toInt32();
+        if (w->minimumHeight() > height || w->maximumHeight() < height)
+            return;
+        QCoreApplication::postEvent(w, new QResizeEvent(QSize(w, h), w->size()));
     }
 }

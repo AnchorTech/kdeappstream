@@ -66,15 +66,11 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
     if (!websocketService->waitForConnected(10000))
         exit(-1);
 
-    qDebug("Connected!");
-
-    //QObject::connect(websocketService, SIGNAL(connected()), evFilter, SLOT(connected()));
-    //QObject::connect(websocketService, SIGNAL(disconnected()), evFilter, SLOT(disconnected()));
-
-    //EventDispather::instance("kappstream_entry22", qApp);
-
 #if !defined Q_OS_WIN && !defined Q_OS_MAC
     static void(*next_qt_startup_hook)() = (void (*)()) dlsym(RTLD_NEXT, "qt_startup_hook");
     next_qt_startup_hook();
 #endif
+
+    qDebug("Connected!");
+    qDebug() << (QLibrary("/usr/lib64/libkappstreamhook.so").load());
 }
