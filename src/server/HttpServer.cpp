@@ -157,7 +157,7 @@ void HttpServer::sendCanvas(QTextStream & os, QString applicationName)
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
             continue;
 
-        ApplicationWrapperThread * wraper = new ApplicationWrapperThread("testapp", this);
+        ApplicationWrapperThread * wraper = new ApplicationWrapperThread(applicationName, this);
         wraper->start();
 
         if (init_server.waitForNewConnection(10000))
