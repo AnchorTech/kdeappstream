@@ -9,12 +9,12 @@
         background-color: gray;
     }
 
-    .Dialog .Bar {
+     .Bar {
         position: absolute;
         background-color: #a9a9a9;
     }
 
-    .Dialog .ui-resizable-handle {
+    .ui-resizable-handle {
         position: absolute;
     }
 
@@ -316,7 +316,6 @@ QtLogic.prototype = {
         });
     },
     input:function (data) {
-        console.log(data);
         var self = this;
         var afterLoad = function () {
             $.each(data, function (_, value) {
@@ -348,7 +347,6 @@ QtLogic.prototype = {
         }
     },
     addChildCommand:function (data) {
-        console.log(data);
         this.addWidgetChild(data.id, data.child, data.flags);
     },
     removeChildCommand:function (data) {
@@ -491,8 +489,11 @@ QtLogic.prototype = {
         }
     },
     addWidgetChild:function (id, childId, flags) {
-        console.log(id, childId, flags);
         var widget = this.getWidget(id);
+        if(Object.keys(this.widgets).length == 1) {
+          widget.main = true;
+            console.log(widget);
+        }
         var children = widget.children;
         var found = false;
         $.each(children, function (_, child) {
@@ -525,7 +526,6 @@ QtLogic.prototype = {
             } else {
                 newChildWidget.canvas.detach().insertAfter(widget.canvas);
             }
-            console.log(children);
             children.push(newChildWidget);
             this.updateWidget(childId, {parent:this.getWidget(id)});
         }
@@ -599,7 +599,6 @@ QtLogic.prototype = {
                 })
                 .on('mousedown', 'canvas', function (evt) {
                     currentButton |= evt.which;
-                    console.log(currentButton);
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
@@ -616,7 +615,6 @@ QtLogic.prototype = {
                 })
                 .on('mouseup', 'canvas', function (evt) {
                     currentButton ^= evt.which;
-                    console.log(currentButton);
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
@@ -1041,7 +1039,17 @@ $(document).ready(function () {
 </script>
 </head>
 <body>
-<div id="widgets"></div>
+<div id="widgets">
+    <div class="Bar"></div>
+    <div class="Left ui-resizable-handle ui-resizable-w"></div>
+    <div class="Bottom ui-resizable-handle ui-resizable-s"></div>
+    <div class="Right ui-resizable-handle ui-resizable-e"></div>
+    <div class="LT ui-resizable-handle ui-resizable-nw"></div>
+    <div class="LB ui-resizable-handle ui-resizable-sw"></div>
+    <div class="RT ui-resizable-handle ui-resizable-ne"></div>
+    <div class="RB ui-resizable-handle ui-resizable-se"></div>
+    <div class="XButton"></div>
+</div>
 <div id="dialogs"></div>
 </body>
 </html>
