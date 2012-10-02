@@ -181,9 +181,15 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::FocusIn:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusIn\033[0m" << recv << QApplication::focusWidget();
+                {
+                    if (QApplication::focusWidget() != w)
+                        w->setFocus();
+                }
                 break;
             case QEvent::FocusOut:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusOut\033[0m" << recv << QApplication::focusWidget();
+                {
+                }
                 break;
             case QEvent::FontChange:
                 qDebug() << "QEvent::FontChange" << recv;
