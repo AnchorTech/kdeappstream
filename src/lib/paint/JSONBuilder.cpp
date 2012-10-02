@@ -678,7 +678,7 @@ void JSONBuilder::font(const QFont & f)
             buffer.append("italic ");
             break;
         case QFont::StyleOblique:
-            buffer.append("\"oblique ");
+            buffer.append("oblique ");
             break;
         default:
             buffer.append("normal ");
@@ -688,7 +688,7 @@ void JSONBuilder::font(const QFont & f)
     switch (f.capitalization())
     {
         case QFont::SmallCaps:
-            buffer.append("\"small-caps ");
+            buffer.append("small-caps ");
             break;
         default:
             buffer.append("normal ");
@@ -698,16 +698,16 @@ void JSONBuilder::font(const QFont & f)
     switch (f.weight())
     {
         case QFont::Light:
-            buffer.append("\"lighter ");
+            buffer.append("lighter ");
             break;
         case QFont::DemiBold:
-            buffer.append("\"600 ");
+            buffer.append("600 ");
             break;
         case QFont::Bold:
-            buffer.append("\"700 ");
+            buffer.append("700 ");
             break;
         case QFont::Black:
-            buffer.append("\"900 ");
+            buffer.append("900 ");
             break;
         default:
             buffer.append("400 ");
