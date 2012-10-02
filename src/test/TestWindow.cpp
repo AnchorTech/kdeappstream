@@ -5,6 +5,14 @@
 #include <QMessageBox>
 #include <QDebug>
 
+class Klasa : public QDialog
+{
+    public:
+        Klasa(QWidget * w) :
+            QDialog(w)
+        {}
+};
+
 TestWindow::TestWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::TestWindow)
@@ -33,7 +41,10 @@ TestWindow::~TestWindow()
 
 void TestWindow::on_pushButton_clicked()
 {
-    QMessageBox::information(this, "dupoza", "Dupa sraka... jakiś tam sobie tekst");
+    //QMessageBox::information(this, "pracoza inzynieroza", "Testoza pracoza projektoza... www.biedoza.pl");
+    Klasa k(this);
+    k.setModal(true);
+    k.exec();
 }
 
 bool TestWindow::event(QEvent *event)

@@ -671,8 +671,10 @@ QtLogic.prototype = {
         $('#dialogs')
                 .on('click', '.XButton', function(evt) {
                     var widget = $(this).nextAll('canvas:first').data('widget');
-                    console.log("Closing:");
-                    console.log(widget);
+                    wsConnector.sendEvent({
+                        command: "close",
+                        id: widget.id
+                    });
                 });
         $(document)
                 .keydown(function (evt) {

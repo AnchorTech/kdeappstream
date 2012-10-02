@@ -157,6 +157,28 @@ void EventDispather::parse(const QString & message)
     else if (command == "resize")
     {
         long long id = value.property("id").toNumber();
+        QWidget * w = (QWidget*) id;
+        if (!WidgetsCollection::instance()->contains(w))
+        {
+            qDebug() << "ni ma widgeta";
+            return;
+        }
+        int width = value.property("w").toInt32();
+        if (w->minimumWidth() > width || w->maximumWidth() < width)
+        {
+            qDebug() << "zły width";
+            return;
+        }
+        int height = value.property("h").toInt32();
+        if (w->minimumHeight() > height || w->maximumHeight() < height)
+        {
+            qDebug() << "zły height";
+            return;
+        }
+        w->resize(width, height);
+        w->update();
+        //qDebug() << "Poszło!" << QSize(width, height) << w->size();
+        //QCoreApplication::postEvent(w, new QResizeEvent(QSize(width, height), w->size()));
     }
     else if (command == "move")
     {
@@ -194,19 +216,12 @@ void EventDispather::parse(const QString & message)
             QCoreApplication::postEvent(w, new QKeyEvent(QEvent::KeyRelease, key, (Qt::KeyboardModifier)modifiers));
         }
     }
-    else if (command == "resize")
+    else if (command == "close")
     {
         long long id = value.property("id").toNumber();
         QWidget * w = (QWidget*) id;
         if (!WidgetsCollection::instance()->contains(w))
             return;
-        int width = value.property("w").toInt32();
-        if (w->minimumWidth() > width || w->maximumWidth() < width)
-            return;
-        int height = value.property("h").toInt32();
-        if (w->minimumHeight() > height || w->maximumHeight() < height)
-            return;
-        //w->resize(width, height);
-        QCoreApplication::postEvent(w, new QResizeEvent(QSize(width, height), w->size()));
+        QCoreApplication::postEvent(w, new QCloseEvent());
     }
 }
