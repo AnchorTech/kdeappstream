@@ -305,6 +305,9 @@ QtLogic.prototype = {
                 });
             }
         });
+        if(images_data.length === 0) {
+            callback();
+        }
         var delayer = delayCallback(images_data.length, callback);
         $.each(images_data, function (_, img) {
             var image = new Image();
@@ -313,6 +316,7 @@ QtLogic.prototype = {
         });
     },
     input:function (data) {
+        console.log(data);
         var self = this;
         var afterLoad = function () {
             $.each(data, function (_, value) {
@@ -344,6 +348,7 @@ QtLogic.prototype = {
         }
     },
     addChildCommand:function (data) {
+        console.log(data);
         this.addWidgetChild(data.id, data.child, data.flags);
     },
     removeChildCommand:function (data) {
@@ -486,6 +491,7 @@ QtLogic.prototype = {
         }
     },
     addWidgetChild:function (id, childId, flags) {
+        console.log(id, childId, flags);
         var widget = this.getWidget(id);
         var children = widget.children;
         var found = false;
@@ -519,6 +525,7 @@ QtLogic.prototype = {
             } else {
                 newChildWidget.canvas.detach().insertAfter(widget.canvas);
             }
+            console.log(children);
             children.push(newChildWidget);
             this.updateWidget(childId, {parent:this.getWidget(id)});
         }
