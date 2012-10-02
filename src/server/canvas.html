@@ -458,8 +458,12 @@ QtLogic.prototype = {
                             stop: function(e, ui) {
                                 var new_width =  ui.size.width - WINDOW_LT.x - WINDOW_RB.x,
                                         new_height = ui.size.height - WINDOW_LT.y - WINDOW_RB.y;
-                                console.log(data);
-                                 console.log('New size: ' + new_width + 'x' + new_height);
+                                wsConnector.sendEvent({
+                                    command: "resize",
+                                    id: id,
+                                    w : new_width,
+                                    h: new_height
+                                });
                                  return false;
                             },
                             ghost: true
