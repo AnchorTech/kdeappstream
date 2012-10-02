@@ -369,8 +369,15 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
             case QEvent::Resize:
                 qDebug() << "QEvent::Resize" << recv;
                 {
-                    //QResizeEvent * re = (QResizeEvent*)e;
-                    //JSONBuilder::instance()->resize(w, re->oldSize(), re->size());
+                    QResizeEvent * re = (QResizeEvent*)e;
+                    if (re->size().width() == w->width() && re->size().height() == w->height())
+                        JSONBuilder::instance()->resize(w, re->oldSize(), re->size());
+                    else
+                    {
+                        w->resize(re->size());
+                        w->update();
+                        re->setAccepted(true);
+                    }
                 }
                 break;
             case QEvent::Shortcut:

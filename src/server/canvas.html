@@ -1097,7 +1097,7 @@ $('#widgets').draggable({
                             stop: function(e, ui) {
                                 var new_width =  ui.size.width,
                                         new_height = ui.size.height;
-				  var id = $(this).find('canvas:first').data('widget').children[0].id;
+                                  var id = $(this).find('canvas:first').data('widget').id;
                                 wsConnector.sendEvent({
                                     command: "resize",
                                     id: id,

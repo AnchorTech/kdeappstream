@@ -175,11 +175,7 @@ void EventDispather::parse(const QString & message)
             qDebug() << "zły height";
             return;
         }
-        w->resize(width, height);
-        w->update();
-        //qDebug() << "Poszło!" << QSize(width, height) << w->size();
-        //QEvent * e = new QResizeEvent(QSize(width, height), w->size());
-        //QCoreApplication::postEvent(w, e);
+        QCoreApplication::postEvent(w, new QResizeEvent(QSize(width, height), w->size()));
     }
     else if (command == "move")
     {
