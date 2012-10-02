@@ -86,6 +86,7 @@ void JSONBuilder::addChild(QWidget * child, QWidget * parent)
           .append(",\"id\":").append(QString::number((long long)parent).toAscii())
           .append(",\"child\":").append(QString::number((long long)child).toAscii())
           .append(",\"flags\":").append(QString::number(child->windowFlags()).toAscii())
+          .append(",\"name\":\"").append(child->metaObject()->className()).append("\"")
           .append("},");
     _sem.release();
     this->finish();

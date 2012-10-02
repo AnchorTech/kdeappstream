@@ -4,6 +4,49 @@
     Websocket client test
 </title>
 <style type="text/css">
+#widgets {
+position: absolute;
+}
+
+#widgets .Bar {
+width: 100%;
+height: 10px;
+}
+
+#widgets .Left {
+height: 100%;
+width: 10px;
+margin-left: -10px;
+}
+
+#widgets .Right {
+height: 100%;
+width: 10px;
+margin-right: -10px;
+right: 0;
+}
+
+#widgets .Bottom {
+  height: 10px;
+  width: 100%;
+  bottom: 0;
+  margin-bottom: -10px;
+}
+
+#widgets .Bottom, #widgets .Right, #widgets .Left {
+  background-color: gray;
+}
+
+#widgets .Bar {
+width: 100%;
+height: 10px;
+margin-top: -10px;
+}
+
+#widgets {
+background-color: gray;
+}
+
     .Dialog {
         position: relative;
         background-color: gray;
@@ -347,7 +390,8 @@ QtLogic.prototype = {
         }
     },
     addChildCommand:function (data) {
-        this.addWidgetChild(data.id, data.child, data.flags);
+	console.log(data.name);
+        this.addWidgetChild(data.id, data.child, data.flags, data.name);
     },
     removeChildCommand:function (data) {
         console.log(data);
@@ -377,6 +421,12 @@ QtLogic.prototype = {
         var widgetData = data.widget;
         var region = widgetData.r;
         var widgetId = widgetData.id;
+	var widget = this.getWidget(widgetId);
+	if(widget.main) {
+	    
+	    $('#widgets').css({width: widgetData.w, height: widgetData.h, 'margin-left': 10, 'margin-top': 10})
+	}
+
         this.updateWidget(widgetId, { // store
             w:widgetData.w,
             h:widgetData.h,
@@ -384,7 +434,6 @@ QtLogic.prototype = {
             y:widgetData.y,
             name:widgetData.name
         });
-        var widget = this.getWidget(widgetId);
         current_widget = widget;
         var renders = data.render;
         var translation = this.calculateTranslation(widget);
@@ -488,13 +537,13 @@ QtLogic.prototype = {
         } else {
         }
     },
-    addWidgetChild:function (id, childId, flags) {
+    addWidgetChild:function (id, childId, flags, name) {
         var widget = this.getWidget(id);
         if(Object.keys(this.widgets).length == 1) {
           widget.main = true;
-            console.log(widget);
         }
         var children = widget.children;
+	widget.name = name;
         var found = false;
         $.each(children, function (_, child) {
             if (child.id == childId) {
@@ -1032,6 +1081,33 @@ function init() {
     qtLogic = new QtLogic($('#widgets'));
 
     wsConnector.init();
+$('#widgets').draggable({
+                            handle: '.Bar'
+                        })
+                        .resizable({
+                            handles: {
+                                w: '.Left',
+                                e: '.Right',
+                                s: '.Bottom',
+                                nw: '.LT',
+                                ne: '.RT',
+                                sw: '.LB',
+                                se: '.RB'
+                            },
+                            stop: function(e, ui) {
+                                var new_width =  ui.size.width,
+                                        new_height = ui.size.height;
+				  var id = $(this).find('canvas:first').data('widget').children[0].id;
+                                wsConnector.sendEvent({
+                                    command: "resize",
+                                    id: id,
+                                    w : new_width,
+                                    h: new_height
+                                });
+                                 return false;
+                            },
+                            ghost: true
+                        });
 }
 
 $(document).ready(function () {

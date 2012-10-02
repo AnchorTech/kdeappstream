@@ -101,11 +101,12 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ApplicationWindowIconChange" << recv;
                 break;
             case QEvent::ChildAdded:
-                //qDebug() << "QEvent::ChildAdded" << (long long) recv;
+                qDebug() << "QEvent::ChildAdded" << (long long) recv;
                 {
                     WidgetsCollection::instance()->add(w);
                     QChildEvent * ce = (QChildEvent*)e;
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
+                    qDebug() << w << cw;
                     if (cw)
                     {
                         WidgetsCollection::instance()->add(cw);
@@ -366,9 +367,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::RequestSoftwareInputPanel" << recv;
                 break;
             case QEvent::Resize:
+                qDebug() << "QEvent::Resize" << recv;
                 {
-                    QResizeEvent * re = (QResizeEvent*)e;
-                    JSONBuilder::instance()->resize(w, re->oldSize(), re->size());
+                    //QResizeEvent * re = (QResizeEvent*)e;
+                    //JSONBuilder::instance()->resize(w, re->oldSize(), re->size());
                 }
                 break;
             case QEvent::Shortcut:

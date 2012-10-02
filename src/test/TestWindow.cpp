@@ -4,13 +4,16 @@
 #include <QPen>
 #include <QMessageBox>
 #include <QDebug>
+#include <QLabel>
 
 class Klasa : public QDialog
 {
     public:
         Klasa(QWidget * w) :
             QDialog(w)
-        {}
+        {
+            new QLabel("safhusahfuiasifhsuia", this);
+        }
 };
 
 TestWindow::TestWindow(QWidget *parent) :
