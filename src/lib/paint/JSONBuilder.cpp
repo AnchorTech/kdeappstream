@@ -88,6 +88,7 @@ void JSONBuilder::addChild(QWidget * child, QWidget * parent)
           .append(",\"flags\":").append(QString::number(child->windowFlags()).toAscii())
           .append("},");
     _sem.release();
+    this->finish();
 }
 
 void JSONBuilder::removeChild(QWidget * child, QWidget * parent)
@@ -98,6 +99,7 @@ void JSONBuilder::removeChild(QWidget * child, QWidget * parent)
           .append(",\"child\":").append(QString::number((long long)child).toAscii())
           .append("},");
     _sem.release();
+    this->finish();
 }
 
 void JSONBuilder::hideWidget(QWidget * widget)
@@ -107,6 +109,7 @@ void JSONBuilder::hideWidget(QWidget * widget)
           .append(",\"id\":").append(QString::number((long long)widget).toAscii())
           .append("},");
     _sem.release();
+    this->finish();
 }
 
 void JSONBuilder::showWidget(QWidget * widget)
@@ -116,6 +119,7 @@ void JSONBuilder::showWidget(QWidget * widget)
           .append(",\"id\":").append(QString::number((long long)widget).toAscii())
           .append("},");
     _sem.release();
+    this->finish();
 }
 
 void JSONBuilder::finish()
