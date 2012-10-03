@@ -20,7 +20,8 @@ SOURCES +=\
     paint/JSONBuilder.cpp \
     paint/WebRenderer.cpp \
     websocket/WebsocketThread.cpp \
-    hooking/WidgetsCollection.cpp
+    hooking/WidgetsCollection.cpp \
+    paint/ImagesBuffer.cpp
 
 HEADERS  += \
     paint/PaintEngine.h \
@@ -37,7 +38,8 @@ HEADERS  += \
     websocket/WebsocketThread.h \
     events/EventFilter.h \
     events/EventDispather.h \
-    hooking/WidgetsCollection.h
+    hooking/WidgetsCollection.h \
+    paint/ImagesBuffer.h
 
 unix {
     LIBS += -ldl
@@ -45,7 +47,11 @@ unix {
 
 OTHER_FILES += \
     websocket/index.html \
-    ../CMakeLists.txt
+    ../CMakeLists.txt \
+    CMakeLists.txt
+
+
+
 
 
 

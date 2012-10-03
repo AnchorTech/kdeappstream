@@ -6,6 +6,7 @@ SET( KAPPSTREAM_LIB_SRCS
      ${CMAKE_CURRENT_SOURCE_DIR}/hooking/WidgetsCollection.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/events/EventDispather.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/events/EventFilter.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/paint/ImagesBuffer.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/paint/JSONBuilder.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/paint/PaintDevice.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/paint/PaintEngine.cpp

@@ -45,7 +45,7 @@ class WebsocketServer : public QObject
         void connected();
         void disconnected();
         void dataReceived(QString data);
-
+        void sendImage(qreal id, QIODevice * output);
 };
 
 #endif // SERVER_H

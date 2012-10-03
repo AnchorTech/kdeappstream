@@ -1,4 +1,5 @@
 #include "WebsocketServer.h"
+#include "paint/ImagesBuffer.h"
 #include "paint/JSONBuilder.h"
 #include "events/EventDispather.h"
 #include "events/EventFilter.h"
@@ -22,6 +23,7 @@ WebsocketServer::WebsocketServer(QObject *parent) :
     server->setMaxPendingConnections(1);
     connect(server, SIGNAL(newConnection()), this, SLOT(onConnection()));
     connect(JSONBuilder::instance(), SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(this, SIGNAL(sendImage(qreal, QIODevice*)), ImagesBuffer::instance(), SLOT(sendData(qreal, QIODevice*)));
 }
 
 WebsocketServer::~WebsocketServer()
@@ -93,19 +95,14 @@ void WebsocketServer::sendMessage(QString message)
 
 void WebsocketServer::onDataReceived(QString data)
 {
-    EventDispather::instance()->parse(data);
-//    static bool flag = true;
-//    if (EventFilter::www && flag)
-//    {
-//        flag = false;
-//        qDebug() << "lipa2";
-//        QCoreApplication::postEvent(EventFilter::www, new QEvent(QEvent::Enter));
-//        QCoreApplication::postEvent(EventFilter::www, new QHoverEvent(QEvent::HoverEnter, QPoint(5,5), QPoint(-1,-1)));
-//    }
-//    else
-//    {
-//        qDebug() << "lipa";
-//    }
+    if (data[0] >= '0' && data[0] <= '9')
+    {
+        emit sendImage(data.remove(0,1).toLongLong(), client);
+    }
+    else
+    {
+        EventDispather::instance()->parse(data);
+    }
 }
 
 void WebsocketServer::readData()

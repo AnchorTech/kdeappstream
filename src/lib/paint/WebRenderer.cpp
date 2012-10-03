@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QPaintEvent>
 #include <QTextEdit>
+#include <QDateTime>
 
 using namespace KAppStream;
 
@@ -42,14 +43,17 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
     if (currentRenderingWidget != widget)
     {
         Widget w(widget, event->region(), event->rect());
+        if (_render.contains(w))
+            _render.removeAll(w);
         _render.enqueue(w);
         if (renderSemaphore.available())
-            t->start();
+        {
+            renderSemaphore.acquire();
+            t->start(100);
+        }
     }
     else
     {
-        if (dynamic_cast<QTextEdit*>(currentRenderingWidget))
-            qDebug() << "Disable render current widget";
         currentRenderingWidget = 0;
     }
 }
@@ -62,10 +66,9 @@ void WebRenderer::dequeue(QWidget * widget)
 
 void WebRenderer::render()
 {
-    if (!renderSemaphore.tryAcquire())
-        return;
-
     int i = 0;
+
+    qDebug() << QDateTime::currentDateTime().toString();
 
     while (!_render.isEmpty())
     {
@@ -76,15 +79,13 @@ void WebRenderer::render()
             qDebug() << "Render current widget";
         w.w->render(pd, QPoint(), QRegion(), 0);
         JSONBuilder::instance()->endRender();
+        JSONBuilder::instance()->finish();
         ++i;
     }
 
-    renderSemaphore.release();
+    qDebug() << QDateTime::currentDateTime().toString();
 
-    if (i)
-    {
-        JSONBuilder::instance()->finish();
-    }
+    renderSemaphore.release();
 
 
     //            static bool f = true;

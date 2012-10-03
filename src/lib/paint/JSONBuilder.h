@@ -108,6 +108,8 @@ namespace KAppStream
         signals:
 
             void readyRead();
+            void bufferImage(const QImage & image, qreal * id);
+            void bufferPixmap(const QPixmap & pixmap, qreal * id);
     };
 }
 
