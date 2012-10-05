@@ -276,8 +276,6 @@ void JSONBuilder::path(const QPainterPath & path)
 
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
-    QByteArray byteArray;
-    QBuffer buf(&byteArray);
     QImage im = pm.copy(sr.toRect()).toImage().scaled(r.size().toSize());
 
     IDImagePair id = ImagesHostServer::instance()->hostImage(im);
