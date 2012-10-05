@@ -68,22 +68,16 @@ void WebRenderer::render()
 {
     int i = 0;
 
-    qDebug() << QDateTime::currentDateTime().toString();
-
     while (!_render.isEmpty())
     {
         Widget w = _render.dequeue();
         JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
         currentRenderingWidget = w.w;
-        if (dynamic_cast<QTextEdit*>(currentRenderingWidget))
-            qDebug() << "Render current widget";
         w.w->render(pd, QPoint(), QRegion(), 0);
         JSONBuilder::instance()->endRender();
         JSONBuilder::instance()->finish();
         ++i;
     }
-
-    qDebug() << QDateTime::currentDateTime().toString();
 
     renderSemaphore.release();
 

@@ -43,8 +43,6 @@ QWidget * QApplication::focusWidget()
 {
     static bool triedOnce = false;
 
-    qDebug() << "Dupa sraka";
-
     if (!QApplication_focusWidget_method && !QApplication_topLevelWidgets_method && !triedOnce) {
         QWidget_focusWidget_method = (QWidget_focusWidget*)dlsym(RTLD_NEXT, "_ZNK7QWidget11focusWidgetEv");
         QApplication_focusWidget_method = (QApplication_focusWidget*)dlsym(RTLD_NEXT, "_ZN12QApplication11focusWidgetEv");

@@ -106,7 +106,6 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                     WidgetsCollection::instance()->add(w);
                     QChildEvent * ce = (QChildEvent*)e;
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
-                    qDebug() << w << cw;
                     if (cw)
                     {
                         WidgetsCollection::instance()->add(cw);

@@ -13,8 +13,7 @@ ImagesHostServer::ImagesHostServer(QObject * parent) :
     QTcpServer(parent),
     m_sem(1)
 {
-    this->listen(QHostAddress::Any);
-    this->setMaxPendingConnections(1);
+    qDebug() << "Listening for images fetching:" << this->listen(QHostAddress::Any);
 }
 
 ImagesHostServer * ImagesHostServer::instance(QObject * parent)
@@ -26,6 +25,7 @@ ImagesHostServer * ImagesHostServer::instance(QObject * parent)
 
 void ImagesHostServer::incomingConnection(int socket)
 {
+    qDebug() << "IncomingConnection!" << socket;
     QTcpSocket * s = new QTcpSocket(this);
     connect(s, SIGNAL(readyRead()), this, SLOT(readClient()));
     connect(s, SIGNAL(disconnected()), this, SLOT(discardClient()));
