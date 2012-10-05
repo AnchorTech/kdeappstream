@@ -33,9 +33,9 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
     WebsocketThread * websocketService = new WebsocketThread(0);
     websocketService->start();
     while (!websocketService->serverPort())
-    {
         usleep(100000);
-    }
+    while (!websocketService->imagesServerPort())
+        usleep(100000);
 
     QLocalSocket socket;
     int i = 0;
@@ -58,7 +58,7 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
 
     installUIExtractorEventFilter();
 
-    socket.write(QString::number(websocketService->serverPort()).toAscii());
+    socket.write((QString::number(websocketService->serverPort()) + " " + QString::number(websocketService->imagesServerPort())).toAscii());
     if (!socket.waitForBytesWritten(30000))
         exit(-1);
     socket.close();

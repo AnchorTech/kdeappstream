@@ -18,6 +18,13 @@ quint16 WebsocketThread::serverPort()
     return 0;
 }
 
+quint16 WebsocketThread::imagesServerPort()
+{
+    if (imagesServer)
+        return imagesServer->serverPort();
+    return 0;
+}
+
 bool WebsocketThread::waitForConnected(int wait)
 {
     return server->waitForConnected(wait);

@@ -167,18 +167,25 @@ void HttpServer::sendCanvas(QTextStream & os, QString applicationName)
             {
                 if (socket->waitForReadyRead())
                 {
-                    char buf[11];
-                    memset(buf, 0, 11);
-                    socket->read(buf, 10);
+                    char buf[21], * buf2, * tmp;
+                    memset(buf, 0, 21);
+                    socket->read(buf, 20);
+                    tmp = buf;
+                    while (*tmp != ' ')
+                        ++tmp;
+                    *tmp = '\0';
+                    buf2 = ++tmp;
 
-                    qDebug() << buf;
+                    qDebug() << buf << buf2;
 
                     QRegExp sessionIDTag("\\[PUT_SESSION_ID_HERE\\]");
                     QRegExp portNumberTag("\\[PUT_PORT_NUMBER_HERE\\]");
+                    QRegExp imgSrvPortNumberTag("\\[PUT_IMG_SRV_PORT_NUMBER_HERE\\]");
                     QTextStream in(&file);
                     QString data = in.readAll();
                     data.replace(sessionIDTag, QUuid::createUuid().toString());
                     data.replace(portNumberTag, buf);
+                    data.replace(imgSrvPortNumberTag, buf2);
                     os << data;
                     return;
                 }
