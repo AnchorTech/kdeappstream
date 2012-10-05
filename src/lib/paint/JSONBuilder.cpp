@@ -1,6 +1,7 @@
 #include "JSONBuilder.h"
 
 #include "paint/ImagesBuffer.h"
+#include "paint/ImagesHostServer.h"
 #include "paint/PaintDevice.h"
 #include "paint/PaintEngine.h"
 #include "websocket/QWsSocket.h"
@@ -189,12 +190,10 @@ void JSONBuilder::ellipse(const QRectF & r)
 
 void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
 {
-    QByteArray byteArray;
-    QBuffer buf(&byteArray);
-    image.copy(sr.toRect()).scaled(r.size().toSize()).save(&buf, "PNG");
+    IDImagePair id = ImagesHostServer::instance()->hostImage(image.copy(sr.toRect()).scaled(r.size().toSize()));
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"data:image/png;base64,")
-          .append(byteArray.toBase64())
+          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii())
+          .append("&k=").append(QString::number(id.key).toAscii())
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())
           .append(",\"y\":").append(QString::number(r.top()).toAscii())
           .append("},");
@@ -202,12 +201,10 @@ void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & s
 
 void JSONBuilder::image(const QImage & image)
 {
-    QByteArray byteArray;
-    QBuffer buf(&byteArray);
-    image.save(&buf, "PNG");
+    IDImagePair id = ImagesHostServer::instance()->hostImage(image);
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"data:image/png;base64,")
-          .append(byteArray.toBase64())
+          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii())
+          .append("&k=").append(QString::number(id.key).toAscii())
           .append("\"},");
 }
 
@@ -281,11 +278,11 @@ void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr
 {
     QByteArray byteArray;
     QBuffer buf(&byteArray);
-    QImage im = pm.copy(sr.toRect()).toImage();
-    im.scaled(r.size().toSize()).save(&buf, "PNG");
+    QImage im = pm.copy(sr.toRect()).toImage().scaled(r.size().toSize());
+
+    IDImagePair id = ImagesHostServer::instance()->hostImage(im);
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"data:image/png;base64,")
-          .append(byteArray.toBase64())
+          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii()).append("&k=").append(QString::number(id.key))
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())
           .append(",\"y\":").append(QString::number(r.top()).toAscii())
           .append("},");
@@ -293,12 +290,9 @@ void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr
 
 void JSONBuilder::pixmap(const QPixmap & pm)
 {
-    QByteArray byteArray;
-    QBuffer buf(&byteArray);
-    pm.save(&buf, "PNG");
+    IDImagePair id = ImagesHostServer::instance()->hostImage(pm.toImage());
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"data:image/png;base64,")
-          .append(byteArray.toBase64())
+          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii()).append("&k=").append(QString::number(id.key))
           .append("\"},");
 }
 
@@ -401,13 +395,10 @@ void JSONBuilder::tiledPixmap(const QRectF & r, const QPixmap & pm, const QPoint
     QPainter painter(&pixmap);
     painter.drawTiledPixmap(QRectF(QPointF(), r.size()), pm, p);
     painter.end();
-    QByteArray byteArray;
-    QBuffer buf(&byteArray);
-    pixmap.save(&buf, "PNG");
 
+    IDImagePair id = ImagesHostServer::instance()->hostImage(pm.toImage());
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"data:image/png;base64,")
-          .append(byteArray.toBase64())
+          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii()).append("&k=").append(QString::number(id.key).toAscii())
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())
           .append(",\"y\":").append(QString::number(r.top()).toAscii())
           .append("},");

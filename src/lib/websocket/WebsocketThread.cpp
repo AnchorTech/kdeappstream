@@ -5,7 +5,8 @@
 
 WebsocketThread::WebsocketThread(QObject *parent) :
     QThread(parent),
-    server(0)
+    server(0),
+    imagesServer(0)
 {
 
 }
@@ -28,6 +29,7 @@ void WebsocketThread::run()
     server = WebsocketServer::instance();
     connect(server, SIGNAL(newConnection()), this, SLOT(onConnection()));
     qDebug() << "WebSocket server started";
+    imagesServer = ImagesHostServer::instance();
     exec();
 }
 

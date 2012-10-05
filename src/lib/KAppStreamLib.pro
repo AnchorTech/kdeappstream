@@ -21,7 +21,8 @@ SOURCES +=\
     paint/WebRenderer.cpp \
     websocket/WebsocketThread.cpp \
     hooking/WidgetsCollection.cpp \
-    paint/ImagesBuffer.cpp
+    paint/ImagesBuffer.cpp \
+    paint/ImagesHostServer.cpp
 
 HEADERS  += \
     paint/PaintEngine.h \
@@ -39,7 +40,8 @@ HEADERS  += \
     events/EventFilter.h \
     events/EventDispather.h \
     hooking/WidgetsCollection.h \
-    paint/ImagesBuffer.h
+    paint/ImagesBuffer.h \
+    paint/ImagesHostServer.h
 
 unix {
     LIBS += -ldl
@@ -49,6 +51,12 @@ OTHER_FILES += \
     websocket/index.html \
     ../CMakeLists.txt \
     CMakeLists.txt
+
+
+
+
+
+
 
 
 

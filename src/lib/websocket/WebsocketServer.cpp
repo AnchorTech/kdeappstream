@@ -95,14 +95,7 @@ void WebsocketServer::sendMessage(QString message)
 
 void WebsocketServer::onDataReceived(QString data)
 {
-    if (data[0] >= '0' && data[0] <= '9')
-    {
-        emit sendImage(data.remove(0,1).toLongLong(), client);
-    }
-    else
-    {
-        EventDispather::instance()->parse(data);
-    }
+    EventDispather::instance()->parse(data);
 }
 
 void WebsocketServer::readData()

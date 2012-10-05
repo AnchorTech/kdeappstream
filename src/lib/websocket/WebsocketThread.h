@@ -4,12 +4,14 @@
 #include <QThread>
 #include <QEventLoop>
 #include <websocket/WebsocketServer.h>
+#include <paint/ImagesHostServer.h>
 
 class WebsocketThread : public QThread
 {
         Q_OBJECT
 
         WebsocketServer * server;
+        ImagesHostServer * imagesServer;
 
     public:
 
