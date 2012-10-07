@@ -390,7 +390,6 @@ QtLogic.prototype = {
         }
     },
     addChildCommand:function (data) {
-	console.log(data.name);
         this.addWidgetChild(data.id, data.child, data.flags, data.name);
     },
     removeChildCommand:function (data) {
@@ -407,9 +406,8 @@ QtLogic.prototype = {
         var canvas = this.widgets[data.id].canvas;
         canvas.hide();
         if(canvas.hasClass("DialogCanvas")) {
-            canvas.parent().hide();
+            canvas.parent().parent().hide();
         }
-
     },
     resizeCommand:function (data) {
         var canvasElement = this.widgets[data.id].canvas;
@@ -460,8 +458,13 @@ QtLogic.prototype = {
             };
             var widget = this.widgets[id];
             widget.canvas = $('<canvas></canvas>')
-                    .data('widget', widget)
+                    .data('widget', widget);
+            widget.children_container = $("<div class='Children'></div>");
+            $("<div class='CanvasContainer'></div>")
+                    .append(widget.canvas)
+                    .append(widget.children_container)
                     .appendTo($('#widgets'));
+
             widget.canvasDrawer = new CanvasDrawer(widget.canvas);
         }
         return this.widgets[id];
@@ -569,11 +572,12 @@ QtLogic.prototype = {
                 container.attr('data-flags',flags);
                 newChildWidget.canvas
                         .addClass("DialogCanvas")
+                        .parent()
                         .detach().appendTo(container);
             } else if(flags & 8) {
                 // Popup
             } else {
-                newChildWidget.canvas.detach().insertAfter(widget.canvas);
+                newChildWidget.canvas.parent().detach().insertAfter(widget.children_container);
             }
             children.push(newChildWidget);
             this.updateWidget(childId, {parent:this.getWidget(id)});
@@ -719,7 +723,7 @@ QtLogic.prototype = {
                 });
         $('#dialogs')
                 .on('click', '.XButton', function(evt) {
-                    var widget = $(this).nextAll('canvas:first').data('widget');
+                    var widget = $(this).nextAll('.CanvasContainer').find('canvas:first').data('widget');
                     wsConnector.sendEvent({
                         command: "close",
                         id: widget.id
