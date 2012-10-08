@@ -344,7 +344,7 @@ QtLogic.prototype = {
             if (d.command == 'draw') {
                 $.each(d.render, function (_, r) {
                     if (r.t == 'image') {
-                        var imgUrl = window.location.protocol + "://" + window.location.hostname + ":" + imagesHostPortNumber + "/" + r.data;
+                        var imgUrl = window.location.hostname + ":" + imagesHostPortNumber + "/" + r.data;
                         images_data.push(imgUrl);
                     }
                 });

@@ -75,7 +75,7 @@ void ImagesBuffer::sendData(qreal id, QIODevice * output)
 
     if (output && m_map.contains(id))
     {
-        output->write(m_map[id]->toBase64());
+        output->write(*m_map[id]);
     }
 
     m_sem.release();

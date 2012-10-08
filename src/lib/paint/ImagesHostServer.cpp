@@ -34,6 +34,7 @@ void ImagesHostServer::incomingConnection(int socket)
 
 void ImagesHostServer::readClient()
 {
+    qDebug() << "readClient!";
     QTcpSocket * socket = (QTcpSocket*)sender();
     if (socket->canReadLine())
     {
@@ -41,20 +42,22 @@ void ImagesHostServer::readClient()
         if (tokens[0] == "GET")
         {
             QStringList resources = tokens[1].split(QRegExp("\\?"));
-            if (resources.count() == 1)
+            qDebug() << resources;
+            if (resources.count() == 2)
             {
                 qlonglong t = 0;
                 qint64 key = 0;
-                QStringList args = resources[0].split(QRegExp("&(amp){0}"));
+                QStringList args = resources[1].split(QRegExp("&(amp){0}"));
+                qDebug() << args;
                 foreach (QString arg, args)
                 {
                     QStringList kv = arg.split("=");
                     if (kv.count() == 2)
                     {
                         if (kv[0] == "t")
-                            t = kv[0].toLongLong();
+                            t = kv[1].toLongLong();
                         else if (kv[0] == "k")
-                            key = kv[0].toLongLong();
+                            key = kv[1].toLongLong();
                     }
 
                     if (t && key)
@@ -76,6 +79,7 @@ close_socket:
 
 void ImagesHostServer::discardClient()
 {
+    qDebug() << "discardClient!";
     QTcpSocket* socket = (QTcpSocket*)sender();
     socket->deleteLater();
 }
