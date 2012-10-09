@@ -75,7 +75,7 @@
     }
 
     .Left {
-        width: 50px;
+        width: 5px;
         height: 100%;
     }
 
@@ -109,6 +109,10 @@
     .RB {
         right: 0;
         bottom: 0;
+    }
+
+    .Popup {
+        z-index: 50;
     }
 
     canvas {
@@ -456,7 +460,7 @@ QtLogic.prototype = {
                 children:[]
             };
             var widget = this.widgets[id];
-            widget.canvas = $('<canvas></canvas>')
+            widget.canvas = $('<canvas width=0 height=0></canvas>')
                     .data('widget', widget);
             widget.children_container = $("<div class='Children'></div>");
             $("<div class='CanvasContainer'></div>")
@@ -478,29 +482,24 @@ QtLogic.prototype = {
                 canvasElement.attr('height', data.h);
             if (canvasElement.attr('width') != data.w)
                 canvasElement.attr('width', data.w);
-//            canvasElement.css({
-//                left:data.x,
-//                top:data.y
-//            });
+            canvasElement.css({
+                left:data.x,
+                top:data.y
+            });
             if (canvasElement.hasClass("DialogCanvas")) {
                 widget.x = WINDOW_LT.x;
                 widget.y = WINDOW_LT.y;
             }
-            if(widget.main) {
-                console.log(data);
-            }
-            if (canvasElement.hasClass("DialogCanvas") && data.x != undefined && data.y != undefined && data.w  != undefined && data.h != undefined) {
+            if (canvasElement.hasClass("DialogCanvas") && data.x != undefined && data.y != undefined && data.w != undefined && data.h != undefined) {
                 canvasElement
-                        //.css({left:0, top:0})
+                        .css({left:0, top:0})
                         .addClass("Set");
                 var parents_dialog = canvasElement.parents(".Dialog");
-                if(widget.main)
-                    console.log(parents_dialog);
                 parents_dialog
                         .css({ width:data.w + WINDOW_LT.x + WINDOW_RB.x, height:data.h + WINDOW_LT.y + WINDOW_RB.y});
-//                if (!canvasElement.hasClass("Set")) {
-//                    parents_dialog.css({left:data.x, top:data.y});
-//                }
+                if (!canvasElement.hasClass("Set")) {
+                    parents_dialog.css({left:data.x, top:data.y});
+                }
                 widget.x = WINDOW_LT.x;
                 widget.y = WINDOW_LT.y;
             }
@@ -523,30 +522,32 @@ QtLogic.prototype = {
                 .appendTo($('#dialogs'))
                 .draggable({
                     handle:'.Bar'
-                })
-                .resizable({
-                    handles:{
-                        w:'.Left',
-                        e:'.Right',
-                        s:'.Bottom',
-                        nw:'.LT',
-                        ne:'.RT',
-                        sw:'.LB',
-                        se:'.RB'
-                    },
-                    stop:function (e, ui) {
-                        var new_width = ui.size.width - WINDOW_LT.x - WINDOW_RB.x,
-                                new_height = ui.size.height - WINDOW_LT.y - WINDOW_RB.y;
-                        wsConnector.sendEvent({
-                            command:"resize",
-                            id:widgetId,
-                            w:new_width,
-                            h:new_height
-                        });
-                        return false;
-                    },
-                    ghost:true
                 });
+        if ((flags & 0x00000100) == 0) {
+            container.resizable({
+                handles:{
+                    w:'.Left',
+                    e:'.Right',
+                    s:'.Bottom',
+                    nw:'.LT',
+                    ne:'.RT',
+                    sw:'.LB',
+                    se:'.RB'
+                },
+                stop:function (e, ui) {
+                    var new_width = ui.size.width - WINDOW_LT.x - WINDOW_RB.x,
+                            new_height = ui.size.height - WINDOW_LT.y - WINDOW_RB.y;
+                    wsConnector.sendEvent({
+                        command:"resize",
+                        id:widgetId,
+                        w:new_width,
+                        h:new_height
+                    });
+                    return false;
+                },
+                ghost:true
+            });
+        }
         container.attr('data-flags', flags);
         widget.canvas
                 .addClass("DialogCanvas")
@@ -557,7 +558,7 @@ QtLogic.prototype = {
         var widget = this.getWidget(id);
         if (Object.keys(this.widgets).length == 1) {
             widget.main = true;
-            this.createDialog(id,3);
+            this.createDialog(id, 3);
         }
         var children = widget.children;
         widget.name = name;
@@ -572,9 +573,11 @@ QtLogic.prototype = {
             var newChildWidget = this.getWidget(childId);
             if ((flags & 3) === 3) {
                 this.createDialog(childId, flags);
-            } else if (flags & 8) {
-                // Popup
             } else {
+                if (flags & 8) {
+                    newChildWidget.canvas.addClass('Popup');
+                    // Popup
+                }
                 newChildWidget.canvas.parent().detach().insertAfter(widget.children_container);
             }
             children.push(newChildWidget);
@@ -586,8 +589,8 @@ QtLogic.prototype = {
         var x = 0, y = 0;
         var parent = widget;
         while (parent) {
-            if(foundDialog) break;
-            if(parent.canvas.hasClass('DialogCanvas')) {
+            if (foundDialog) break;
+            if (parent.canvas.hasClass('DialogCanvas')) {
                 foundDialog = true;
             }
             x += parent.x;
