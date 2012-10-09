@@ -36,7 +36,6 @@ void ImagesHostServer::readClient()
 {
     qDebug() << "readClient!";
     QTcpSocket * socket = (QTcpSocket*)sender();
-    QDataStream ds(socket);
     if (socket->canReadLine())
     {
         QStringList tokens = QString(socket->readLine()).split(QRegExp("[ \r\n][ \r\n]*"));
@@ -54,13 +53,14 @@ void ImagesHostServer::readClient()
                 {
                     t = args[0].toLongLong();
                     key = args[1].toLongLong();
+                    this->sendStatus(socket, 200);
                     this->sendImage(socket, IDImagePair(t, key));
                     goto close_socket;
                 }
             }
         }
     }
-    this->sendStatus(ds, 400);
+    this->sendStatus(socket, 400);
 close_socket:
     socket->close();
     if (socket->state() == QTcpSocket::UnconnectedState)
@@ -74,20 +74,20 @@ void ImagesHostServer::discardClient()
     socket->deleteLater();
 }
 
-void ImagesHostServer::sendStatus(QDataStream & os, int status)
+void ImagesHostServer::sendStatus(QIODevice * device, int status)
 {
     switch (status)
     {
         case 200:
-            os << "HTTP/1.0 200 Ok\r\n"
-                  "Content-Type: text/html; charset=\"utf-8\"\r\n"
-                  "\r\n";
+            device->write("HTTP/1.0 200 Ok\r\n"
+                          "Content-Type: image/png; charset=\"utf-8\"\r\n"
+                          "\r\n");
             break;
         case 400:
         default:
-            os << "HTTP/1.0 400 Bad Request\r\n"
-                  "Content-Type: text/html; charset=\"utf-8\"\r\n"
-                  "\r\n";
+            device->write("HTTP/1.0 400 Bad Request\r\n"
+                          "Content-Type: text/html; charset=\"utf-8\"\r\n"
+                          "\r\n");
     }
 }
 

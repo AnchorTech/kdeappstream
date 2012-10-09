@@ -67,8 +67,8 @@ class ImagesHostServer : public QTcpServer
     protected slots:
 
         virtual void incomingConnection(int socket);
+        void sendStatus(QIODevice * device, int status);
         void sendImage(QIODevice * device, IDImagePair id);
-        void sendStatus(QDataStream & os, int status);
 
     private slots:
 
