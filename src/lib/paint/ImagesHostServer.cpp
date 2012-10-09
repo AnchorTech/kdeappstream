@@ -6,6 +6,7 @@
 #include <QImage>
 #include <QImageWriter>
 #include <QDateTime>
+#include <QBuffer>
 
 ImagesHostServer * ImagesHostServer::m_instance = 0;
 
@@ -103,8 +104,10 @@ void ImagesHostServer::sendImage(QIODevice * device, IDImagePair id)
         m_data.remove(id);
         m_sem.release();
 
-        QImageWriter writer(device, "png");
-        writer.write(image);
+        QByteArray ba;
+        QBuffer buf(&ba);
+        image.save(&buf, "PNG");
+        device->write(ba);
     }
     else
     {
