@@ -36,6 +36,7 @@ void ImagesHostServer::readClient()
 {
     qDebug() << "readClient!";
     QTcpSocket * socket = (QTcpSocket*)sender();
+    QDataStream ds(socket);
     if (socket->canReadLine())
     {
         QStringList tokens = QString(socket->readLine()).split(QRegExp("[ \r\n][ \r\n]*"));
@@ -43,34 +44,23 @@ void ImagesHostServer::readClient()
         {
             QStringList resources = tokens[1].split(QRegExp("\\?"));
             qDebug() << resources;
-            if (resources.count() == 2)
+            if (resources.count() == 1)
             {
                 qlonglong t = 0;
                 qint64 key = 0;
-                QStringList args = resources[1].split(QRegExp("&(amp){0}"));
+                QStringList args = resources[0].split(QRegExp("(\\\\|/|_|\\.)"), QString::SkipEmptyParts);
                 qDebug() << args;
-                foreach (QString arg, args)
+                if (args.count() == 3)
                 {
-                    QStringList kv = arg.split("=");
-                    if (kv.count() == 2)
-                    {
-                        if (kv[0] == "t")
-                            t = kv[1].toLongLong();
-                        else if (kv[0] == "k")
-                            key = kv[1].toLongLong();
-                    }
-
-                    if (t && key)
-                        break;
-                }
-
-                if (t && key)
+                    t = args[0].toLongLong();
+                    key = args[1].toLongLong();
                     this->sendImage(socket, IDImagePair(t, key));
-
-                goto close_socket;
+                    goto close_socket;
+                }
             }
         }
     }
+    this->sendStatus(ds, 400);
 close_socket:
     socket->close();
     if (socket->state() == QTcpSocket::UnconnectedState)
@@ -82,6 +72,23 @@ void ImagesHostServer::discardClient()
     qDebug() << "discardClient!";
     QTcpSocket* socket = (QTcpSocket*)sender();
     socket->deleteLater();
+}
+
+void ImagesHostServer::sendStatus(QDataStream & os, int status)
+{
+    switch (status)
+    {
+        case 200:
+            os << "HTTP/1.0 200 Ok\r\n"
+                  "Content-Type: text/html; charset=\"utf-8\"\r\n"
+                  "\r\n";
+            break;
+        case 400:
+        default:
+            os << "HTTP/1.0 400 Bad Request\r\n"
+                  "Content-Type: text/html; charset=\"utf-8\"\r\n"
+                  "\r\n";
+    }
 }
 
 void ImagesHostServer::sendImage(QIODevice * device, IDImagePair id)

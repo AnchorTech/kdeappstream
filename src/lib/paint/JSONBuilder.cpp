@@ -192,8 +192,7 @@ void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & s
 {
     IDImagePair id = ImagesHostServer::instance()->hostImage(image.copy(sr.toRect()).scaled(r.size().toSize()));
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii())
-          .append("&k=").append(QString::number(id.key).toAscii())
+          .append(",\"data\":\"").append(id.toString().toAscii())
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())
           .append(",\"y\":").append(QString::number(r.top()).toAscii())
           .append("},");
@@ -203,8 +202,7 @@ void JSONBuilder::image(const QImage & image)
 {
     IDImagePair id = ImagesHostServer::instance()->hostImage(image);
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii())
-          .append("&k=").append(QString::number(id.key).toAscii())
+          .append(",\"data\":\"").append(id.toString().toAscii())
           .append("\"},");
 }
 
@@ -280,7 +278,7 @@ void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr
 
     IDImagePair id = ImagesHostServer::instance()->hostImage(im);
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii()).append("&k=").append(QString::number(id.key))
+          .append(",\"data\":\"").append(id.toString().toAscii())
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())
           .append(",\"y\":").append(QString::number(r.top()).toAscii())
           .append("},");
@@ -290,7 +288,7 @@ void JSONBuilder::pixmap(const QPixmap & pm)
 {
     IDImagePair id = ImagesHostServer::instance()->hostImage(pm.toImage());
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii()).append("&k=").append(QString::number(id.key))
+          .append(",\"data\":\"").append(id.toString().toAscii())
           .append("\"},");
 }
 
@@ -396,7 +394,7 @@ void JSONBuilder::tiledPixmap(const QRectF & r, const QPixmap & pm, const QPoint
 
     IDImagePair id = ImagesHostServer::instance()->hostImage(pm.toImage());
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"?t=").append(QString::number(id.t).toAscii()).append("&k=").append(QString::number(id.key).toAscii())
+          .append(",\"data\":\"").append(id.toString().toAscii())
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())
           .append(",\"y\":").append(QString::number(r.top()).toAscii())
           .append("},");

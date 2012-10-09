@@ -22,11 +22,14 @@ class IDImagePair
             key(id.key)
         {}
 
+        QString toString()
+        {
+            return QString("%1_%2.png").arg(t).arg(key);
+        }
+
         bool operator ==(const IDImagePair & pair) const
         {
-            if (pair.key == key)
-                return true;
-            return false;
+            return (key == pair.key);
         }
 
         bool operator !=(const IDImagePair & pair) const
@@ -38,7 +41,7 @@ class IDImagePair
         {
             if (pair.key != key)
                 return (t < pair.t);
-            return 0;
+            return (pair.key < key);
         }
 
 };
@@ -65,6 +68,7 @@ class ImagesHostServer : public QTcpServer
 
         virtual void incomingConnection(int socket);
         void sendImage(QIODevice * device, IDImagePair id);
+        void sendStatus(QDataStream & os, int status);
 
     private slots:
 

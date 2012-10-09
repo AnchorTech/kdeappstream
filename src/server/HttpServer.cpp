@@ -30,6 +30,7 @@ HttpServer::HttpServer(uint _port, QObject * parent) :
 
 void HttpServer::incomingConnection(int socket)
 {
+    qDebug() << "Client connected: " << socket;
     QTcpSocket * s = new QTcpSocket(this);
     connect(s, SIGNAL(readyRead()), this, SLOT(readClient()));
     connect(s, SIGNAL(disconnected()), this, SLOT(discardClient()));
@@ -58,25 +59,30 @@ void HttpServer::readClient()
                         QStringList kv = arg.split("=");
                         if (kv.count() == 2 && kv[0] == "app")
                         {
+                            qDebug() << "Sending canvas.html page";
                             this->sendCanvas(os, kv[1]);
                             goto close_socket;
                         }
                     }
+                    qDebug() << "Cannot find application name";
                     this->sendStatus(os, 400);
                     goto close_socket;
                 }
                 else
                 {
+                    qDebug() << "Sending index.html page";
                     this->sendIndex(os);
                 }
             }
             else
             {
+                qDebug() << "Sending index.html page";
                 this->sendIndex(os);
             }
         }
         else
         {
+            qDebug() << "This is not a GET request!";
             this->sendStatus(os, 400);
         }
     }
