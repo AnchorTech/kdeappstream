@@ -6,7 +6,6 @@
 #include <QImage>
 #include <QImageWriter>
 #include <QDateTime>
-#include <QBuffer>
 
 ImagesHostServer * ImagesHostServer::m_instance = 0;
 
@@ -26,7 +25,7 @@ ImagesHostServer * ImagesHostServer::instance(QObject * parent)
 
 void ImagesHostServer::incomingConnection(int socket)
 {
-    qDebug() << "IncomingConnection!" << socket;
+    //qDebug() << "IncomingConnection!" << socket;
     QTcpSocket * s = new QTcpSocket(this);
     connect(s, SIGNAL(readyRead()), this, SLOT(readClient()));
     connect(s, SIGNAL(disconnected()), this, SLOT(discardClient()));
@@ -35,7 +34,7 @@ void ImagesHostServer::incomingConnection(int socket)
 
 void ImagesHostServer::readClient()
 {
-    qDebug() << "readClient!";
+    //qDebug() << "readClient!";
     QTcpSocket * socket = (QTcpSocket*)sender();
     if (socket->canReadLine())
     {
@@ -49,7 +48,6 @@ void ImagesHostServer::readClient()
                 qlonglong t = 0;
                 qint64 key = 0;
                 QStringList args = resources[0].split(QRegExp("(\\\\|/|_|\\.)"), QString::SkipEmptyParts);
-                qDebug() << args;
                 if (args.count() == 3)
                 {
                     t = args[0].toLongLong();
@@ -70,7 +68,7 @@ close_socket:
 
 void ImagesHostServer::discardClient()
 {
-    qDebug() << "discardClient!";
+    //qDebug() << "discardClient!";
     QTcpSocket* socket = (QTcpSocket*)sender();
     socket->deleteLater();
 }
@@ -94,7 +92,7 @@ void ImagesHostServer::sendStatus(QIODevice * device, int status)
 
 void ImagesHostServer::sendImage(QIODevice * device, IDImagePair id)
 {
-    qDebug() << "Reading image of given ID";
+    //qDebug() << "Reading image of given ID";
 
     m_sem.acquire();
 
@@ -104,10 +102,10 @@ void ImagesHostServer::sendImage(QIODevice * device, IDImagePair id)
         m_data.remove(id);
         m_sem.release();
 
-        QByteArray ba;
-        QBuffer buf(&ba);
-        image.save(&buf, "PNG");
-        device->write(ba);
+        qDebug() << image.size();
+
+        QImageWriter writer(device, "png");
+        writer.write(image);
     }
     else
     {
@@ -129,7 +127,7 @@ IDImagePair ImagesHostServer::hostImage(const QImage & image)
     else
         m_data.insert(id, img);
 
-    while (m_data.count() > 100)
+    while (m_data.count() > 1000)
         m_data.remove(m_data.begin().key());
 
     m_sem.release();

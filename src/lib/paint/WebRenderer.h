@@ -18,8 +18,6 @@ namespace KAppStream
             {
                 QWidget * w;
 
-                QRegion region;
-
                 QRect rect;
 
                 _Widget(QWidget * _w)
@@ -27,10 +25,9 @@ namespace KAppStream
                     w = _w;
                 }
 
-                _Widget(QWidget * _w, const QRegion & _region, const QRect & _rect)
+                _Widget(QWidget * _w, const QRect & _rect)
                 {
                     w = _w;
-                    region = _region;
                     rect = _rect;
                 }
 

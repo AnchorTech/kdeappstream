@@ -39,7 +39,7 @@ JSONBuilder * JSONBuilder::instance(QObject * parent)
     return m_instance;
 }
 
-void JSONBuilder::beginRender(QWidget * widget, const QRegion & region, const QRect & rect)
+void JSONBuilder::beginRender(QWidget * widget, const QRect & rect)
 {
     if (!widget)
         return;
@@ -392,7 +392,7 @@ void JSONBuilder::tiledPixmap(const QRectF & r, const QPixmap & pm, const QPoint
     painter.drawTiledPixmap(QRectF(QPointF(), r.size()), pm, p);
     painter.end();
 
-    IDImagePair id = ImagesHostServer::instance()->hostImage(pm.toImage());
+    IDImagePair id = ImagesHostServer::instance()->hostImage(pixmap.toImage());
     buffer.append("{\"t\":\"image\"")
           .append(",\"data\":\"").append(id.toString().toAscii())
           .append("\",\"x\":").append(QString::number(r.left()).toAscii())

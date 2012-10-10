@@ -39,9 +39,9 @@ class IDImagePair
 
         bool operator <(const IDImagePair & pair) const
         {
-            if (pair.key != key)
+            if (pair.key == key)
                 return (t < pair.t);
-            return (pair.key < key);
+            return (key < pair.key);
         }
 
 };

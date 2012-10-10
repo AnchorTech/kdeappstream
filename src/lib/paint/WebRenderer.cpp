@@ -42,7 +42,16 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
 {
     if (currentRenderingWidget != widget)
     {
-        Widget w(widget, event->region(), event->rect());
+        QRect r = event->rect();
+        QRegion rg = event->region();
+        if (!r.isValid())
+        {
+            if(!rg.isEmpty())
+                r = rg.boundingRect();
+            else
+                r = widget->rect();
+        }
+        Widget w(widget, r);
         if (_render.contains(w))
             _render.removeAll(w);
         _render.enqueue(w);
@@ -71,9 +80,9 @@ void WebRenderer::render()
     while (!_render.isEmpty())
     {
         Widget w = _render.dequeue();
-        JSONBuilder::instance()->beginRender(w.w, w.region, w.rect);
         currentRenderingWidget = w.w;
-        w.w->render(pd, QPoint(), QRegion(), 0);
+        JSONBuilder::instance()->beginRender(w.w, w.rect);
+        w.w->render(pd, w.rect.topLeft(), QRegion(w.rect), 0);
         JSONBuilder::instance()->endRender();
         JSONBuilder::instance()->finish();
         ++i;

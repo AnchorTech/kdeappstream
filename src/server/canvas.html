@@ -424,8 +424,7 @@ QtLogic.prototype = {
         var region = widgetData.r;
         var widgetId = widgetData.id;
 	var widget = this.getWidget(widgetId);
-	if(widget.main) {
-	    
+        if(widget.main) {
 	    $('#widgets').css({width: widgetData.w, height: widgetData.h, 'margin-left': 10, 'margin-top': 10})
 	}
 
@@ -444,7 +443,7 @@ QtLogic.prototype = {
         canvasDrawer.ctx.save();
 
         canvasDrawer.setup(region, translation);
-        canvasDrawer.clearWidget(widget);
+        canvasDrawer.clearWidget(region, widget);
         //canvasDrawer.setupBrush({style: 0}); // Clear brush
         //canvasDrawer.setupPen('none'); // Clear brush
         $.each(renders, function (_, value) {
@@ -836,9 +835,9 @@ CanvasDrawer.prototype = {
         //this.ctx.clip();
         //this.ctx.translate(translation.x, translation.y);
     },
-    clearWidget: function(widget) {
+    clearWidget: function(region, widget) {
         var c = widget.canvas;
-        this.ctx.clearRect(0,0, c.width(), c.height());
+        this.ctx.clearRect(region.x, region.y, region.w, region.h);
     },
     draw:function (data, translation) {
         var ctx = this.ctx;
@@ -875,7 +874,7 @@ CanvasDrawer.prototype = {
                 this.drawPolygon(data);
                 break;
             default:
-            //debug(data);
+            debug(data);
         }
 
 
