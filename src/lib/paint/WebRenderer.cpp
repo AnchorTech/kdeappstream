@@ -15,6 +15,9 @@
 #include <QPaintEvent>
 #include <QTextEdit>
 #include <QDateTime>
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QGraphicsItem>
 
 using namespace KAppStream;
 
@@ -49,7 +52,7 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
             if(!rg.isEmpty())
                 r = rg.boundingRect();
             else
-                r = widget->rect();
+                r = QRect();
         }
         Widget w(widget, r);
         if (_render.contains(w))
@@ -81,6 +84,20 @@ void WebRenderer::render()
     {
         Widget w = _render.dequeue();
         currentRenderingWidget = w.w;
+
+//        if (dynamic_cast<QGraphicsView*>(w.w))
+//        {
+//            QGraphicsView * view = (QGraphicsView*)w.w;
+//            qDebug() << view;
+//            if (view->scene())
+//            {
+//                qDebug() << view->sceneRect();
+//                qDebug() << view->scene();
+//                foreach (QGraphicsItem * item, view->scene()->items())
+//                    qDebug() << item << item->pos() << item->scenePos();
+//            }
+//        }
+
         JSONBuilder::instance()->beginRender(w.w, w.rect);
         w.w->render(pd, w.rect.topLeft(), QRegion(w.rect), 0);
         JSONBuilder::instance()->endRender();

@@ -22,7 +22,7 @@ class IDImagePair
             key(id.key)
         {}
 
-        QString toString()
+        QString toString() const
         {
             return QString("%1_%2.png").arg(t).arg(key);
         }

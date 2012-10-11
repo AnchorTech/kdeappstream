@@ -838,6 +838,7 @@ CanvasDrawer.prototype = {
     clearWidget: function(region, widget) {
         var c = widget.canvas;
         this.ctx.clearRect(region.x, region.y, region.w, region.h);
+        this.ctx.setTransform(1,0,0,1,0,0);
     },
     draw:function (data, translation) {
         var ctx = this.ctx;
@@ -876,13 +877,12 @@ CanvasDrawer.prototype = {
             default:
             debug(data);
         }
-
-
     },
     drawImage:function (data) {
         var img = new Image();
         img.src = data.data;
         this.ctx.drawImage(img, data.x, data.y);
+        debug(data.x + ' ' + data.y);
     },
     drawRect:function (data) {
         this.ctx.lineWidth = 0.2;
@@ -890,24 +890,30 @@ CanvasDrawer.prototype = {
         //this.ctx.strokeRect(data.x, data.y, data.w, data.h);
     },
     drawState:function (data) {
-        var brush = data.data.brush;
         var bbrush = data.data.bbrush;
         if (bbrush)
             console.log(bbrush);
         var opacity = data.data.opacity;
-        if (opacity) console.log('Opacity: ' + opacity);
+        if (opacity)
+            console.log('Opacity: ' + opacity);
         var composition = data.data.composition;
-        if (composition) console.log('composition: ' + composition);
+        if (composition)
+            console.log('composition: ' + composition);
         var font = data.data.font;
-        var pen = data.data.pen;
-        var transform = data.data.transform;
+        if (font)
+            console.log('font: ' + font);
         var clip = data.data.clip;
         if (clip)
             this.setupClipping(clip);
+        var transform = data.data.transform;
         if (transform)
             this.setupTransform(transform);
-        if (pen) this.setupPen(pen);
-        if (brush) this.setupBrush(brush);
+        var pen = data.data.pen;
+        if (pen)
+            this.setupPen(pen);
+        var brush = data.data.brush;
+        if (brush)
+            this.setupBrush(brush);
     },
     drawTtiledPixmap:function (data) {
 
@@ -1032,7 +1038,9 @@ CanvasDrawer.prototype = {
         ctx.miterLimit = pen.miter;
     },
     setupTransform:function (transform) {
+        debug(transform);
         this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0] + this.currentTranslation.x, transform[2][1] + this.currentTranslation.y);
+        //debug(transform[0][0] + ' ' + transform[0][1] + ' ' + transform[0][2] + ' ' + transform[1][0] + ' ' + transform[1][1] + ' ' + transform[1][2] + ' ' + transform[2][0] + ' ' + transform[2][1] + ' ' + transform[2][2] + ' ' + this.currentTranslation.x  + ' ' + this.currentTranslation.y);
         //this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0], transform[2][1]);
     },
     setupClipping:function (clip) {

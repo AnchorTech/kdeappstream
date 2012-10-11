@@ -42,7 +42,7 @@ void ImagesHostServer::readClient()
         if (tokens[0] == "GET")
         {
             QStringList resources = tokens[1].split(QRegExp("\\?"));
-            qDebug() << resources;
+            //qDebug() << resources;
             if (resources.count() == 1)
             {
                 qlonglong t = 0;
@@ -102,14 +102,14 @@ void ImagesHostServer::sendImage(QIODevice * device, IDImagePair id)
         m_data.remove(id);
         m_sem.release();
 
-        qDebug() << image.size();
+        //qDebug() << image.size();
 
         QImageWriter writer(device, "png");
         writer.write(image);
     }
     else
     {
-        qDebug() << "Cannot find image of given ID";
+        //qDebug() << "Cannot find image of given ID";
         m_sem.release();
     }
 }

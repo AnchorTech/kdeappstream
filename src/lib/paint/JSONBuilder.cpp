@@ -1,7 +1,6 @@
 #include "JSONBuilder.h"
 
 #include "paint/ImagesBuffer.h"
-#include "paint/ImagesHostServer.h"
 #include "paint/PaintDevice.h"
 #include "paint/PaintEngine.h"
 #include "websocket/QWsSocket.h"
@@ -18,6 +17,7 @@
 #include <QToolButton>
 #include <QGradient>
 #include <QPainter>
+#include <QGraphicsView>
 
 using namespace KAppStream;
 
@@ -170,6 +170,7 @@ void JSONBuilder::flush(QWsSocket * device)
 
 void JSONBuilder::ellipse(const QRect & r)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"ellipse\"")
           .append(",\"x\":").append(QString::number(r.x()))
           .append(",\"y\":").append(QString::number(r.y()))
@@ -180,6 +181,7 @@ void JSONBuilder::ellipse(const QRect & r)
 
 void JSONBuilder::ellipse(const QRectF & r)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"ellipse\"")
           .append(",\"x\":").append(QString::number(r.x()))
           .append(",\"y\":").append(QString::number(r.y()))
@@ -190,24 +192,28 @@ void JSONBuilder::ellipse(const QRectF & r)
 
 void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
 {
-    IDImagePair id = ImagesHostServer::instance()->hostImage(image.copy(sr.toRect()).scaled(r.size().toSize()));
-    buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"").append(id.toString().toAscii())
-          .append("\",\"x\":").append(QString::number(r.left()).toAscii())
-          .append(",\"y\":").append(QString::number(r.top()).toAscii())
-          .append("},");
+    this->image(image.copy(sr.toRect()).scaled(r.size().toSize()), r.topLeft());
 }
 
-void JSONBuilder::image(const QImage & image)
+void JSONBuilder::image(const QImage & image, const QPointF & p)
 {
-    IDImagePair id = ImagesHostServer::instance()->hostImage(image);
+        IDImagePair id = ImagesHostServer::instance()->hostImage(image);
+        this->image(id, p);
+}
+
+void JSONBuilder::image(const IDImagePair & id, const QPointF & p)
+{
+    saveStatePriv();
     buffer.append("{\"t\":\"image\"")
           .append(",\"data\":\"").append(id.toString().toAscii())
-          .append("\"},");
+          .append("\",\"x\":").append(QString::number(p.x()).toAscii())
+          .append(",\"y\":").append(QString::number(p.y()).toAscii())
+          .append("},");
 }
 
 void JSONBuilder::line(const QLine & l)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"line\"")
           .append(",\"xs\":").append(QString::number(l.x1()))
           .append(",\"ys\":").append(QString::number(l.y1()))
@@ -218,6 +224,7 @@ void JSONBuilder::line(const QLine & l)
 
 void JSONBuilder::line(const QLineF & l)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"line\"")
           .append(",\"xs\":").append(QString::number(l.x1()))
           .append(",\"ys\":").append(QString::number(l.y1()))
@@ -228,6 +235,7 @@ void JSONBuilder::line(const QLineF & l)
 
 void JSONBuilder::path(const QPainterPath & path)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"path\"")
             .append(",\"data\":[");
 
@@ -274,26 +282,36 @@ void JSONBuilder::path(const QPainterPath & path)
 
 void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
-    QImage im = pm.copy(sr.toRect()).toImage().scaled(r.size().toSize());
-
-    IDImagePair id = ImagesHostServer::instance()->hostImage(im);
-    buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"").append(id.toString().toAscii())
-          .append("\",\"x\":").append(QString::number(r.left()).toAscii())
-          .append(",\"y\":").append(QString::number(r.top()).toAscii())
-          .append("},");
+    this->pixmap(pm.copy(sr.toRect()).scaled(r.size().toSize()), r.topLeft());
 }
 
-void JSONBuilder::pixmap(const QPixmap & pm)
+void JSONBuilder::pixmap(const QPixmap & pm, const QPointF & p)
 {
     IDImagePair id = ImagesHostServer::instance()->hostImage(pm.toImage());
+    this->pixmap(id, p);
+}
+
+void JSONBuilder::pixmap(const IDImagePair & id, const QPointF & p)
+{
+    QTransform t = cur_state.transform;
+    cur_state.transform = QTransform();
+    cur_state.state |= QPaintEngine::DirtyTransform;
+    saveStatePriv();
+
     buffer.append("{\"t\":\"image\"")
           .append(",\"data\":\"").append(id.toString().toAscii())
-          .append("\"},");
+          .append("\",\"x\":").append(QString::number(p.x()).toAscii())
+          .append(",\"y\":").append(QString::number(p.y()).toAscii())
+          .append("},");
+
+    cur_state.transform = t;
+    cur_state.state |= QPaintEngine::DirtyTransform;
+    saveStatePriv();
 }
 
 void JSONBuilder::points(const QPointF * points, int pointCount)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"points\"")
             .append(",\"data\":[");
     while (pointCount--)
@@ -308,6 +326,7 @@ void JSONBuilder::points(const QPointF * points, int pointCount)
 
 void JSONBuilder::points(const QPoint * points, int pointCount)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"points\"")
             .append(",\"data\":[");
     while (pointCount--)
@@ -322,6 +341,7 @@ void JSONBuilder::points(const QPoint * points, int pointCount)
 
 void JSONBuilder::polygon(const QPointF * points, int pointCount, QPaintEngine::PolygonDrawMode mode)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"polygon\"")
             .append(",\"mode\":").append(QString::number(mode))
             .append(",\"data\":[");
@@ -337,6 +357,7 @@ void JSONBuilder::polygon(const QPointF * points, int pointCount, QPaintEngine::
 
 void JSONBuilder::polygon(const QPoint * points, int pointCount, QPaintEngine::PolygonDrawMode mode)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"polygon\"")
             .append(",\"mode\":").append(QString::number(mode))
             .append(",\"data\":[");
@@ -352,6 +373,7 @@ void JSONBuilder::polygon(const QPoint * points, int pointCount, QPaintEngine::P
 
 void JSONBuilder::rect(const QRect & r)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"rect\"")
           .append(",\"x\":").append(QString::number(r.x()))
           .append(",\"y\":").append(QString::number(r.y()))
@@ -362,6 +384,7 @@ void JSONBuilder::rect(const QRect & r)
 
 void JSONBuilder::rect(const QRectF & r)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"rect\"")
           .append(",\"x\":").append(QString::number(r.x()))
           .append(",\"y\":").append(QString::number(r.y()))
@@ -372,6 +395,7 @@ void JSONBuilder::rect(const QRectF & r)
 
 void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
 {
+    saveStatePriv();
     buffer.append("{\"t\":\"text\"")
             .append(",\"data\":{")
             .append("\"text\":\"").append(textItem.text().replace("\\", "\\\\").replace("\"", "\\\"").toAscii()).append("\"")
@@ -392,12 +416,7 @@ void JSONBuilder::tiledPixmap(const QRectF & r, const QPixmap & pm, const QPoint
     painter.drawTiledPixmap(QRectF(QPointF(), r.size()), pm, p);
     painter.end();
 
-    IDImagePair id = ImagesHostServer::instance()->hostImage(pixmap.toImage());
-    buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"").append(id.toString().toAscii())
-          .append("\",\"x\":").append(QString::number(r.left()).toAscii())
-          .append(",\"y\":").append(QString::number(r.top()).toAscii())
-          .append("},");
+    this->image(pixmap.toImage(), r.topLeft());
 }
 
 void JSONBuilder::state(const QPaintEngineState & s)
@@ -412,11 +431,23 @@ void JSONBuilder::state(const QPaintEngineState & s)
     if (f & QPaintEngine::DirtyBrushOrigin)
         cur_state.brushOrigin = s.brushOrigin();
     if (f & QPaintEngine::DirtyClipPath || f & QPaintEngine::DirtyClipRegion)
+    {
         cur_state.clipOperation = s.clipOperation();
-    if (f & QPaintEngine::DirtyClipPath)
         cur_state.clipPath = s.clipPath();
-    if (f & QPaintEngine::DirtyClipRegion)
         cur_state.clipRegion = s.clipRegion();
+        if ( f & QPaintEngine::DirtyClipRegion &&
+             s.clipRegion().rectCount() == 1 &&
+             s.clipRegion().boundingRect() == context.first()->rect())
+        { }
+        else if (s.clipOperation() != Qt::NoClip)
+        {
+            cur_state.clipOperation = s.clipOperation();
+            if (f & QPaintEngine::DirtyClipPath)
+                cur_state.clipPath = s.clipPath();
+            if (f & QPaintEngine::DirtyClipRegion)
+                cur_state.clipRegion = s.clipRegion();
+        }
+    }
     if (f & QPaintEngine::DirtyCompositionMode)
         cur_state.compositionMode = s.compositionMode();
     if (f & QPaintEngine::DirtyFont)
@@ -432,8 +463,6 @@ void JSONBuilder::state(const QPaintEngineState & s)
     if (f & QPaintEngine::DirtyTransform)
         cur_state.transform = s.transform();
     cur_state.state |= f & ~(QPaintEngine::DirtyHints);
-
-    saveStatePriv();
 }
 
 void JSONBuilder::saveStatePriv()

@@ -11,6 +11,8 @@
 #include <QPixmap>
 #include <QPaintEngineState>
 
+#include "paint/ImagesHostServer.h"
+
 class QWsSocket;
 
 namespace KAppStream
@@ -74,12 +76,12 @@ namespace KAppStream
             void ellipse(const QRect & r);
             void ellipse(const QRectF & r);
             void image(const QRectF & rectangle, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags);
-            void image(const QImage & i);
+            void image(const QImage & i, const QPointF & p = QPointF(0,0));
             void line(const QLine & l);
             void line(const QLineF & l);
             void path(const QPainterPath & path);
-            void pixmap(const QPixmap & pm);
             void pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr);
+            void pixmap(const QPixmap & pm, const QPointF & p = QPointF(0,0));
             void points(const QPointF * points, int pointCount);
             void points(const QPoint * points, int pointCount);
             void polygon(const QPointF * points, int pointCount, QPaintEngine::PolygonDrawMode mode);
@@ -104,6 +106,8 @@ namespace KAppStream
             void gradient(const QGradient & g);
             void transform(const QTransform & t);
             void saveStatePriv();
+            void image(const IDImagePair & id, const QPointF & p);
+            void pixmap(const IDImagePair & id, const QPointF & p);
 
         signals:
 
