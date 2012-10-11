@@ -842,16 +842,9 @@ CanvasDrawer.prototype = {
         //this.ctx.clip();
         //this.ctx.translate(translation.x, translation.y);
     },
-<<<<<<< HEAD
-    clearWidget: function(region, widget) {
-        var c = widget.canvas;
-        this.ctx.clearRect(region.x, region.y, region.w, region.h);
-        this.ctx.setTransform(1,0,0,1,0,0);
-=======
     clearWidget:function (widget) {
         var c = widget.canvas;
         this.ctx.clearRect(0, 0, c.width(), c.height());
->>>>>>> d18c4c5c3aa79f56f5f92f28d6d726dc8c34be2f
     },
     draw:function (data, translation) {
         var ctx = this.ctx;
