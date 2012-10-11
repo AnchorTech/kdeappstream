@@ -35,7 +35,6 @@ void PaintEngine::drawEllipse(const QRect & rect)
 
 void PaintEngine::drawImage(const QRectF & rectangle, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
 {
-    qDebug() << rectangle;
     JSONBuilder::instance()->image(rectangle, image, sr, flags);
 }
 
@@ -58,7 +57,6 @@ void PaintEngine::drawPath(const QPainterPath & path)
 
 void PaintEngine::drawPixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr)
 {
-    qDebug() << r;
     JSONBuilder::instance()->pixmap(r, pm, sr);
 }
 
@@ -101,7 +99,6 @@ void PaintEngine::drawTextItem(const QPointF & p, const QTextItem & textItem)
 
 void PaintEngine::drawTiledPixmap(const QRectF & rect, const QPixmap & pixmap, const QPointF & p)
 {
-    qDebug() << rect;
     JSONBuilder::instance()->tiledPixmap(rect, pixmap, p);
 }
 
@@ -118,6 +115,5 @@ PaintEngine::Type PaintEngine::type() const
 
 void PaintEngine::updateState (const QPaintEngineState & state)
 {
-    qDebug() << (state.state() & QPaintEngine::DirtyTransform) << state.transform();
     JSONBuilder::instance()->state(state);
 }

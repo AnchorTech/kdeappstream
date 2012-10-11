@@ -842,9 +842,10 @@ CanvasDrawer.prototype = {
         //this.ctx.clip();
         //this.ctx.translate(translation.x, translation.y);
     },
-    clearWidget:function (widget) {
+    clearWidget:function (region, widget) {
         var c = widget.canvas;
-        this.ctx.clearRect(0, 0, c.width(), c.height());
+        this.ctx.clearRect(region.x, region.y, region.w, region.h);
+        this.ctx.setTransform(1,0,0,1,0,0);
     },
     draw:function (data, translation) {
         var ctx = this.ctx;
@@ -888,7 +889,6 @@ CanvasDrawer.prototype = {
         var img = new Image();
         img.src = data.data;
         this.ctx.drawImage(img, data.x, data.y);
-        debug(data.x + ' ' + data.y);
     },
     drawRect:function (data) {
         this.ctx.lineWidth = 0.2;
@@ -1044,9 +1044,7 @@ CanvasDrawer.prototype = {
         ctx.miterLimit = pen.miter;
     },
     setupTransform:function (transform) {
-        debug(transform);
         this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0] + this.currentTranslation.x, transform[2][1] + this.currentTranslation.y);
-        //debug(transform[0][0] + ' ' + transform[0][1] + ' ' + transform[0][2] + ' ' + transform[1][0] + ' ' + transform[1][1] + ' ' + transform[1][2] + ' ' + transform[2][0] + ' ' + transform[2][1] + ' ' + transform[2][2] + ' ' + this.currentTranslation.x  + ' ' + this.currentTranslation.y);
         //this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0], transform[2][1]);
     },
     setupClipping:function (clip) {
@@ -1095,7 +1093,6 @@ CanvasHelper.createGradient = function (ctx, gradient, style) {
         return lingrad;
     }
 };
-
 
 function init() {
     wsConnector = new WSConnector('ws://' + window.document.location.hostname + ':' + portNumber);
