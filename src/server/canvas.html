@@ -4,57 +4,17 @@
     Websocket client test
 </title>
 <style type="text/css">
-#widgets {
-position: absolute;
-}
+    #widgets {
+        position: absolute;
+    }
 
-#widgets .Bar {
-width: 100%;
-height: 10px;
-}
-
-#widgets .Left {
-height: 100%;
-width: 10px;
-margin-left: -10px;
-}
-
-#widgets .Right {
-height: 100%;
-width: 10px;
-margin-right: -10px;
-right: 0;
-}
-
-#widgets .Bottom {
-  height: 10px;
-  width: 100%;
-  bottom: 0;
-  margin-bottom: -10px;
-}
-
-#widgets .Bottom, #widgets .Right, #widgets .Left {
-  background-color: gray;
-}
-
-#widgets .Bar {
-width: 100%;
-height: 10px;
-margin-top: -10px;
-}
-
-#widgets {
-background-color: gray;
-}
+    #widgets {
+        background-color: gray;
+    }
 
     .Dialog {
         position: relative;
         background-color: gray;
-    }
-
-     .Bar {
-        position: absolute;
-        background-color: #a9a9a9;
     }
 
     .ui-resizable-handle {
@@ -64,58 +24,97 @@ background-color: gray;
     .ui-resizable-n {
         cursor: n-resize;
     }
-.ui-resizable-s {
+
+    .ui-resizable-s {
         cursor: s-resize;
     }
-.ui-resizable-w {
+
+    .ui-resizable-w {
         cursor: w-resize;
     }
-.ui-resizable-e {
+
+    .ui-resizable-e {
         cursor: e-resize;
     }
-.ui-resizable-nw {
+
+    .ui-resizable-nw {
         cursor: nw-resize;
     }
-.ui-resizable-ne {
+
+    .ui-resizable-ne {
         cursor: ne-resize;
     }
-.ui-resizable-sw {
+
+    .ui-resizable-sw {
         cursor: sw-resize;
     }
-.ui-resizable-se {
+
+    .ui-resizable-se {
         cursor: se-resize;
     }
 
-.XButton {
-    right: 5px;
-    top: 5px;
-    width: 12px;
-    height: 12px;
-    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
-    position: absolute;
-}
+    .XButton {
+        right: 5px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+        position: absolute;
+    }
 
-.LT, .LB, .RT, .RB {
-    width: 9px;
-    height: 9px;
-}
+    .LT, .LB, .RT, .RB {
+        width: 9px;
+        height: 9px;
+    }
 
-.LT {
-    left: 0;
-    top:0;
-}
-.LB {
-    left: 0;
-    bottom: 0;
-}
+    .Bar {
+        position: absolute;
+        background-color: #a9a9a9;
+        width: 100%;
+        height: 20px;
+    }
+
+    .Left {
+        width: 5px;
+        height: 100%;
+    }
+
+    .Right {
+        width: 5px;
+        height: 100%;
+        right: 0;
+    }
+
+    .Bottom {
+        width: 100%;
+        height: 5px;
+        bottom: 0;
+    }
+
+    .LT {
+        left: 0;
+        top: 0;
+    }
+
+    .LB {
+        left: 0;
+        bottom: 0;
+    }
+
     .RT {
         right: 0;
-        top:0;
+        top: 0;
     }
+
     .RB {
         right: 0;
         bottom: 0;
     }
+
+    .Popup {
+        z-index: 50;
+    }
+
     canvas {
         position: absolute;
         left: 0;
@@ -127,7 +126,8 @@ background-color: gray;
     }
 </style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://jqueryjs.googlecode.com/svn-history/r6063/trunk/plugins/simulate/jquery.simulate.js"></script>
+<script type="text/javascript"
+        src="http://jqueryjs.googlecode.com/svn-history/r6063/trunk/plugins/simulate/jquery.simulate.js"></script>
 
 <script type="text/javascript" src="http://jedrychowski.org/jquery-ui/js/jquery-ui-1.8.23.custom.min.js"></script>
 <style type="text/css" src="http://jedrychowski.org/jquery-ui/css/ui-lightness/jquery-ui-1.8.23.custom.css"></style>
@@ -145,7 +145,7 @@ var delayCallback = function (num, callback) {
 };
 
 function isEmpty(map) {
-    for(var key in map) {
+    for (var key in map) {
         if (map.hasOwnProperty(key)) {
             return false;
         }
@@ -154,8 +154,8 @@ function isEmpty(map) {
 }
 
 
-    Array.prototype.pushFront = function(data) {
-  this.reverse();
+Array.prototype.pushFront = function (data) {
+    this.reverse();
     this.push(data);
     this.reverse();
 
@@ -277,6 +277,9 @@ var portNumber = [PUT_PORT_NUMBER_HERE];
 var imagesHostPortNumber = [PUT_IMG_SRV_PORT_NUMBER_HERE];
 var verbose = false;
 
+var WINDOW_LT = {x:5, y:20};
+var WINDOW_RB = {x:5, y:5 };
+
 var widgetsContainer = $('#widgets');
 
 function WSConnector(uri, options) {
@@ -351,7 +354,7 @@ QtLogic.prototype = {
                 });
             }
         });
-        if(images_data.length === 0) {
+        if (images_data.length === 0) {
             callback();
         }
         var delayer = delayCallback(images_data.length, callback);
@@ -402,14 +405,14 @@ QtLogic.prototype = {
     showElement:function (data) {
         var canvas = this.widgets[data.id].canvas;
         canvas.show();
-        if(canvas.hasClass("DialogCanvas")) {
+        if (canvas.hasClass("DialogCanvas")) {
             canvas.parent().show();
         }
     },
     hideElement:function (data) {
         var canvas = this.widgets[data.id].canvas;
         canvas.hide();
-        if(canvas.hasClass("DialogCanvas")) {
+        if (canvas.hasClass("DialogCanvas")) {
             canvas.parent().parent().hide();
         }
     },
@@ -423,10 +426,11 @@ QtLogic.prototype = {
         var widgetData = data.widget;
         var region = widgetData.r;
         var widgetId = widgetData.id;
-	var widget = this.getWidget(widgetId);
-        if(widget.main) {
-	    $('#widgets').css({width: widgetData.w, height: widgetData.h, 'margin-left': 10, 'margin-top': 10})
-	}
+        var widget = this.getWidget(widgetId);
+        if (widget.main) {
+            widget.canvas.addClass("Main");
+
+        }
 
         this.updateWidget(widgetId, { // store
             w:widgetData.w,
@@ -460,7 +464,7 @@ QtLogic.prototype = {
                 children:[]
             };
             var widget = this.widgets[id];
-            widget.canvas = $('<canvas></canvas>')
+            widget.canvas = $('<canvas width=0 height=0></canvas>')
                     .data('widget', widget);
             widget.children_container = $("<div class='Children'></div>");
             $("<div class='CanvasContainer'></div>")
@@ -473,9 +477,6 @@ QtLogic.prototype = {
         return this.widgets[id];
     },
     updateWidget:function (id, data) {
-        var WINDOW_LT = {x: 5, y: 20};
-        var WINDOW_RB= {x: 5, y: 5 };
-
         var widget = this.getWidget(id);
         $.extend(widget, data);
         var canvasElement = widget.canvas;
@@ -489,67 +490,82 @@ QtLogic.prototype = {
                 left:data.x,
                 top:data.y
             });
-            if(canvasElement.hasClass("DialogCanvas") ) {
+            if (canvasElement.hasClass("DialogCanvas")) {
                 widget.x = WINDOW_LT.x;
                 widget.y = WINDOW_LT.y;
             }
-            if(canvasElement.hasClass("DialogCanvas") && data.x && data.y && data.w && data.h) {
+            if (canvasElement.hasClass("DialogCanvas") && data.x != undefined && data.y != undefined && data.w != undefined && data.h != undefined) {
                 canvasElement
                         .css({left:0, top:0})
                         .addClass("Set");
                 var parents_dialog = canvasElement.parents(".Dialog");
                 parents_dialog
-                        .css({ width: data.w + WINDOW_LT.x + WINDOW_RB.x, height: data.h + WINDOW_LT.y + WINDOW_RB.y})
-                        .draggable({
-                            handle: '.Bar'
-                        })
-                        .resizable({
-                            handles: {
-                                w: '.Left',
-                                e: '.Right',
-                                s: '.Bottom',
-                                nw: '.LT',
-                                ne: '.RT',
-                                sw: '.LB',
-                                se: '.RB'
-                            },
-                            stop: function(e, ui) {
-                                var new_width =  ui.size.width - WINDOW_LT.x - WINDOW_RB.x,
-                                        new_height = ui.size.height - WINDOW_LT.y - WINDOW_RB.y;
-                                wsConnector.sendEvent({
-                                    command: "resize",
-                                    id: id,
-                                    w : new_width,
-                                    h: new_height
-                                });
-                                 return false;
-                            },
-                            ghost: true
-                        });
-            if(!canvasElement.hasClass("Set")) {
-                parents_dialog.css({left: data.x, top: data.y});
-            }
-                parents_dialog.find(".Bar")
-                        .css({width: '100%', height: WINDOW_LT.y});
-                parents_dialog.find(".Left")
-                        .css({width: WINDOW_LT.x, height: '100%'});
-                parents_dialog.find(".Right")
-                        .css({width: WINDOW_RB.x, height: '100%', right: 0});
-                parents_dialog.find(".Bottom")
-                        .css({width: '100%', height: WINDOW_RB.y, bottom: 0});
+                        .css({ width:data.w + WINDOW_LT.x + WINDOW_RB.x, height:data.h + WINDOW_LT.y + WINDOW_RB.y});
+                if (!canvasElement.hasClass("Set")) {
+                    parents_dialog.css({left:data.x, top:data.y});
+                }
                 widget.x = WINDOW_LT.x;
                 widget.y = WINDOW_LT.y;
             }
         } else {
         }
     },
+    createDialog:function (widgetId, flags) {
+        var widget = this.getWidget(widgetId);
+        var container = $('<div class="Dialog">' +
+                '<div class="Bar"></div>' +
+                '<div class="Left ui-resizable-handle ui-resizable-w"></div>' +
+                '<div class="Bottom ui-resizable-handle ui-resizable-s"></div>' +
+                '<div class="Right ui-resizable-handle ui-resizable-e"></div>' +
+                '<div class="LT ui-resizable-handle ui-resizable-nw"></div>' +
+                '<div class="LB ui-resizable-handle ui-resizable-sw"></div>' +
+                '<div class="RT ui-resizable-handle ui-resizable-ne"></div>' +
+                '<div class="RB ui-resizable-handle ui-resizable-se"></div>' +
+                '<div class="XButton"></div>' +
+                '</div>')
+                .appendTo($('#dialogs'))
+                .draggable({
+                    handle:'.Bar'
+                });
+        if ((flags & 0x00000100) == 0) {
+            container.resizable({
+                handles:{
+                    w:'.Left',
+                    e:'.Right',
+                    s:'.Bottom',
+                    nw:'.LT',
+                    ne:'.RT',
+                    sw:'.LB',
+                    se:'.RB'
+                },
+                stop:function (e, ui) {
+                    var new_width = ui.size.width - WINDOW_LT.x - WINDOW_RB.x,
+                            new_height = ui.size.height - WINDOW_LT.y - WINDOW_RB.y;
+                    wsConnector.sendEvent({
+                        command:"resize",
+                        id:widgetId,
+                        w:new_width,
+                        h:new_height
+                    });
+                    return false;
+                },
+                ghost:true
+            });
+        }
+        container.attr('data-flags', flags);
+        widget.canvas
+                .addClass("DialogCanvas")
+                .parent()
+                .detach().appendTo(container);
+    },
     addWidgetChild:function (id, childId, flags, name) {
         var widget = this.getWidget(id);
-        if(Object.keys(this.widgets).length == 1) {
-          widget.main = true;
+        if (Object.keys(this.widgets).length == 1) {
+            widget.main = true;
+            this.createDialog(id, 3);
         }
         var children = widget.children;
-	widget.name = name;
+        widget.name = name;
         var found = false;
         $.each(children, function (_, child) {
             if (child.id == childId) {
@@ -559,27 +575,13 @@ QtLogic.prototype = {
         });
         if (!found) {
             var newChildWidget = this.getWidget(childId);
-            if((flags & 3) === 3) {
-               var container = $('<div class="Dialog">' +
-                       '<div class="Bar"></div>' +
-                       '<div class="Left ui-resizable-handle ui-resizable-w"></div>' +
-                       '<div class="Bottom ui-resizable-handle ui-resizable-s"></div>' +
-                       '<div class="Right ui-resizable-handle ui-resizable-e"></div>' +
-                       '<div class="LT ui-resizable-handle ui-resizable-nw"></div>' +
-                       '<div class="LB ui-resizable-handle ui-resizable-sw"></div>' +
-                       '<div class="RT ui-resizable-handle ui-resizable-ne"></div>' +
-                       '<div class="RB ui-resizable-handle ui-resizable-se"></div>' +
-                       '<div class="XButton"></div>' +
-                       '</div>')
-                       .appendTo($('#dialogs'));
-                container.attr('data-flags',flags);
-                newChildWidget.canvas
-                        .addClass("DialogCanvas")
-                        .parent()
-                        .detach().appendTo(container);
-            } else if(flags & 8) {
-                // Popup
+            if ((flags & 3) === 3) {
+                this.createDialog(childId, flags);
             } else {
+                if (flags & 8) {
+                    newChildWidget.canvas.addClass('Popup');
+                    // Popup
+                }
                 newChildWidget.canvas.parent().detach().insertAfter(widget.children_container);
             }
             children.push(newChildWidget);
@@ -587,9 +589,14 @@ QtLogic.prototype = {
         }
     },
     calculateTranslation:function (widget) {
+        var foundDialog = false;
         var x = 0, y = 0;
         var parent = widget;
         while (parent) {
+            if (foundDialog) break;
+            if (parent.canvas.hasClass('DialogCanvas')) {
+                foundDialog = true;
+            }
             x += parent.x;
             y += parent.y;
             parent = parent.parent;
@@ -599,31 +606,31 @@ QtLogic.prototype = {
     bindGlobalEvents:function () {
         this.enterQue = [];
         var currentButton = 0;
-        
+
         $('#widgets, #dialogs')
                 .on('mouseenter', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
                     var parent = widget.parent;
                     var array = [widget];
-                    while(parent) {
+                    while (parent) {
                         array.pushFront(parent);
                         parent = parent.parent;
                     }
                     this.enterQue = array;
-                    var len =  array.length;
-                    for(var i = 0; i < len; i++) {
-                        for(var j = 0; j <= i; j++)  {
-                        widget = array[j];
-                        var eventData = parseMouseEvent(evt,widget.canvas);
-                        wsConnector.sendEvent({
-                            command:"mouse",
-                            type:"enter",
-                            id:widget.id,
-                            x:eventData.x,
-                            y:eventData.y
-                        });
-                        widget.mousePositionX = eventData.x;
-                        widget.mousePositionY = eventData.y;
+                    var len = array.length;
+                    for (var i = 0; i < len; i++) {
+                        for (var j = 0; j <= i; j++) {
+                            widget = array[j];
+                            var eventData = parseMouseEvent(evt, widget.canvas);
+                            wsConnector.sendEvent({
+                                command:"mouse",
+                                type:"enter",
+                                id:widget.id,
+                                x:eventData.x,
+                                y:eventData.y
+                            });
+                            widget.mousePositionX = eventData.x;
+                            widget.mousePositionY = eventData.y;
                         }
                     }
                 })
@@ -631,16 +638,16 @@ QtLogic.prototype = {
                     var widget = $(this).data('widget');
                     var parent = widget.parent;
                     var array = [widget];
-                    while(parent) {
+                    while (parent) {
                         array.pushFront(parent);
                         parent = parent.parent;
                     }
                     this.enterQue = array;
-                    var len =  array.length;
-                    for(var i = 0; i < len; i++) {
-                        for(var j = 0; j <= i; j++)  {
+                    var len = array.length;
+                    for (var i = 0; i < len; i++) {
+                        for (var j = 0; j <= i; j++) {
                             widget = array[j];
-                            var eventData = parseMouseEvent(evt,widget.canvas);
+                            var eventData = parseMouseEvent(evt, widget.canvas);
                             wsConnector.sendEvent({
                                 command:"mouse",
                                 type:"leave",
@@ -725,11 +732,11 @@ QtLogic.prototype = {
                     }
                 });
         $('#dialogs')
-                .on('click', '.XButton', function(evt) {
+                .on('click', '.XButton', function (evt) {
                     var widget = $(this).nextAll('.CanvasContainer').find('canvas:first').data('widget');
                     wsConnector.sendEvent({
-                        command: "close",
-                        id: widget.id
+                        command:"close",
+                        id:widget.id
                     });
                 });
         $(document)
@@ -739,10 +746,10 @@ QtLogic.prototype = {
                         command:"key",
                         type:"press",
                         key:eventData.key,
-                        text: eventData.text,
+                        text:eventData.text,
                         modifiers:eventData.modifiers,
-                        count: 1,
-                        "autorep": false
+                        count:1,
+                        "autorep":false
                     });
                 })
                 .keyup(function (evt) {
@@ -752,10 +759,10 @@ QtLogic.prototype = {
                         command:"key",
                         type:"release",
                         key:eventData.key,
-                        text: eventData.text,
+                        text:eventData.text,
                         modifiers:eventData.modifiers,
-                        count: 1,
-                        "autorep": false
+                        count:1,
+                        "autorep":false
                     });
                 });
 
@@ -763,7 +770,7 @@ QtLogic.prototype = {
     }
 };
 
-function parseMouseEvent(evt,widget) {
+function parseMouseEvent(evt, widget) {
     var data = {};
     switch (evt.which) {
         case 1: // left
@@ -799,7 +806,7 @@ function parseMouseEvent(evt,widget) {
 
 function parseKeyEvent(evt) {
     var data = {};
-    if(evt.keyCode>= 65 && evt.keyCode <=90 ) {
+    if (evt.keyCode >= 65 && evt.keyCode <= 90) {
         data.key = evt.keyCode;
         data.text = $.trim(String.fromCharCode(evt.which)).toLowerCase();
     } else {
@@ -835,10 +842,16 @@ CanvasDrawer.prototype = {
         //this.ctx.clip();
         //this.ctx.translate(translation.x, translation.y);
     },
+<<<<<<< HEAD
     clearWidget: function(region, widget) {
         var c = widget.canvas;
         this.ctx.clearRect(region.x, region.y, region.w, region.h);
         this.ctx.setTransform(1,0,0,1,0,0);
+=======
+    clearWidget:function (widget) {
+        var c = widget.canvas;
+        this.ctx.clearRect(0, 0, c.width(), c.height());
+>>>>>>> d18c4c5c3aa79f56f5f92f28d6d726dc8c34be2f
     },
     draw:function (data, translation) {
         var ctx = this.ctx;
@@ -1030,7 +1043,7 @@ CanvasDrawer.prototype = {
         if (pen.dash && pen.dash.pattern.length != 0) {
             // TODO
         }
-        if(pen === "none" || isEmpty(pen)) {
+        if (pen === "none" || isEmpty(pen)) {
             ctx.strokeStyle = "rgba(0,0,0,0)";
         }
         ctx.lineWidth = pen.width;
@@ -1096,33 +1109,6 @@ function init() {
     qtLogic = new QtLogic($('#widgets'));
 
     wsConnector.init();
-$('#widgets').draggable({
-                            handle: '.Bar'
-                        })
-                        .resizable({
-                            handles: {
-                                w: '.Left',
-                                e: '.Right',
-                                s: '.Bottom',
-                                nw: '.LT',
-                                ne: '.RT',
-                                sw: '.LB',
-                                se: '.RB'
-                            },
-                            stop: function(e, ui) {
-                                var new_width =  ui.size.width,
-                                        new_height = ui.size.height;
-                                  var id = $(this).find('canvas:first').data('widget').id;
-                                wsConnector.sendEvent({
-                                    command: "resize",
-                                    id: id,
-                                    w : new_width,
-                                    h: new_height
-                                });
-                                 return false;
-                            },
-                            ghost: true
-                        });
 }
 
 $(document).ready(function () {
@@ -1133,15 +1119,6 @@ $(document).ready(function () {
 </head>
 <body>
 <div id="widgets">
-    <div class="Bar"></div>
-    <div class="Left ui-resizable-handle ui-resizable-w"></div>
-    <div class="Bottom ui-resizable-handle ui-resizable-s"></div>
-    <div class="Right ui-resizable-handle ui-resizable-e"></div>
-    <div class="LT ui-resizable-handle ui-resizable-nw"></div>
-    <div class="LB ui-resizable-handle ui-resizable-sw"></div>
-    <div class="RT ui-resizable-handle ui-resizable-ne"></div>
-    <div class="RB ui-resizable-handle ui-resizable-se"></div>
-    <div class="XButton"></div>
 </div>
 <div id="dialogs"></div>
 </body>
