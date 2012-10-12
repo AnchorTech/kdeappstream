@@ -492,6 +492,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::WindowTitleChange:
                 //qDebug() << "QEvent::WindowTitleChange" << recv;
+                JSONBuilder::instance()->titleChange(w, w->windowTitle());
                 break;
             case QEvent::WindowUnblocked:
                 //qDebug() << "QEvent::WindowUnblocked" << recv;

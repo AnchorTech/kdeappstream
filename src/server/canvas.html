@@ -63,6 +63,33 @@
         position: absolute;
     }
 
+    .MaxButton {
+        right: 23px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+        position: absolute;
+    }
+
+    .ResButton {
+        right: 23px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+        position: absolute;
+    }
+
+    .MinButton {
+        right: 40px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+        position: absolute;
+    }
+
     .LT, .LB, .RT, .RB {
         width: 9px;
         height: 9px;
@@ -73,6 +100,8 @@
         background-color: #a9a9a9;
         width: 100%;
         height: 20px;
+        font-size: 9pt;
+        text-align: center;
     }
 
     .Left {
@@ -393,6 +422,9 @@ QtLogic.prototype = {
             case "hide":
                 this.hideElement(data);
                 break;
+            case "title":
+                this.setTitle(data);
+                break;
             default:
                 debug(data);
         }
@@ -456,6 +488,17 @@ QtLogic.prototype = {
         });
         canvasDrawer.ctx.restore();
 
+    },
+    setTitle:function (data) {
+        var widgetId = data.id;
+        var title = data.text;
+        var widget = this.getWidget(widgetId);
+        if (widget) {
+            var p = widget.canvas.parent();
+            var pp = p.parent();
+            var c = pp.children('div.Bar');
+            c.html(title);
+        }
     },
     getWidget:function (id) {
         if (!this.widgets[id]) {
@@ -522,6 +565,9 @@ QtLogic.prototype = {
                 '<div class="LB ui-resizable-handle ui-resizable-sw"></div>' +
                 '<div class="RT ui-resizable-handle ui-resizable-ne"></div>' +
                 '<div class="RB ui-resizable-handle ui-resizable-se"></div>' +
+                '<div class="MinButton"></div>' +
+                '<div class="MaxButton"></div>' +
+                '<div class="ResButton"></div>' +
                 '<div class="XButton"></div>' +
                 '</div>')
                 .appendTo($('#dialogs'))

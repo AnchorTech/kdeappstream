@@ -145,6 +145,18 @@ void JSONBuilder::showWidget(QWidget * widget)
     this->finish();
 }
 
+void JSONBuilder::titleChange(QWidget * widget, const QString & title)
+{
+    QString tmp = title;
+    _sem.acquire();
+    buffer.append("{\"command\":\"title\"")
+          .append(",\"id\":").append(QString::number((long long)widget).toAscii())
+          .append(",\"text\":\"").append(tmp.replace("\\", "\\\\").replace("\"", "\\\"").toUtf8())
+          .append("\"},");
+    _sem.release();
+    this->finish();
+}
+
 void JSONBuilder::finish()
 {
     emit readyRead();
