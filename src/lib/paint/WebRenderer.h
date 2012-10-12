@@ -33,7 +33,7 @@ namespace KAppStream
 
                 bool operator ==(const _Widget & widget) const
                 {
-                    return (this == &widget || this->w == widget.w);
+                    return (this == &widget || (this->w == widget.w && widget.rect.contains(this->rect)));
                 }
 
             } Widget;

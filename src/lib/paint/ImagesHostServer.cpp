@@ -68,7 +68,6 @@ void ImagesHostServer::readClient()
         if (tokens[0] == "GET")
         {
             QStringList resources = tokens[1].split(QRegExp("\\?"));
-            qDebug() << resources;
             if (resources.count() == 2)
             {
                 resources[1] = resources[1].right(resources[1].length() - 2);
