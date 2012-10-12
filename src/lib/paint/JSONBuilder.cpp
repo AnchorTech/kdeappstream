@@ -293,6 +293,8 @@ void JSONBuilder::pixmap(const QPixmap & pm, const QPointF & p)
 
 void JSONBuilder::pixmap(const QByteArray & id, const QPointF & p)
 {
+    // issue: http://www.qtcentre.org/threads/20106-QPixmap-Rotating-but-not-translating
+
     QTransform t = cur_state.transform;
     cur_state.transform = QTransform();
     cur_state.state |= QPaintEngine::DirtyTransform;
