@@ -197,15 +197,15 @@ void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & s
 
 void JSONBuilder::image(const QImage & image, const QPointF & p)
 {
-        IDImagePair id = ImagesHostServer::instance()->hostImage(image);
+        QByteArray id = ImagesHostServer::instance()->hostImage(image);
         this->image(id, p);
 }
 
-void JSONBuilder::image(const IDImagePair & id, const QPointF & p)
+void JSONBuilder::image(const QByteArray & id, const QPointF & p)
 {
     saveStatePriv();
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"").append(id.toString().toAscii())
+          .append(",\"data\":\"").append(id.data())
           .append("\",\"x\":").append(QString::number(p.x()).toAscii())
           .append(",\"y\":").append(QString::number(p.y()).toAscii())
           .append("},");
@@ -287,11 +287,11 @@ void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr
 
 void JSONBuilder::pixmap(const QPixmap & pm, const QPointF & p)
 {
-    IDImagePair id = ImagesHostServer::instance()->hostImage(pm.toImage());
+    QByteArray id = ImagesHostServer::instance()->hostImage(pm.toImage());
     this->pixmap(id, p);
 }
 
-void JSONBuilder::pixmap(const IDImagePair & id, const QPointF & p)
+void JSONBuilder::pixmap(const QByteArray & id, const QPointF & p)
 {
     QTransform t = cur_state.transform;
     cur_state.transform = QTransform();
@@ -299,7 +299,7 @@ void JSONBuilder::pixmap(const IDImagePair & id, const QPointF & p)
     saveStatePriv();
 
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"").append(id.toString().toAscii())
+          .append(",\"data\":\"").append(id.data())
           .append("\",\"x\":").append(QString::number(p.x()).toAscii())
           .append(",\"y\":").append(QString::number(p.y()).toAscii())
           .append("},");

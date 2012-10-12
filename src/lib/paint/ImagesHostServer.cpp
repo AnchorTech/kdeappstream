@@ -6,6 +6,11 @@
 #include <QImage>
 #include <QImageWriter>
 #include <QDateTime>
+#include <QDirIterator>
+#include <QResource>
+#include <QImage>
+#include <QPixmap>
+#include <QApplication>
 
 ImagesHostServer * ImagesHostServer::m_instance = 0;
 
@@ -14,6 +19,27 @@ ImagesHostServer::ImagesHostServer(QObject * parent) :
     m_sem(1)
 {
     qDebug() << "Listening for images fetching:" << this->listen(QHostAddress::Any);
+
+    QDirIterator it(":", QDirIterator::Subdirectories);
+    while (it.hasNext())
+    {
+        QResource r(it.next());
+        if (r.data())
+        {
+//            QPixmap p(r.fileName());
+//            if (!p.isNull())
+//            {
+//                qDebug() << "Pixmap:" << p.cacheKey() << r.fileName();
+//                continue;
+//            }
+            QImage i(r.fileName());
+            if (!i.isNull())
+            {
+                qDebug() << "Image:" << i.cacheKey() << r.fileName();
+                continue;
+            }
+        }
+    }
 }
 
 ImagesHostServer * ImagesHostServer::instance(QObject * parent)
@@ -45,15 +71,11 @@ void ImagesHostServer::readClient()
             //qDebug() << resources;
             if (resources.count() == 1)
             {
-                qlonglong t = 0;
-                qint64 key = 0;
                 QStringList args = resources[0].split(QRegExp("(\\\\|/|_|\\.)"), QString::SkipEmptyParts);
-                if (args.count() == 3)
+                if (args.count() == 1)
                 {
-                    t = args[0].toLongLong();
-                    key = args[1].toLongLong();
                     this->sendStatus(socket, 200);
-                    this->sendImage(socket, IDImagePair(t, key));
+                    this->sendImage(socket, args[0].toAscii());
                     goto close_socket;
                 }
             }
@@ -90,7 +112,7 @@ void ImagesHostServer::sendStatus(QIODevice * device, int status)
     }
 }
 
-void ImagesHostServer::sendImage(QIODevice * device, IDImagePair id)
+void ImagesHostServer::sendImage(QIODevice * device, QByteArray id)
 {
     //qDebug() << "Reading image of given ID";
 
@@ -114,23 +136,26 @@ void ImagesHostServer::sendImage(QIODevice * device, IDImagePair id)
     }
 }
 
-IDImagePair ImagesHostServer::hostImage(const QImage & image)
+QByteArray ImagesHostServer::hostImage(const QImage & image)
 {
-    QImage img = image.copy();
-
     m_sem.acquire();
 
-    IDImagePair id(QDateTime::currentDateTime().toMSecsSinceEpoch(), image.cacheKey());
+    QByteArray key = fastmd5(image).toBase64();
+    if (m_cached.contains(key))
+    {
+        m_sem.release();
+        return key;
+    }
 
-    if (m_data.contains(id))
-        m_data[id] = img;
-    else
-        m_data.insert(id, img);
+    m_cached.insert(key);
+
+    QImage img = image.copy();
+    m_data.insert(key, img);
 
     while (m_data.count() > 1000)
         m_data.remove(m_data.begin().key());
 
     m_sem.release();
 
-    return id;
+    return key;
 }

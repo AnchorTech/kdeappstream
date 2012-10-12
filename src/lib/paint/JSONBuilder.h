@@ -106,8 +106,8 @@ namespace KAppStream
             void gradient(const QGradient & g);
             void transform(const QTransform & t);
             void saveStatePriv();
-            void image(const IDImagePair & id, const QPointF & p);
-            void pixmap(const IDImagePair & id, const QPointF & p);
+            void image(const QByteArray & id, const QPointF & p);
+            void pixmap(const QByteArray & id, const QPointF & p);
 
         signals:
 

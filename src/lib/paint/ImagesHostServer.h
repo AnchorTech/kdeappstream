@@ -4,47 +4,8 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QSemaphore>
-
-class IDImagePair
-{
-    public:
-
-        qlonglong t;
-        qint64 key;
-
-        IDImagePair(qlonglong _t, qint64 _key) :
-            t(_t),
-            key(_key)
-        {}
-
-        IDImagePair(const IDImagePair & id) :
-            t(id.t),
-            key(id.key)
-        {}
-
-        QString toString() const
-        {
-            return QString("%1_%2.png").arg(t).arg(key);
-        }
-
-        bool operator ==(const IDImagePair & pair) const
-        {
-            return (key == pair.key);
-        }
-
-        bool operator !=(const IDImagePair & pair) const
-        {
-            return !(this->operator ==(pair));
-        }
-
-        bool operator <(const IDImagePair & pair) const
-        {
-            if (pair.key == key)
-                return (t < pair.t);
-            return (key < pair.key);
-        }
-
-};
+#include <QCryptographicHash>
+#include <QImage>
 
 class ImagesHostServer : public QTcpServer
 {
@@ -54,7 +15,8 @@ class ImagesHostServer : public QTcpServer
 
         uint port;
         QSemaphore m_sem;
-        QMap<IDImagePair, QImage> m_data;
+        QMap<QByteArray, QImage> m_data;
+        QSet<QByteArray> m_cached;
 
         explicit ImagesHostServer(QObject * parent = 0);
 
@@ -62,13 +24,20 @@ class ImagesHostServer : public QTcpServer
 
         static ImagesHostServer * instance(QObject * parent = 0);
 
-        IDImagePair hostImage(const QImage & image);
+        QByteArray hostImage(const QImage & image);
+
+        static inline QByteArray fastmd5( const QImage & image )
+        {
+            QCryptographicHash formats( QCryptographicHash::Md5 );
+            formats.addData((const char*)image.bits(), image.byteCount());
+            return formats.result();
+        }
 
     protected slots:
 
         virtual void incomingConnection(int socket);
         void sendStatus(QIODevice * device, int status);
-        void sendImage(QIODevice * device, IDImagePair id);
+        void sendImage(QIODevice * device, QByteArray id);
 
     private slots:
 
