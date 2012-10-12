@@ -43,8 +43,6 @@ void EventDispather::parse(const QString & message)
 
     QString command = value.property("command").toString();
 
-    qDebug() << "\033[35;1mReceived data: \033[0m" << message;
-
     if (command == "mouse")
     {
         long long id = value.property("id").toNumber();
@@ -122,21 +120,6 @@ void EventDispather::parse(const QString & message)
                     QCoreApplication::postEvent(w, new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
                 }
                 QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseButtonPress, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
-
-//                {
-//                    w->focusProxy()->setFocus(Qt::MouseFocusReason);
-//                    QWidget * prevW = QApplication::focusWidget();
-//                    if (prevW)
-//                        QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
-//                    QCoreApplication::postEvent(w->focusProxy(), new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
-//                }
-//                else if (w->focusPolicy() & Qt::ClickFocus)
-//                {
-//                    QWidget * prevW = QApplication::focusWidget();
-//                    if (prevW)
-//                        QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
-//                    QCoreApplication::postEvent(w, new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
-//                }
             }
         }
         else if (type == "release")
@@ -159,22 +142,13 @@ void EventDispather::parse(const QString & message)
         long long id = value.property("id").toNumber();
         QWidget * w = (QWidget*) id;
         if (!WidgetsCollection::instance()->contains(w))
-        {
-            qDebug() << "ni ma widgeta";
             return;
-        }
         int width = value.property("w").toInt32();
         if (w->minimumWidth() > width || w->maximumWidth() < width)
-        {
-            qDebug() << "zły width";
             return;
-        }
         int height = value.property("h").toInt32();
         if (w->minimumHeight() > height || w->maximumHeight() < height)
-        {
-            qDebug() << "zły height";
             return;
-        }
         QCoreApplication::postEvent(w, new QResizeEvent(QSize(width, height), w->size()));
     }
     else if (command == "move")
@@ -183,34 +157,29 @@ void EventDispather::parse(const QString & message)
     }
     else if (command == "key")
     {
+        qDebug() << "\033[35;1mReceived data: \033[0m" << message;
+
         QWidget * w = QApplication::focusWidget();
         if (!w)
-        {
-            qDebug() << "No focusWidget() !";
             return;
-        }
-        if (w->focusProxy())
-        {
-            w = w->focusProxy();
-            qDebug() << "focusProxy() ! << w";
-        }
-        else
-        {
-            qDebug() << "No focusProxy() !";
-        }
 
-        char key = (char) value.property("key").toInteger();
+        if (w->focusProxy())
+            w = w->focusProxy();
+
+        int key = value.property("key").toInteger();
         int modifiers = value.property("modifiers").toInteger();
+        QString text = value.property("text").toString();
+        bool autorep = value.property("autorep").toBool();
+        int count = value.property("count").toInteger();
 
         QString type = value.property("type").toString();
         if (type == "press")
         {
-            char t[] = { key, '\0' };
-            QCoreApplication::postEvent(w, new QKeyEvent(QEvent::KeyPress, key, (Qt::KeyboardModifier)modifiers, QString::fromAscii(t)));
+            QCoreApplication::postEvent(w, new QKeyEvent(QEvent::KeyPress, key, (Qt::KeyboardModifier)modifiers, text, autorep, count));
         }
         else if (type == "release")
         {
-            QCoreApplication::postEvent(w, new QKeyEvent(QEvent::KeyRelease, key, (Qt::KeyboardModifier)modifiers));
+            QCoreApplication::postEvent(w, new QKeyEvent(QEvent::KeyRelease, key, (Qt::KeyboardModifier)modifiers, text, autorep, count));
         }
     }
     else if (command == "close")

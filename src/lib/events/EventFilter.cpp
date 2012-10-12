@@ -278,10 +278,16 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
 //                qDebug() << "QEvent::InputMethod" << recv;
                 break;
             case QEvent::KeyPress:
-//                qDebug() << "\033[32;1m QEvent::KeyPress \033[0m" << recv << QWidget::keyboardGrabber() << QApplication::activeWindow();
+                {
+                    QKeyEvent * ke = (QKeyEvent*) e;
+                    qDebug() << "\033[32;1m QEvent::KeyPress \033[0m" << ke->count() << ke->isAutoRepeat() << ke->key() << ke->modifiers() << ke->text() << recv;
+                }
                 break;
             case QEvent::KeyRelease:
-//                qDebug() << "\033[32;1m QEvent::KeyRelease \033[0m" << recv << QWidget::keyboardGrabber() << QApplication::activeWindow();
+                {
+                    QKeyEvent * ke = (QKeyEvent*) e;
+                    qDebug() << "\033[32;1m QEvent::KeyRelease \033[0m" << ke->count() << ke->isAutoRepeat() << ke->key() << ke->modifiers() << ke->text() << recv;
+                }
                 break;
             case QEvent::LanguageChange:
                 //qDebug() << "QEvent::LanguageChange" << recv;

@@ -606,6 +606,9 @@ QtLogic.prototype = {
     bindGlobalEvents:function () {
         this.enterQue = [];
         var currentButton = 0;
+        var autoRepeatPress = false;
+        var autoRepeatPress_tmp = false;
+        var autoRepeatRelease = false;
 
         $('#widgets, #dialogs')
                 .on('mouseenter', 'canvas', function (evt) {
@@ -741,6 +744,17 @@ QtLogic.prototype = {
                 });
         $(document)
                 .keydown(function (evt) {
+                    if (autoRepeatPress_tmp)
+                        autoRepeatRelease = autoRepeatPress = autoRepeatPress_tmp;
+                    else
+                        autoRepeatPress_tmp = true;
+                    evt.preventDefault();
+                })
+                .keyup(function (evt) {
+                    autoRepeatPress_tmp = autoRepeatRelease = false;
+                    evt.preventDefault();
+                })
+                .keypress(function (evt) {
                     var eventData = parseKeyEvent(evt);
                     wsConnector.sendEvent({
                         command:"key",
@@ -749,12 +763,8 @@ QtLogic.prototype = {
                         text:eventData.text,
                         modifiers:eventData.modifiers,
                         count:1,
-                        "autorep":false
+                        "autorep":autoRepeatPress
                     });
-                })
-                .keyup(function (evt) {
-                    debug(evt)
-                    var eventData = parseKeyEvent(evt);
                     wsConnector.sendEvent({
                         command:"key",
                         type:"release",
@@ -762,11 +772,12 @@ QtLogic.prototype = {
                         text:eventData.text,
                         modifiers:eventData.modifiers,
                         count:1,
-                        "autorep":false
+                        "autorep":autoRepeatRelease
                     });
+                    if (!autoRepeatPress_tmp)
+                        autoRepeatPress = autoRepeatPress_tmp;
+                    evt.preventDefault();
                 });
-
-
     }
 };
 
@@ -806,20 +817,146 @@ function parseMouseEvent(evt, widget) {
 
 function parseKeyEvent(evt) {
     var data = {};
-    if (evt.keyCode >= 65 && evt.keyCode <= 90) {
-        data.key = evt.keyCode;
-        data.text = $.trim(String.fromCharCode(evt.which)).toLowerCase();
-    } else {
 
+    switch (evt.keyCode) {
+        case KeyboardEvent.DOM_VK_BACK_SPACE:
+            data.key = 0x01000003;
+            break;
+        case KeyboardEvent.DOM_VK_TAB:
+            data.key = 0x01000001;
+            break;
+        case KeyboardEvent.DOM_VK_RETURN:
+            data.key = 0x01000004;
+            break;
+        case KeyboardEvent.DOM_VK_SHIFT:
+            data.key = 0x01000020;
+            break;
+        case KeyboardEvent.DOM_VK_CONTROL:
+            data.key = 0x01000021;
+            break;
+        case KeyboardEvent.DOM_VK_ALT:
+            data.key = 0x01000023;
+            break;
+        case KeyboardEvent.DOM_VK_PAUSE:
+            data.key = 0x01000008;
+            break;
+        case KeyboardEvent.DOM_VK_CAPS_LOCK:
+            data.key = 0x01000024;
+            break;
+        case KeyboardEvent.DOM_VK_ESCAPE:
+            data.key = 0x01000000;
+            break;
+        case KeyboardEvent.DOM_VK_PAGE_UP:
+            data.key = 0x01000016;
+            break;
+        case KeyboardEvent.DOM_VK_PAGE_DOWN:
+            data.key = 0x01000017;
+            break;
+        case KeyboardEvent.DOM_VK_END:
+            data.key = 0x01000011;
+            break;
+        case KeyboardEvent.DOM_VK_HOME:
+            data.key = 0x01000010;
+            break;
+        case KeyboardEvent.DOM_VK_LEFT:
+            data.key = 0x01000012;
+            break;
+        case KeyboardEvent.DOM_VK_UP:
+            data.key = 0x01000013;
+            break;
+        case KeyboardEvent.DOM_VK_RIGHT:
+            data.key = 0x01000014;
+            break;
+        case KeyboardEvent.DOM_VK_DOWN:
+            data.key = 0x01000015;
+            break;
+        case KeyboardEvent.DOM_VK_PRINTSCREEN:
+            data.key = 0x01000009;
+            break;
+        case KeyboardEvent.DOM_VK_INSERT:
+            data.key = 0x01000006;
+            break;
+        case KeyboardEvent.DOM_VK_DELETE:
+            data.key = 0x01000007;
+            break;
+        case KeyboardEvent.DOM_VK_CONTEXT_MENU:
+            data.key = 0x01000055;
+            break;
+        case KeyboardEvent.DOM_VK_NUM_LOCK:
+            data.key = 0x01000025;
+            break;
+        case KeyboardEvent.DOM_VK_SCROLL_LOCK:
+            data.key = 0x01000026;
+            break;
+        case KeyboardEvent.DOM_VK_WIN:
+            data.key = 0x01000022;
+            break;
+        case KeyboardEvent.DOM_VK_HELP:
+            data.key = 0x01000058;
+            break;
+        case KeyboardEvent.DOM_VK_CANCEL:
+            data.key = 0x01020001;
+            break;
+        case KeyboardEvent.DOM_VK_ALTGR:
+            data.key = 0x01001103;
+            break;
+        case KeyboardEvent.DOM_VK_PRINT:
+            data.key = 0x01020002;
+            break;
+        case KeyboardEvent.DOM_VK_EXECUTE:
+            data.key = 0x01020003;
+            break;
+        case KeyboardEvent.DOM_VK_SLEEP:
+            data.key = 0x01020004;
+            break;
+        case KeyboardEvent.DOM_VK_SELECT:
+            data.key = 0x01010000;
+            break;
+        case KeyboardEvent.DOM_VK_CLEAR:
+            data.key = 0x0100000b;
+            break;
+        case KeyboardEvent.DOM_VK_META:
+            data.key = 0x01000022;
+            break;
+        case KeyboardEvent.DOM_VK_MODECHANGE:
+            data.key = 0x0100117e;
+            break;
+        case KeyboardEvent.DOM_VK_KANJI:
+            data.key = 0x01001121;
+            break;
+        case KeyboardEvent.DOM_VK_HANGUL:
+            data.key = 0x01001131;
+            break;
+        case KeyboardEvent.DOM_VK_HANJA:
+            data.key = 0x01001134;
+            break;
+        case KeyboardEvent.DOM_VK_EISU:
+            data.key = 0x01001130;
+            break;
+        case KeyboardEvent.DOM_VK_KANA:
+        case KeyboardEvent.DOM_VK_JUNJA:
+        case KeyboardEvent.DOM_VK_FINAL:
+        case KeyboardEvent.DOM_VK_SEPARATOR:
+        case KeyboardEvent.DOM_VK_CONVERT:
+        case KeyboardEvent.DOM_VK_NONCONVERT:
+        case KeyboardEvent.DOM_VK_ACCEPT:
+        case KeyboardEvent.DOM_VK_ENTER: // Reserved, but not used.
+            break;
+        default:
+            // F1 - F24
+            if (evt.keyCode >= KeyboardEvent.DOM_VK_F1 && evt.keyCode <= KeyboardEvent.DOM_VK_F24) {
+                data.key = 0x01000030 + evt.keyCode - KeyboardEvent.DOM_VK_F1;
+            } else {
+                data.key = evt.charCode;
+                data.text = String.fromCharCode(evt.which);
+            }
     }
 
     var modifiers = 0;
     if (evt.ctrlKey)
         modifiers += 0x04000000;
-    if (evt.shiftKey) {
+    if (evt.shiftKey)
         modifiers += 0x02000000;
-        data.text = data.text.toUpperCase();
-    }
     if (evt.altKey)
         modifiers += 0x08000000;
     if (evt.metaKey)
