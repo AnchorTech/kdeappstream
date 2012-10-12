@@ -68,14 +68,20 @@ void ImagesHostServer::readClient()
         if (tokens[0] == "GET")
         {
             QStringList resources = tokens[1].split(QRegExp("\\?"));
-            //qDebug() << resources;
-            if (resources.count() == 1)
+            qDebug() << resources;
+            if (resources.count() == 2)
             {
-                QStringList args = resources[0].split(QRegExp("(\\\\|/|_|\\.)"), QString::SkipEmptyParts);
-                if (args.count() == 1)
+                resources[1] = resources[1].right(resources[1].length() - 2);
+                if (resources[0] == "/add")
                 {
                     this->sendStatus(socket, 200);
-                    this->sendImage(socket, args[0].toAscii());
+                    this->sendImage(socket, resources[1].toAscii());
+                    goto close_socket;
+                }
+                else if (resources[0] == "/rm")
+                {
+                    this->sendStatus(socket, 200);
+                    this->removeCache(resources[0].toAscii());
                     goto close_socket;
                 }
             }
@@ -90,7 +96,6 @@ close_socket:
 
 void ImagesHostServer::discardClient()
 {
-    //qDebug() << "discardClient!";
     QTcpSocket* socket = (QTcpSocket*)sender();
     socket->deleteLater();
 }
@@ -112,7 +117,7 @@ void ImagesHostServer::sendStatus(QIODevice * device, int status)
     }
 }
 
-void ImagesHostServer::sendImage(QIODevice * device, QByteArray id)
+void ImagesHostServer::sendImage(QIODevice * device, const QByteArray & id)
 {
     //qDebug() << "Reading image of given ID";
 
@@ -124,8 +129,6 @@ void ImagesHostServer::sendImage(QIODevice * device, QByteArray id)
         m_data.remove(id);
         m_sem.release();
 
-        //qDebug() << image.size();
-
         QImageWriter writer(device, "png");
         writer.write(image);
     }
@@ -134,6 +137,18 @@ void ImagesHostServer::sendImage(QIODevice * device, QByteArray id)
         //qDebug() << "Cannot find image of given ID";
         m_sem.release();
     }
+}
+
+void ImagesHostServer::removeCache(const QByteArray & id)
+{
+    m_sem.acquire();
+
+    if (m_cached.contains(id))
+        m_cached.remove(id);
+    if (m_data.contains(id))
+        m_data.remove(id);
+
+    m_sem.release();
 }
 
 QByteArray ImagesHostServer::hostImage(const QImage & image)

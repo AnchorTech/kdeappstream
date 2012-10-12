@@ -205,7 +205,7 @@ void JSONBuilder::image(const QByteArray & id, const QPointF & p)
 {
     saveStatePriv();
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"").append(id.data())
+          .append(",\"data\":\"add?i=").append(id.data())
           .append("\",\"x\":").append(QString::number(p.x()).toAscii())
           .append(",\"y\":").append(QString::number(p.y()).toAscii())
           .append("},");
@@ -299,7 +299,7 @@ void JSONBuilder::pixmap(const QByteArray & id, const QPointF & p)
     saveStatePriv();
 
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"").append(id.data())
+          .append(",\"data\":\"add?i=").append(id.data())
           .append("\",\"x\":").append(QString::number(p.x()).toAscii())
           .append(",\"y\":").append(QString::number(p.y()).toAscii())
           .append("},");

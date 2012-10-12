@@ -37,7 +37,8 @@ class ImagesHostServer : public QTcpServer
 
         virtual void incomingConnection(int socket);
         void sendStatus(QIODevice * device, int status);
-        void sendImage(QIODevice * device, QByteArray id);
+        void sendImage(QIODevice * device, const QByteArray & id);
+        void removeCache(const QByteArray & id);
 
     private slots:
 
