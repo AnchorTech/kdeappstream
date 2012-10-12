@@ -168,7 +168,7 @@ void EventDispather::parse(const QString & message)
 
         int key = value.property("key").toInteger();
         int modifiers = value.property("modifiers").toInteger();
-        QString text = value.property("text").toString();
+        QString text = QString::fromUtf8(value.property("text").toVariant().toByteArray());
         bool autorep = value.property("autorep").toBool();
         int count = value.property("count").toInteger();
 

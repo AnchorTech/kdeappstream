@@ -398,7 +398,7 @@ void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
     saveStatePriv();
     buffer.append("{\"t\":\"text\"")
             .append(",\"data\":{")
-            .append("\"text\":\"").append(textItem.text().replace("\\", "\\\\").replace("\"", "\\\"").toAscii()).append("\"")
+            .append("\"text\":\"").append(textItem.text().replace("\\", "\\\\").replace("\"", "\\\"").toUtf8()).append("\"")
             .append(",\"ascent\":").append(QString::number(textItem.ascent()).toAscii())
             .append(",\"descent\":").append(QString::number(textItem.descent()).toAscii())
             .append(",\"x\":").append(QString::number(p.x()).toAscii())
