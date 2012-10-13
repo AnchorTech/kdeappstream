@@ -17,6 +17,7 @@
 #include <QToolButton>
 #include <QGradient>
 #include <QPainter>
+#include <QListWidget>
 #include <QGraphicsView>
 
 using namespace KAppStream;
@@ -48,17 +49,22 @@ void JSONBuilder::beginRender(QWidget * widget, const QRect & rect)
 
     context << widget;
 
+    QWidget * parent = widget->parentWidget();
     QSize s = widget->size();
     QPoint p = widget->pos();
-    if (!widget->parentWidget())
+    if (!parent)
         p = QPoint(0,0);
     else if (widget->windowType() & Qt::Window)
-        p = widget->parentWidget()->mapFromGlobal(p);
+        p = parent->mapFromGlobal(p);
 
     buffer.append("{\"command\":\"draw\"")
           .append(",\"widget\":{")
-          .append("\"id\":").append(QString::number((long long)widget).toAscii())
-          .append(",\"name\":\"").append(widget->metaObject()->className()).append("\"")
+          .append("\"id\":").append(QString::number((long long)widget).toAscii());
+
+    if (parent)
+        buffer.append(",\"z\":").append(QString::number(parent->children().indexOf(widget)).toAscii());
+
+    buffer.append(",\"name\":\"").append(widget->metaObject()->className()).append("\"")
           .append(",\"flags\":").append(QString::number(widget->windowFlags()).toAscii())
           .append(",\"x\":").append(QString::number( p.x() ).toAscii())
           .append(",\"y\":").append(QString::number( p.y() ).toAscii())
@@ -157,6 +163,35 @@ void JSONBuilder::titleChange(QWidget * widget, const QString & title)
     this->finish();
 }
 
+void JSONBuilder::move(QWidget * widget, const QPoint & pos)
+{
+    if (!_sem.tryAcquire())
+        return;
+    if (dynamic_cast<QListWidget*>(widget->parentWidget()))
+        qDebug() << widget->pos();
+    buffer.append("{\"command\":\"move\"")
+          .append(",\"id\":").append(QString::number((long long)widget).toAscii())
+          .append(",\"x\":").append(QString::number(pos.x()).toAscii())
+          .append(",\"y\":").append(QString::number(pos.y()).toAscii())
+          .append("},");
+    _sem.release();
+    this->finish();
+}
+
+void JSONBuilder::ZOrderChange(QWidget * widget)
+{
+    QWidget * parent = widget->parentWidget();
+    if (!parent || !_sem.tryAcquire())
+        return;
+
+    buffer.append("{\"command\":\"zorder\"")
+          .append(",\"id\":").append(QString::number((long long)widget).toAscii())
+          .append(",\"z\":").append(QString::number(parent->children().indexOf(widget)).toAscii())
+          .append("},");
+    _sem.release();
+    this->finish();
+}
+
 void JSONBuilder::finish()
 {
     emit readyRead();
@@ -217,7 +252,7 @@ void JSONBuilder::image(const QByteArray & id, const QPointF & p)
 {
     saveStatePriv();
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"add?i=").append(id.data())
+          .append(",\"data\":\"").append(id.data())
           .append("\",\"x\":").append(QString::number(p.x()).toAscii())
           .append(",\"y\":").append(QString::number(p.y()).toAscii())
           .append("},");
@@ -313,7 +348,7 @@ void JSONBuilder::pixmap(const QByteArray & id, const QPointF & p)
     saveStatePriv();
 
     buffer.append("{\"t\":\"image\"")
-          .append(",\"data\":\"add?i=").append(id.data())
+          .append(",\"data\":\"").append(id.data())
           .append("\",\"x\":").append(QString::number(p.x()).toAscii())
           .append(",\"y\":").append(QString::number(p.y()).toAscii())
           .append("},");
@@ -424,12 +459,31 @@ void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
 
 void JSONBuilder::tiledPixmap(const QRectF & r, const QPixmap & pm, const QPointF & p)
 {
+    //    QTransform t = cur_state.transform;
+    //    cur_state.transform = QTransform();
+    //    cur_state.state |= QPaintEngine::DirtyTransform;
+    //    saveStatePriv();
+
+    //    QByteArray id = ImagesHostServer::instance()->hostImage(pm.toImage());
+    //    buffer.append("{\"t\":\"pixmap\"")
+    //          .append(",\"data\":\"").append(id.data())
+    //          .append("\",\"x\":").append(QString::number(p.x()).toAscii())
+    //          .append(",\"y\":").append(QString::number(p.y()).toAscii())
+    //          .append(",\"r\":{\"x\":").append(QString::number(r.x()).toAscii())
+    //          .append(",\"y\":").append(QString::number(r.y()).toAscii())
+    //          .append(",\"w\":").append(QString::number(r.width()).toAscii())
+    //          .append(",\"h\":").append(QString::number(r.height()).toAscii())
+    //          .append("}},");
+
+    //    cur_state.transform = t;
+    //    cur_state.state |= QPaintEngine::DirtyTransform;
+    //    saveStatePriv();
+
     QPixmap pixmap(r.size().toSize());
     pixmap.fill(Qt::transparent);
     QPainter painter(&pixmap);
     painter.drawTiledPixmap(QRectF(QPointF(), r.size()), pm, p);
     painter.end();
-
     this->image(pixmap.toImage(), r.topLeft());
 }
 

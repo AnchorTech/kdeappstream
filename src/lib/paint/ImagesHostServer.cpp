@@ -118,8 +118,6 @@ void ImagesHostServer::sendStatus(QIODevice * device, int status)
 
 void ImagesHostServer::sendImage(QIODevice * device, const QByteArray & id)
 {
-    //qDebug() << "Reading image of given ID";
-
     m_sem.acquire();
 
     if (m_data.contains(id))
@@ -133,7 +131,6 @@ void ImagesHostServer::sendImage(QIODevice * device, const QByteArray & id)
     }
     else
     {
-        //qDebug() << "Cannot find image of given ID";
         m_sem.release();
     }
 }

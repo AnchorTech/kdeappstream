@@ -71,6 +71,8 @@ namespace KAppStream
             void hideWidget(QWidget * widget);
             void showWidget(QWidget * widget);
             void titleChange(QWidget * widget, const QString & title);
+            void move(QWidget * widget, const QPoint & pos);
+            void ZOrderChange(QWidget * widget);
 
             void finish();
             void flush(QWsSocket * device);

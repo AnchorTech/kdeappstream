@@ -98,6 +98,8 @@ void WebRenderer::render()
 //            }
 //        }
 
+//        qDebug() << w.w << w.w->graphicsProxyWidget() << w.w->parentWidget() << w.w->focusProxy();
+
         JSONBuilder::instance()->beginRender(w.w, w.rect);
         w.w->render(pd, w.rect.topLeft(), QRegion(w.rect), 0);
         JSONBuilder::instance()->endRender();

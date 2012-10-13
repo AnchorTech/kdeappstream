@@ -110,10 +110,12 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                     {
                         WidgetsCollection::instance()->add(cw);
                         JSONBuilder::instance()->addChild(cw, w);
+                        JSONBuilder::instance()->move(w, w->pos());
                     }
                 }
                 break;
             case QEvent::ChildPolished:
+                JSONBuilder::instance()->move(w, w->pos());
                 //qDebug() << "QEvent::ChildPolished" << (long long) recv;
                 break;
             case QEvent::ChildRemoved:
@@ -135,6 +137,8 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
             case QEvent::Close:
 //                qDebug() << "QEvent::Close" << recv;
                 {
+                    QWidget * t;
+                    t->acceptDrops();
                     WidgetsCollection::instance()->remove(w);
                     WebRenderer::instance()->dequeue(w);
                 }
@@ -348,6 +352,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::Move:
                 //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Move" << recv;
+                {
+                    QMoveEvent * me = dynamic_cast<QMoveEvent*>(e);
+                    JSONBuilder::instance()->move(w, me->pos());
+                }
                 break;
             case QEvent::Paint:
 //                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Paint" << recv;
@@ -499,6 +507,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::ZOrderChange:
                 //qDebug() << "QEvent::ZOrderChange" << recv;
+                JSONBuilder::instance()->ZOrderChange(w);
                 break;
             case QEvent::KeyboardLayoutChange:
                 //qDebug() << "QEvent::KeyboardLayoutChange" << recv;
