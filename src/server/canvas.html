@@ -455,14 +455,12 @@ QtLogic.prototype = {
         canvasElement.attr('width', data.new.w);
     },
     drawCommand:function (data) {
-        widgety = this.widgets;
         var widgetData = data.widget;
         var region = widgetData.r;
         var widgetId = widgetData.id;
         var widget = this.getWidget(widgetId);
         if (widget.main) {
             widget.canvas.addClass("Main");
-
         }
 
         this.updateWidget(widgetId, { // store
@@ -472,22 +470,20 @@ QtLogic.prototype = {
             y:widgetData.y,
             name:widgetData.name
         });
+
         current_widget = widget;
         var renders = data.render;
         var translation = this.calculateTranslation(widget);
         widget.canvas.css({left:translation.x, top:translation.y});
         var canvasDrawer = widget.canvasDrawer;
-        canvasDrawer.ctx.save();
 
         canvasDrawer.setup(region, translation);
-        canvasDrawer.clearWidget(region, widget);
         //canvasDrawer.setupBrush({style: 0}); // Clear brush
         //canvasDrawer.setupPen('none'); // Clear brush
         $.each(renders, function (_, value) {
             canvasDrawer.draw(value, translation);
         });
-        canvasDrawer.ctx.restore();
-
+        canvasDrawer.flush();
     },
     setTitle:function (data) {
         var widgetId = data.id;
@@ -828,6 +824,18 @@ QtLogic.prototype = {
     }
 };
 
+QtLogic.getTempCanvas = function() {
+    var widget = {
+        id:null,
+        parent:null,
+        children:[]
+    };
+    widget.canvas = $('<canvas width=0 height=0></canvas>').data('widget', widget);
+    widget.children_container = $("<div class='Children'></div>");
+    widget.canvasDrawer = new CanvasDrawer(widget.canvas);
+    return widget;
+}
+
 function parseMouseEvent(evt, widget) {
     var data = {};
     switch (evt.which) {
@@ -1016,24 +1024,24 @@ function parseKeyEvent(evt) {
 function CanvasDrawer(canvas) {
     this.canvas = canvas[0];
     this.ctx = this.canvas.getContext("2d");
+    // temporary (off-screen) canvas
+    this.t_canvas = document.createElement('canvas');
+    this.t_ctx = this.t_canvas.getContext("2d");
     this.currentTranslation = {x:0, y:0};
 }
 
 CanvasDrawer.prototype = {
     setup:function (region, translation) {
         var r = region;
-        //this.ctx.rect(translation.x, translation.y, r.w, r.h);
-        //this.ctx.clip();
-        //this.ctx.translate(translation.x, translation.y);
-    },
-    clearWidget:function (region, widget) {
-        var c = widget.canvas;
-        this.ctx.clearRect(region.x, region.y, region.w, region.h);
-        this.ctx.setTransform(1,0,0,1,0,0);
+        this.t_canvas.width = r.w;
+        this.t_canvas.height = r.h;
+        this.currentTranslation = {x:-r.x, y:-r.y};
+        this.setupTransform([[1,0,0],[0,1,0],[0,0,1]]);
+        this.region = r;
+        this.saveState();
     },
     draw:function (data, translation) {
-        var ctx = this.ctx;
-
+        var ctx = this.t_ctx;
         switch (data.t) {
             case "image":
                 this.drawImage(data);
@@ -1072,11 +1080,11 @@ CanvasDrawer.prototype = {
     drawImage:function (data) {
         var img = new Image();
         img.src = data.data;
-        this.ctx.drawImage(img, data.x, data.y);
+        this.t_ctx.drawImage(img, data.x, data.y);
     },
     drawRect:function (data) {
-        this.ctx.lineWidth = 0.2;
-        this.ctx.fillRect(data.x, data.y, data.w, data.h);
+        this.t_ctx.lineWidth = 0.2;
+        this.t_ctx.fillRect(data.x, data.y, data.w, data.h);
         //this.ctx.strokeRect(data.x, data.y, data.w, data.h);
     },
     drawState:function (data) {
@@ -1104,16 +1112,23 @@ CanvasDrawer.prototype = {
         var brush = data.data.brush;
         if (brush)
             this.setupBrush(brush);
+        this.brush = brush;
+        this.bbrush = bbrush;
+        this.opacity = opacity;
+        this.composition = composition;
+        this.font = font;
+        this.clip = clip;
+        this.transform = transform;
+        this.pen = pen;
     },
     drawTtiledPixmap:function (data) {
-
         var img = new Image();
         img.src = data.pixmap;
-        var ctx = this.ctx;
+        var ctx = this.t_ctx;
         ctx.drawImage(img, data.rect.x, data.rect.y, data.rect.w, data.rect.h);
     },
     drawText:function (data) {
-        var ctx = this.ctx;
+        var ctx = this.t_ctx;
         var fdata = data.data;
         //ctx.font = fdata.font;
         ctx.font = '9pt Helvetica';
@@ -1123,14 +1138,14 @@ CanvasDrawer.prototype = {
         ctx.fillStyle = fillOld;
     },
     drawLine:function (data) {
-        var ctx = this.ctx;
+        var ctx = this.t_ctx;
         ctx.beginPath();
         ctx.moveTo(data.xs, data.ys);
         ctx.lineTo(data.xe, data.ye);
         ctx.stroke();
     },
     drawPath:function (data) {
-        var ctx = this.ctx;
+        var ctx = this.t_ctx;
         ctx.beginPath();
         $.each(data.data, function (_, v) {
             var type = v.t;
@@ -1154,7 +1169,7 @@ CanvasDrawer.prototype = {
         ctx.stroke();
     },
     drawEllipse:function (data) {
-        var ctx = this.ctx;
+        var ctx = this.t_ctx;
         var x = data.x, y = data.y, w = data.w, h = data.h;
         var kappa = .5522848;
         var ox = (w / 2) * kappa, // control point offset horizontal
@@ -1174,13 +1189,13 @@ CanvasDrawer.prototype = {
         ctx.stroke();
     },
     drawPoints:function (data) {
-        var ctx = this.ctx;
+        var ctx = this.t_ctx;
         $.each(data, function (_, d) {
             ctx.strokeRect(d[0], d[1], 1, 1);
         });
     },
     drawPolygon:function (data) {
-        var ctx = this.ctx;
+        var ctx = this.t_ctx;
         $.each(data.data, function (i, d) {
             if (i == 0) {
                 ctx.moveTo(d[0], d[1]);
@@ -1193,75 +1208,97 @@ CanvasDrawer.prototype = {
         ctx.stroke();
     },
     setupBrush:function (brush) {
-        var ctx = this.ctx;
-        switch (brush.style) {
-            case 0: // Qt::NoBrush
-                ctx.fillStyle = "rgba(0,0,0,0)"; // no filling
-                break;
-            case 1: // Qt::SolidPattern
-                ctx.fillStyle = brush.color;
-                break;
-            case 15: // Qt::LinearGradientPattern
-                var gradient = brush.gradient;
-                ctx.fillStyle = CanvasHelper.createGradient(ctx, gradient, 15);
-                break;
-            default:
-                console.log('Unknown style: ' + brush.style);
+        if (brush) {
+            var ctx = this.t_ctx;
+            switch (brush.style) {
+                case 0: // Qt::NoBrush
+                    ctx.fillStyle = "rgba(0,0,0,0)"; // no filling
+                    break;
+                case 1: // Qt::SolidPattern
+                    ctx.fillStyle = brush.color;
+                    break;
+                case 15: // Qt::LinearGradientPattern
+                    var gradient = brush.gradient;
+                    ctx.fillStyle = CanvasHelper.createGradient(ctx, gradient, 15);
+                    break;
+                default:
+                    console.log('Unknown style: ' + brush.style);
+            }
         }
     },
     setupPen:function (pen) {
-        var ctx = this.ctx;
-        if (pen.color) {
-            ctx.strokeStyle = pen.color;
+        if (pen) {
+            var ctx = this.t_ctx;
+            if (pen.color) {
+                ctx.strokeStyle = pen.color;
+            }
+            if (pen.brush) {
+                ctx.strokeStyle = CanvasHelper.createGradient(ctx, pen.brush.gradient, pen.brush.style);
+            }
+            if (pen.dash && pen.dash.pattern.length != 0) {
+                // TODO
+            }
+            if (pen === "none" || isEmpty(pen)) {
+                ctx.strokeStyle = "rgba(0,0,0,0)";
+            }
+            ctx.lineWidth = pen.width;
+            ctx.lineJoin = pen.join;
+            ctx.miterLimit = pen.miter;
         }
-        if (pen.brush) {
-            ctx.strokeStyle = CanvasHelper.createGradient(ctx, pen.brush.gradient, pen.brush.style);
-        }
-        if (pen.dash && pen.dash.pattern.length != 0) {
-            // TODO
-        }
-        if (pen === "none" || isEmpty(pen)) {
-            ctx.strokeStyle = "rgba(0,0,0,0)";
-        }
-        ctx.lineWidth = pen.width;
-        ctx.lineJoin = pen.join;
-        ctx.miterLimit = pen.miter;
     },
     setupTransform:function (transform) {
-        this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0] + this.currentTranslation.x, transform[2][1] + this.currentTranslation.y);
-        //this.ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0], transform[2][1]);
+        if (transform) {
+            this.t_ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0] + this.currentTranslation.x, transform[2][1] + this.currentTranslation.y);
+        }
     },
     setupClipping:function (clip) {
-        //TODO
+        if (jQuery.isEmptyObject(clip))
+            return;
+        this.restoreState();
+        this.saveState();
         return;
-        var ctx = this.ctx;
+        var ctx = this.t_ctx;
         var self = this;
-        ctx.save();
-        if (!jQuery.isEmptyObject(clip)) {
-            ctx.beginPath();
-            $.each(clip.data, function (_, v) {
-                var type = v.t;
-                var points = v.p;
-                switch (type) {
-                    case 0:
-                        ctx.moveTo(points[0][0] + self.currentTranslation.x, points[0][1] + self.currentTranslation.y);
-                        break;
-                    case 1:
-                        ctx.lineTo(points[0][0] + self.currentTranslation.x, points[0][1] + self.currentTranslation.y);
-                        break;
-                    case 2:
-                        if (points.length == 2) {
-                            ctx.quadraticCurveTo(points[0][0], points[0][1], points[1][0], points[1][1]);
-                        } else { // 3
-                            ctx.bezierCurveTo(points[0][0], points[0][1], points[1][0], points[1][1], points[2][0], points[2][1]);
-                        }
-                }
-            });
-            ctx.closePath();
-            ctx.clip();
-        } else {
-            ctx.restore();
-        }
+        ctx.beginPath();
+        $.each(clip.data, function (_, v) {
+            var type = v.t;
+            var points = v.p;
+            switch (type) {
+                case 0:
+                    ctx.moveTo(points[0][0] + self.currentTranslation.x, points[0][1] + self.currentTranslation.y);
+                    break;
+                case 1:
+                    ctx.lineTo(points[0][0] + self.currentTranslation.x, points[0][1] + self.currentTranslation.y);
+                    break;
+                case 2:
+                    if (points.length == 2) {
+                        aticCurveTo(points[0][0], points[0][1], points[1][0], points[1][1]);
+                    } else { // 3
+                        ctx.bezierCurveTo(points[0][0], points[0][1], points[1][0], points[1][1], points[2][0], points[2][1]);
+                    }
+            }
+        });
+        ctx.closePath();
+        ctx.clip();
+    },
+    restoreState:function () {
+        this.t_ctx.restore();
+        this.setupBrush(this.brush);
+        this.setupPen(this.pen);
+        this.setupTransform(this.transform);
+    },
+    saveState:function () {
+        this.t_ctx.save();
+    },
+    flush:function () {
+        var region = this.region;
+        var canvas = this.t_canvas;
+        this.ctx.clearRect(region.x, region.y, region.w, region.h);
+        this.ctx.drawImage(canvas, region.x, region.y);
+        this.t_ctx.clearRect(0, 0, this.t_ctx.width, this.t_ctx.height);
+        this.t_ctx.width = 0;
+        this.t_ctx.height = 0;
+        this.region = {};
     }
 };
 
