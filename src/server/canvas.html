@@ -1028,16 +1028,29 @@ function CanvasDrawer(canvas) {
     this.t_canvas = document.createElement('canvas');
     this.t_ctx = this.t_canvas.getContext("2d");
     this.currentTranslation = {x:0, y:0};
+
 }
 
 CanvasDrawer.prototype = {
     setup:function (region, translation) {
         var r = region;
+
+        this.bbrush = {style:0};
+        this.opacity = 1.0;
+        this.composition = {};
+        this.font = '9pt Helvetica';
+        this.clip = {};
+        this.transform = [[1,0,0],[0,1,0],[0,0,1]];
+        this.pen = {};
+        this.brush = {style:0};
+
         this.t_canvas.width = r.w;
         this.t_canvas.height = r.h;
         this.currentTranslation = {x:-r.x, y:-r.y};
-        this.setupTransform([[1,0,0],[0,1,0],[0,0,1]]);
+        this.setupTransform(this.transform);
         this.region = r;
+        this.t_ctx.lineWidth = 0;
+        this.t_ctx.strokeStyle = "rgba(0,0,0,0)";
         this.saveState();
     },
     draw:function (data, translation) {
@@ -1083,43 +1096,57 @@ CanvasDrawer.prototype = {
         this.t_ctx.drawImage(img, data.x, data.y);
     },
     drawRect:function (data) {
-        this.t_ctx.lineWidth = 0.2;
         this.t_ctx.fillRect(data.x, data.y, data.w, data.h);
-        //this.ctx.strokeRect(data.x, data.y, data.w, data.h);
+        //this.t_ctx.strokeRect(data.x, data.y, data.w, data.h);
     },
     drawState:function (data) {
         var bbrush = data.data.bbrush;
-        if (bbrush)
+        if (bbrush) {
             console.log(bbrush);
+            this.bbrush = bbrush;
+        }
+
         var opacity = data.data.opacity;
-        if (opacity)
+        if (opacity) {
             console.log('Opacity: ' + opacity);
+            this.opacity = opacity;
+        }
+
         var composition = data.data.composition;
-        if (composition)
+        if (composition) {
             console.log('composition: ' + composition);
+            this.composition = composition;
+        }
+
         var font = data.data.font;
-        if (font)
-            console.log('font: ' + font);
+        if (font) {
+            this.font = font;
+            this.setupFont(font);
+        }
+
         var clip = data.data.clip;
-        if (clip)
+        if (clip) {
             this.setupClipping(clip);
+            this.clip = clip;
+        }
+
         var transform = data.data.transform;
-        if (transform)
+        if (transform) {
             this.setupTransform(transform);
+            this.transform = transform;
+        }
+
         var pen = data.data.pen;
-        if (pen)
+        if (pen) {
+            this.pen = pen;
             this.setupPen(pen);
+        }
+
         var brush = data.data.brush;
-        if (brush)
+        if (brush) {
+            this.brush = brush;
             this.setupBrush(brush);
-        this.brush = brush;
-        this.bbrush = bbrush;
-        this.opacity = opacity;
-        this.composition = composition;
-        this.font = font;
-        this.clip = clip;
-        this.transform = transform;
-        this.pen = pen;
+        }
     },
     drawTtiledPixmap:function (data) {
         var img = new Image();
@@ -1129,9 +1156,10 @@ CanvasDrawer.prototype = {
     },
     drawText:function (data) {
         var ctx = this.t_ctx;
+        debug(data);
+        debug(this.pen);
         var fdata = data.data;
         //ctx.font = fdata.font;
-        ctx.font = '9pt Helvetica';
         var fillOld = ctx.strokeStyle;
         ctx.fillStyle = ctx.strokeStyle;
         ctx.fillText(CanvasHelper.decodeUtf8(fdata.text), fdata.x, fdata.y);
@@ -1139,13 +1167,22 @@ CanvasDrawer.prototype = {
     },
     drawLine:function (data) {
         var ctx = this.t_ctx;
+        debug(data);
+        debug(this.pen);
+        var t_transform = this.transform;
+        t_transform[2][0] = 0;
+        t_transform[2][1] = 0;
+        this.setupTransform(t_transform);
         ctx.beginPath();
         ctx.moveTo(data.xs, data.ys);
         ctx.lineTo(data.xe, data.ye);
         ctx.stroke();
+        this.setupTransform(this.transform);
     },
     drawPath:function (data) {
         var ctx = this.t_ctx;
+        debug(data);
+        debug(this.pen);
         ctx.beginPath();
         $.each(data.data, function (_, v) {
             var type = v.t;
@@ -1170,6 +1207,12 @@ CanvasDrawer.prototype = {
     },
     drawEllipse:function (data) {
         var ctx = this.t_ctx;
+        debug(data);
+        debug(this.pen);
+        var t_transform = this.transform;
+        t_transform[2][0] = 0;
+        t_transform[2][1] = 0;
+        this.setupTransform(t_transform);
         var x = data.x, y = data.y, w = data.w, h = data.h;
         var kappa = .5522848;
         var ox = (w / 2) * kappa, // control point offset horizontal
@@ -1187,15 +1230,20 @@ CanvasDrawer.prototype = {
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
+        this.setupTransform(this.transform);
     },
     drawPoints:function (data) {
         var ctx = this.t_ctx;
+        debug('drawPoints');
+        debug(this.pen);
         $.each(data, function (_, d) {
             ctx.strokeRect(d[0], d[1], 1, 1);
         });
     },
     drawPolygon:function (data) {
         var ctx = this.t_ctx;
+        debug(data);
+        debug(this.pen);
         $.each(data.data, function (i, d) {
             if (i == 0) {
                 ctx.moveTo(d[0], d[1]);
@@ -1208,7 +1256,6 @@ CanvasDrawer.prototype = {
         ctx.stroke();
     },
     setupBrush:function (brush) {
-        if (brush) {
             var ctx = this.t_ctx;
             switch (brush.style) {
                 case 0: // Qt::NoBrush
@@ -1224,10 +1271,8 @@ CanvasDrawer.prototype = {
                 default:
                     console.log('Unknown style: ' + brush.style);
             }
-        }
     },
     setupPen:function (pen) {
-        if (pen) {
             var ctx = this.t_ctx;
             if (pen.color) {
                 ctx.strokeStyle = pen.color;
@@ -1236,7 +1281,14 @@ CanvasDrawer.prototype = {
                 ctx.strokeStyle = CanvasHelper.createGradient(ctx, pen.brush.gradient, pen.brush.style);
             }
             if (pen.dash && pen.dash.pattern.length != 0) {
-                // TODO
+                if (typeof ctx.mozDash == 'object')
+                    ctx.mozDash = pen.dash.pattern;
+                else if (typeof ctx.setLineDash == 'function')
+                    ctx.setLineDash(pen.dash.pattern);
+                if (typeof ctx.mozDashOffset == 'number')
+                    ctx.mozDashOffset = pen.dash.offset;
+                else if (typeof ctx.lineDashOffset == 'number')
+                    ctx.lineDashOffset = pen.dash.offset;
             }
             if (pen === "none" || isEmpty(pen)) {
                 ctx.strokeStyle = "rgba(0,0,0,0)";
@@ -1244,12 +1296,14 @@ CanvasDrawer.prototype = {
             ctx.lineWidth = pen.width;
             ctx.lineJoin = pen.join;
             ctx.miterLimit = pen.miter;
-        }
+            if (pen.cap)
+                ctx.lineCap = pen.cap;
+    },
+    setupFont:function (font) {
+        this.t_ctx.font = font;
     },
     setupTransform:function (transform) {
-        if (transform) {
             this.t_ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0] + this.currentTranslation.x, transform[2][1] + this.currentTranslation.y);
-        }
     },
     setupClipping:function (clip) {
         if (jQuery.isEmptyObject(clip))
@@ -1286,6 +1340,7 @@ CanvasDrawer.prototype = {
         this.setupBrush(this.brush);
         this.setupPen(this.pen);
         this.setupTransform(this.transform);
+        this.setupFont(this.font);
     },
     saveState:function () {
         this.t_ctx.save();
@@ -1293,6 +1348,7 @@ CanvasDrawer.prototype = {
     flush:function () {
         var region = this.region;
         var canvas = this.t_canvas;
+        this.restoreState();
         this.ctx.clearRect(region.x, region.y, region.w, region.h);
         this.ctx.drawImage(canvas, region.x, region.y);
         this.t_ctx.clearRect(0, 0, this.t_ctx.width, this.t_ctx.height);
@@ -1301,6 +1357,8 @@ CanvasDrawer.prototype = {
         this.region = {};
     }
 };
+
+CanvasDrawer.identityTransform = [[1,0,0],[0,1,0],[0,0,1]];
 
 CanvasHelper = function () {
 };

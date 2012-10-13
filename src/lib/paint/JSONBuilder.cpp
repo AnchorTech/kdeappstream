@@ -765,13 +765,14 @@ void JSONBuilder::pen(const QPen & p)
 
     if (p.style() != Qt::SolidLine)
     {
+        qreal w = p.widthF();
         buffer.append(",\"dash\":{");
         {
             buffer.append("\"offset\":").append(QString::number(p.dashOffset()));
             buffer.append(",\"pattern\":[");
             {
                 foreach (qreal d, p.dashPattern())
-                    buffer.append(QString::number(d)).append(',');
+                    buffer.append(QString::number(d * w)).append(',');
                 if (buffer[buffer.length()-1] == ',')
                     buffer.remove(buffer.length()-1, 1);
             }
@@ -780,7 +781,19 @@ void JSONBuilder::pen(const QPen & p)
         buffer.append("}");
     }
 
-    buffer.append(",\"cap\":").append(QString::number(p.capStyle()));
+    int cap = p.capStyle();
+    switch (cap)
+    {
+        case Qt::RoundCap:
+            buffer.append(",\"cap\":\"round\"");
+            break;
+        case Qt::SquareCap:
+            buffer.append(",\"cap\":\"square\"");
+            break;
+        default:
+            buffer.append(",\"cap\":\"butt\"");
+    }
+
     buffer.append(",\"join\":").append(QString::number(p.joinStyle()));
     if (p.joinStyle() == Qt::MiterJoin)
         buffer.append(",\"miter\":").append(QString::number(p.miterLimit()));
