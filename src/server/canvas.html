@@ -145,23 +145,11 @@
         z-index: 50;
     }
 
-    .CanvasContainer {
+    canvas {
         position: absolute;
         left: 0;
         right: 0;
     }
-
-    .Children {
-        display: block;
-        left: 0;
-        right: 0;
-    }
-
-    /*canvas {
-        position: absolute;
-        left: 0;
-        right: 0;
-    }*/
 
     canvas:not([data-name]) {
         display: none;
@@ -495,15 +483,15 @@ QtLogic.prototype = {
 
         current_widget = widget;
         var renders = data.render;
-        //var translation = this.calculateTranslation(widget);
-        //widget.canvas.css({left:translation.x, top:translation.y});
+        var translation = this.calculateTranslation(widget);
+        widget.canvas.css({left:translation.x, top:translation.y});
         var canvasDrawer = widget.canvasDrawer;
 
-        canvasDrawer.setup(region);
+        canvasDrawer.setup(region, translation);
         //canvasDrawer.setupBrush({style: 0}); // Clear brush
         //canvasDrawer.setupPen('none'); // Clear brush
         $.each(renders, function (_, value) {
-            canvasDrawer.draw(value);
+            canvasDrawer.draw(value, translation);
         });
         canvasDrawer.flush();
     },
@@ -545,10 +533,11 @@ QtLogic.prototype = {
             widget.canvas = $('<canvas width=0 height=0></canvas>')
                     .data('widget', widget);
             widget.children_container = $("<div class='Children'></div>");
-            widget.container = $("<div class='CanvasContainer'></div>");
-            widget.container.append(widget.canvas)
-                            .append(widget.children_container)
-                            .appendTo($('#widgets'));
+            $("<div class='CanvasContainer'></div>")
+                    .append(widget.canvas)
+                    .append(widget.children_container)
+                    .appendTo($('#widgets'));
+
             widget.canvasDrawer = new CanvasDrawer(widget.canvas);
         }
         return this.widgets[id];
@@ -557,13 +546,16 @@ QtLogic.prototype = {
         var widget = this.getWidget(id);
         $.extend(widget, data);
         var canvasElement = widget.canvas;
-        var containerElement = widget.container;
         if (canvasElement) {
             canvasElement.attr('data-name', data.name);
             if (canvasElement.attr('height') != data.h)
                 canvasElement.attr('height', data.h);
             if (canvasElement.attr('width') != data.w)
                 canvasElement.attr('width', data.w);
+            canvasElement.css({
+                left:data.x,
+                top:data.y
+            });
             if (canvasElement.hasClass("DialogCanvas")) {
                 widget.x = WINDOW_LT.x;
                 widget.y = WINDOW_LT.y;
@@ -581,12 +573,7 @@ QtLogic.prototype = {
                 widget.x = WINDOW_LT.x;
                 widget.y = WINDOW_LT.y;
             }
-        }
-        if (containerElement) {
-            containerElement.css({
-                left:data.x,
-                top:data.y
-            });
+        } else {
         }
     },
     createDialog:function (widgetId, flags) {
@@ -705,19 +692,17 @@ QtLogic.prototype = {
                     var len = array.length;
                     for (var i = 0; i < len; i++) {
                         for (var j = 0; j <= i; j++) {
-                            if (widget.canvas) {
-                                widget = array[j];
-                                var eventData = parseMouseEvent(evt, widget.canvas);
-                                wsConnector.sendEvent({
-                                    command:"mouse",
-                                    type:"enter",
-                                    id:widget.id,
-                                    x:eventData.x,
-                                    y:eventData.y
-                                });
-                                widget.mousePositionX = eventData.x;
-                                widget.mousePositionY = eventData.y;
-                            }
+                            widget = array[j];
+                            var eventData = parseMouseEvent(evt, widget.canvas);
+                            wsConnector.sendEvent({
+                                command:"mouse",
+                                type:"enter",
+                                id:widget.id,
+                                x:eventData.x,
+                                y:eventData.y
+                            });
+                            widget.mousePositionX = eventData.x;
+                            widget.mousePositionY = eventData.y;
                         }
                     }
                 })
@@ -734,18 +719,16 @@ QtLogic.prototype = {
                     for (var i = 0; i < len; i++) {
                         for (var j = 0; j <= i; j++) {
                             widget = array[j];
-                            if (widget.canvas) {
-                                var eventData = parseMouseEvent(evt, widget.canvas);
-                                wsConnector.sendEvent({
-                                    command:"mouse",
-                                    type:"leave",
-                                    id:widget.id,
-                                    x:eventData.x,
-                                    y:eventData.y
-                                });
-                                widget.mousePositionX = undefined;
-                                widget.mousePositionY = undefined;
-                            }
+                            var eventData = parseMouseEvent(evt, widget.canvas);
+                            wsConnector.sendEvent({
+                                command:"mouse",
+                                type:"leave",
+                                id:widget.id,
+                                x:eventData.x,
+                                y:eventData.y
+                            });
+                            widget.mousePositionX = undefined;
+                            widget.mousePositionY = undefined;
                         }
                     }
                 })
@@ -1065,8 +1048,9 @@ function CanvasDrawer(canvas) {
 }
 
 CanvasDrawer.prototype = {
-    setup:function (region) {
+    setup:function (region, translation) {
         var r = region;
+
         this.bbrush = {style:0};
         this.opacity = 1.0;
         this.composition = {};
@@ -1085,7 +1069,7 @@ CanvasDrawer.prototype = {
         this.t_ctx.strokeStyle = "rgba(0,0,0,0)";
         this.saveState();
     },
-    draw:function (data) {
+    draw:function (data, translation) {
         var ctx = this.t_ctx;
         switch (data.t) {
             case "image":
