@@ -145,11 +145,23 @@
         z-index: 50;
     }
 
-    canvas {
+    .CanvasContainer {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .Content {
+        position: absolute;
+        left: 5;
+        top: 20;
+    }
+
+    /*canvas {
         position: absolute;
         left: 0;
         right: 0;
-    }
+    }*/
 
     canvas:not([data-name]) {
         display: none;
@@ -483,15 +495,13 @@ QtLogic.prototype = {
 
         current_widget = widget;
         var renders = data.render;
-        var translation = this.calculateTranslation(widget);
-        widget.canvas.css({left:translation.x, top:translation.y});
         var canvasDrawer = widget.canvasDrawer;
 
-        canvasDrawer.setup(region, translation);
+        canvasDrawer.setup(region);
         //canvasDrawer.setupBrush({style: 0}); // Clear brush
         //canvasDrawer.setupPen('none'); // Clear brush
         $.each(renders, function (_, value) {
-            canvasDrawer.draw(value, translation);
+            canvasDrawer.draw(value);
         });
         canvasDrawer.flush();
     },
@@ -514,12 +524,10 @@ QtLogic.prototype = {
     setPosition:function (data) {
         var widget = this.getWidget(data.id);
         if (widget) {
-            widget.canvas.css({
+            widget.container.css({
                 left:data.x,
                 top:data.y
             });
-            var translation = this.calculateTranslation(widget);
-            widget.canvas.css({left:translation.x, top:translation.y});
         }
     },
     getWidget:function (id) {
@@ -533,10 +541,10 @@ QtLogic.prototype = {
             widget.canvas = $('<canvas width=0 height=0></canvas>')
                     .data('widget', widget);
             widget.children_container = $("<div class='Children'></div>");
-            $("<div class='CanvasContainer'></div>")
-                    .append(widget.canvas)
-                    .append(widget.children_container)
-                    .appendTo($('#widgets'));
+            widget.container = $("<div class='CanvasContainer'></div>");
+            widget.container.append(widget.canvas)
+                            .append(widget.children_container)
+                            .appendTo($('#widgets'));
 
             widget.canvasDrawer = new CanvasDrawer(widget.canvas);
         }
@@ -546,13 +554,14 @@ QtLogic.prototype = {
         var widget = this.getWidget(id);
         $.extend(widget, data);
         var canvasElement = widget.canvas;
-        if (canvasElement) {
+        var containerElement = widget.container;
+        if (canvasElement && containerElement) {
             canvasElement.attr('data-name', data.name);
             if (canvasElement.attr('height') != data.h)
                 canvasElement.attr('height', data.h);
             if (canvasElement.attr('width') != data.w)
                 canvasElement.attr('width', data.w);
-            canvasElement.css({
+            containerElement.css({
                 left:data.x,
                 top:data.y
             });
@@ -591,6 +600,7 @@ QtLogic.prototype = {
                 '<div class="MaxButton"></div>' +
                 '<div class="ResButton"></div>' +
                 '<div class="XButton"></div>' +
+                '<div class="Content"></div>' +
                 '</div>')
                 .appendTo($('#dialogs'))
                 .draggable({
@@ -621,11 +631,13 @@ QtLogic.prototype = {
                 ghost:true
             });
         }
+        debug(container);
+        debug(container.children('.Content'));
         container.attr('data-flags', flags);
         widget.canvas
                 .addClass("DialogCanvas")
                 .parent()
-                .detach().appendTo(container);
+                .detach().appendTo(container.children('.Content'));
     },
     addWidgetChild:function (id, childId, flags, name) {
         var widget = this.getWidget(id);
@@ -1048,7 +1060,7 @@ function CanvasDrawer(canvas) {
 }
 
 CanvasDrawer.prototype = {
-    setup:function (region, translation) {
+    setup:function (region) {
         var r = region;
 
         this.bbrush = {style:0};
@@ -1069,7 +1081,7 @@ CanvasDrawer.prototype = {
         this.t_ctx.strokeStyle = "rgba(0,0,0,0)";
         this.saveState();
     },
-    draw:function (data, translation) {
+    draw:function (data) {
         var ctx = this.t_ctx;
         switch (data.t) {
             case "image":
