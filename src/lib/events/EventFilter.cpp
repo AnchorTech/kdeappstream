@@ -137,8 +137,6 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
             case QEvent::Close:
 //                qDebug() << "QEvent::Close" << recv;
                 {
-                    QWidget * t;
-                    t->acceptDrops();
                     WidgetsCollection::instance()->remove(w);
                     WebRenderer::instance()->dequeue(w);
                 }

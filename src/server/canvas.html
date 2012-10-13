@@ -14,7 +14,7 @@
     }
 
     .Dialog {
-        position: relative;
+        position: absolute;
         background-color: gray;
     }
 
@@ -151,7 +151,7 @@
         top: 0;
     }
 
-    .Content {
+    .DialogRoot {
         position: absolute;
         left: 5;
         top: 20;
@@ -523,8 +523,9 @@ QtLogic.prototype = {
     },
     setPosition:function (data) {
         var widget = this.getWidget(data.id);
-        if (widget) {
-            widget.container.css({
+        var containerElement = widget.container;
+        if (widget && !containerElement.hasClass('DialogRoot')) {
+            containerElement.css({
                 left:data.x,
                 top:data.y
             });
@@ -561,10 +562,12 @@ QtLogic.prototype = {
                 canvasElement.attr('height', data.h);
             if (canvasElement.attr('width') != data.w)
                 canvasElement.attr('width', data.w);
-            containerElement.css({
-                left:data.x,
-                top:data.y
-            });
+            if (!containerElement.hasClass('DialogRoot')) {
+                containerElement.css({
+                    left:data.x,
+                    top:data.y
+                });
+            }
             if (canvasElement.hasClass("DialogCanvas")) {
                 widget.x = WINDOW_LT.x;
                 widget.y = WINDOW_LT.y;
@@ -600,7 +603,6 @@ QtLogic.prototype = {
                 '<div class="MaxButton"></div>' +
                 '<div class="ResButton"></div>' +
                 '<div class="XButton"></div>' +
-                '<div class="Content"></div>' +
                 '</div>')
                 .appendTo($('#dialogs'))
                 .draggable({
@@ -631,13 +633,12 @@ QtLogic.prototype = {
                 ghost:true
             });
         }
-        debug(container);
-        debug(container.children('.Content'));
         container.attr('data-flags', flags);
         widget.canvas
                 .addClass("DialogCanvas")
                 .parent()
-                .detach().appendTo(container.children('.Content'));
+                .addClass("DialogRoot")
+                .detach().appendTo(container);
     },
     addWidgetChild:function (id, childId, flags, name) {
         var widget = this.getWidget(id);
