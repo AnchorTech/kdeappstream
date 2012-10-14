@@ -492,14 +492,19 @@ QtLogic.prototype = {
         var canvas = this.widgets[data.id].canvas;
         canvas.show();
         if (canvas.hasClass("DialogCanvas")) {
-            canvas.parent().show();
+            canvas.parents('.Dialog')
+                    .removeClass("Hidden")
+                    .show();
         }
     },
     hideElement:function (data) {
+        console.log(data);
         var canvas = this.widgets[data.id].canvas;
         canvas.hide();
         if (canvas.hasClass("DialogCanvas")) {
-            canvas.parent().parent().hide();
+            canvas.parents('.Dialog')
+                    .addClass("Hidden")
+                    .hide();
         }
     },
     resizeCommand:function (data) {
@@ -544,7 +549,7 @@ QtLogic.prototype = {
             var p = widget.canvas.parent();
             var pp = p.parent();
             var c = pp.children('div.Bar');
-            c.html(title);
+            c.html(CanvasHelper.decodeUtf8(title));
         }
     },
     setOrder:function (data) {
@@ -609,8 +614,8 @@ QtLogic.prototype = {
                         .addClass("Set");
                 var parents_dialog = canvasElement.parents(".Dialog");
                 parents_dialog
-                        .show()
                         .css({ width:data.w + WINDOW_LT.x + WINDOW_RB.x, height:data.h + WINDOW_LT.y + WINDOW_RB.y});
+                if(!parents_dialog.hasClass('Hidden')) parents_dialog.show();
                 if (!canvasElement.hasClass("Set")) {
                     parents_dialog.css({left:data.x, top:data.y});
                 }
