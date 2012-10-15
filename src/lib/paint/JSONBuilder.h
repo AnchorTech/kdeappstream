@@ -23,8 +23,12 @@ namespace KAppStream
     {
             Q_OBJECT
 
-            QSemaphore _sem;
-            QByteArray buffer;
+            QSemaphore _render_sem;
+            QByteArray render_buffer;
+
+            QSemaphore _layout_sem;
+            QByteArray layout_buffer;
+
             QList<QWidget*> context;
 
             struct State
