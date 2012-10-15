@@ -140,4 +140,12 @@ void EventConverter::parse(const QString & message)
             return;
         QCoreApplication::postEvent(w, new QCloseEvent());
     }
+    else if (command == "activate")
+    {
+        long long id = value.property("id").toNumber();
+        QWidget * w = (QWidget*) id;
+        if (!WidgetsCollection::instance()->contains(w))
+            return;
+        QCoreApplication::postEvent(w, new Activate());
+    }
 }

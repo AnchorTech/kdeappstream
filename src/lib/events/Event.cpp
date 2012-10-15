@@ -1,5 +1,6 @@
 #include "Event.h"
 
+int Activate::_type = QEvent::registerEventType();
 int MousePressEvent::_type = QEvent::registerEventType();
 int MouseReleaseEvent::_type = QEvent::registerEventType();
 int MouseMoveEvent::_type = QEvent::registerEventType();

@@ -14,6 +14,22 @@ class Event : public QEvent
         {}
 };
 
+class Activate : public Event
+{
+        static int _type;
+
+    public:
+
+        Activate() :
+            Event((QEvent::Type)_type)
+        {}
+
+        static QEvent::Type eventType()
+        {
+            return (QEvent::Type) _type;
+        }
+};
+
 class MouseEvent : public Event
 {
         QPoint _pos;

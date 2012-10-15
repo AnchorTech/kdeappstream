@@ -90,6 +90,16 @@ void JSONBuilder::endRender()
     _sem.release();
 }
 
+void JSONBuilder::activateWindow(QWidget * window)
+{
+    _sem.acquire();
+    buffer.append("{\"command\":\"activate\"")
+          .append(",\"id\":").append(QString::number((long long)window).toAscii())
+          .append("},");
+    _sem.release();
+    this->finish();
+}
+
 void JSONBuilder::addChild(QWidget * child, QWidget * parent)
 {
     _sem.acquire();

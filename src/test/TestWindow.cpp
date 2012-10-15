@@ -50,6 +50,22 @@ void TestWindow::on_pushButton_clicked()
     k.exec();
 }
 
+void TestWindow::on_pushButton2_clicked()
+{
+    //QMessageBox::information(this, "pracoza inzynieroza", "Testoza pracoza projektoza... www.biedoza.pl");
+    Klasa k(this);
+    k.setModal(false);
+    k.exec();
+}
+
+void TestWindow::on_pushButton3_clicked()
+{
+    //QMessageBox::information(this, "pracoza inzynieroza", "Testoza pracoza projektoza... www.biedoza.pl");
+    Klasa k(this);
+    k.setModal(false);
+    k.show();
+}
+
 bool TestWindow::event(QEvent *event)
 {
     //bool isa = event->isAccepted();

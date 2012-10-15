@@ -26,6 +26,8 @@ class TestWindow : public QMainWindow
     private slots:
 
         void on_pushButton_clicked();
+        void on_pushButton2_clicked();
+        void on_pushButton3_clicked();
 
     private:
 

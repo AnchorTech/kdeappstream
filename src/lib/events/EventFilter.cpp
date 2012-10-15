@@ -1,4 +1,5 @@
 #include "EventFilter.h"
+#include "EventDispatcher.h"
 
 #include "WebRenderer.h"
 #include "websocket/WebsocketServer.h"
@@ -497,6 +498,8 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                     {
                         windowsStack.removeAll(w);
                         windowsStack.push_front(w);
+                        if (!EventDispatcher::isActivateEvent())
+                            JSONBuilder::instance()->activateWindow(w);
                     }
                 }
                 break;
@@ -504,7 +507,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::WindowBlocked" << recv;
                 break;
             case QEvent::WindowDeactivate:
-                qDebug() << "QEvent::WindowDeactivate" << recv << e << QApplication::activeWindow();
+                qDebug() << "QEvent::WindowDeactivate" << recv << QApplication::activeWindow();
                 break;
             case QEvent::WindowIconChange:
                 //qDebug() << "QEvent::WindowIconChange" << recv;

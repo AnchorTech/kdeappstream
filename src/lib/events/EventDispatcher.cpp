@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QApplication>
 
+bool EventDispatcher::_isActivateEvent = false;
+
 EventDispatcher::EventDispatcher(QObject * parent) :
     QObject(parent)
 {
@@ -87,6 +89,12 @@ bool EventDispatcher::eventFilter(QObject * recv, QEvent * e)
     }
     else if (type == MouseDbClickEvent::eventType())
     {
+    }
+    else if (type == Activate::eventType())
+    {
+        _isActivateEvent = true;
+        QApplication::setActiveWindow(widget);
+        _isActivateEvent = false;
     }
 
     return true;

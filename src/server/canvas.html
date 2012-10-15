@@ -531,6 +531,11 @@ QtLogic.prototype = {
             case "move":
                 this.setPosition(data);
                 break;
+            case "activate":
+                this.activateDialog(this.getWidget(data.id));
+            case "deactivate":
+                this.deactivateDialog(this.getWidget(data.id));
+                break;
             default:
                 debug(data);
         }
@@ -690,7 +695,6 @@ QtLogic.prototype = {
         } else {
         }
     },
-
     onResized:function (widgetId, w, h) {
         console.log(widgetId, w, h);
         wsConnector.sendEvent({
@@ -738,9 +742,11 @@ QtLogic.prototype = {
                     },
                     ghost:true
                 });
-        container.find('.XButton').click(function () {
 
+        container.find('.XButton').click(function () {
+            QtLogic.deactivateDialog(widget); // TODO
         });
+
         container.find('.MinButton').click(function () {
             container.addClass("Minimized");
             var task = $('.TaskTemplate:first').clone()
@@ -751,6 +757,7 @@ QtLogic.prototype = {
             });
             task.find('.Title').html(container.find('.Bar').html());
             $('#taskbar').append(task);
+            QtLogic.deactivateDialog(widget); // TODO
         });
 
         container.find('.MaxButton').click(function () {
@@ -781,12 +788,65 @@ QtLogic.prototype = {
             self.onResized(widgetId, width, height);
         });
 
+        container.data('wid', widgetId);
+
         container.attr('data-flags', flags);
         widget.canvas
                 .addClass("DialogCanvas")
                 .parent()
                 .addClass("DialogRoot")
                 .detach().appendTo(container);
+
+        widget.dialog = container;
+
+        container.click(function() {
+            QtLogic.activateDialog(widget);
+        });
+
+    },
+    activateDialog:function (widgetId) {
+        var container = widget.dialog;
+        var d = QtLogic.dialogs;
+        var i = d.indexOf(container);
+        if (i != -1)
+        {
+            if (i == d.length-1)
+                return;
+            var a = [];
+            var b = [];
+            if (i > 0)
+                a = d.slice(0,i);
+            if (i+1 < d.length)
+                b = d.slice(i+1, d.length-1);
+            QtLogic.dialogs = a.concat(b);
+        }
+        QtLogic.dialogs.push(container);
+
+        // Notify the server
+        wsConnector.sendEvent({
+            command:"activate",
+            id:container.data('wid')
+        });
+    },
+    deactivateDialog:function (widgetId) {
+        var container = widget.dialog;
+        var d = QtLogic.dialogs;
+        var i = d.indexOf(container);
+        if (i != -1)
+        {
+            if (i == d.length-1)
+                return;
+            var a = [];
+            var b = [];
+            if (i > 0)
+                a = d.slice(0,i);
+            if (i+1 < d.length)
+                b = d.slice(i+1, d.length-1);
+            QtLogic.dialogs = a.concat(b);
+        }
+        QtLogic.dialogs.
+        QtLogic.dialogs.push(container);
+        // don't send deactivate event to the server!
     },
     addWidgetChild:function (id, childId, flags, name) {
         var widget = this.getWidget(id);
@@ -989,6 +1049,7 @@ QtLogic.prototype = {
 QtLogic.images = {};
 QtLogic.images_ajax = [];
 QtLogic.images_timeouts = [];
+QtLogic.dialogs = [];
 
 function parseMouseEvent(evt, widget) {
     var data = {};

@@ -6,10 +6,16 @@
 
 class EventDispatcher : public QObject
 {
+        static bool _isActivateEvent;
+
     public:
 
         EventDispatcher(QObject * parent = 0);
         bool eventFilter(QObject * recv, QEvent * e);
+        static bool isActivateEvent()
+        {
+            return _isActivateEvent;
+        }
 
     private:
 
