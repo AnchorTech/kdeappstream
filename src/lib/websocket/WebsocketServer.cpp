@@ -1,7 +1,7 @@
 #include "WebsocketServer.h"
 #include "paint/ImagesBuffer.h"
 #include "paint/JSONBuilder.h"
-#include "events/EventDispather.h"
+#include "events/EventConverter.h"
 #include "events/EventFilter.h"
 
 #include <QDebug>
@@ -95,7 +95,7 @@ void WebsocketServer::sendMessage(QString message)
 
 void WebsocketServer::onDataReceived(QString data)
 {
-    EventDispather::instance()->parse(data);
+    EventConverter::instance()->parse(data);
 }
 
 void WebsocketServer::readData()

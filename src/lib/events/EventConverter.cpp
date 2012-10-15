@@ -1,4 +1,5 @@
-#include "EventDispather.h"
+#include "EventConverter.h"
+#include "events/Event.h"
 #include "events/EventFilter.h"
 #include "hooking/WidgetsCollection.h"
 
@@ -15,27 +16,27 @@
 #include <QStack>
 #include <QSizeGrip>
 
-EventDispather * EventDispather::m_instance = 0;
+EventConverter * EventConverter::m_instance = 0;
 
-EventDispather::EventDispather() :
+EventConverter::EventConverter() :
     engine(this)
 {
     m_instance = this;
 }
 
-EventDispather::~EventDispather()
+EventConverter::~EventConverter()
 {
     m_instance = 0;
 }
 
-EventDispather * EventDispather::instance()
+EventConverter * EventConverter::instance()
 {
     if (m_instance)
         return m_instance;
-    return new EventDispather();
+    return new EventConverter();
 }
 
-void EventDispather::parse(const QString & message)
+void EventConverter::parse(const QString & message)
 {
     QScriptValue value = engine.evaluate("(" + message + ")");
     if (!value.isObject())
@@ -63,64 +64,13 @@ void EventDispather::parse(const QString & message)
             int oy = value.property("oy").toInt32();
             int buttons = value.property("btn").toInt32();
             int modifiers = value.property("modifiers").toInt32();
-            if (w->isEnabled())
-            {
-                if (buttons || w->hasMouseTracking())
-                    QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseMove, QPoint(x,y), QPoint(5,5), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
-            }
-
-            if (w->testAttribute(Qt::WA_Hover))
-            {
-                QPoint p = QPoint(x,y);
-                QPoint op = QPoint(ox,oy);
-//                QWidget * _w = w;
-//                do
-//                {
-//                    eventStack.push(new QHoverEvent(QEvent::HoverMove, p, op));
-//                    widgetStack.push(_w);
-//                    QWidget * tmp = _w;
-//                    _w = _w->parentWidget();
-//                    if (_w)
-//                    {
-//                        p = tmp->mapToParent(p);
-//                        op = tmp->mapToParent(op);
-//                    }
-//                }
-//                while (_w);
-
-                //while (!eventStack.isEmpty())
-                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverMove, p, op));
-            }
-        }
-        else if (type == "enter")
-        {
-            QCoreApplication::postEvent(w, new QEvent(QEvent::Enter));
-            if (w->testAttribute(Qt::WA_Hover))
-                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverEnter, QPoint(5,5), QPoint(-1,-1)));
-        }
-        else if (type == "leave")
-        {
-            QCoreApplication::postEvent(w, new QEvent(QEvent::Leave));
-            if (w->testAttribute(Qt::WA_Hover))
-                QCoreApplication::postEvent(w, new QHoverEvent(QEvent::HoverLeave, QPoint(-1,-1), QPoint(5,5)));
+            QCoreApplication::postEvent(w, new MouseMoveEvent(QPoint(x,y), QPoint(x,y), QPoint(ox,oy), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "press")
         {
             int button = value.property("btn").toInt32();
             int modifiers = value.property("modifiers").toInt32();
-            if (w->isEnabled() && button)
-            {
-                if (w->focusProxy())
-                    w = w->focusProxy();
-                if (w->focusPolicy() & Qt::ClickFocus)
-                {
-                    QWidget * prevW = QApplication::focusWidget();
-                    if (prevW)
-                        QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
-                    QCoreApplication::postEvent(w, new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
-                }
-                QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseButtonPress, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
-            }
+            QCoreApplication::postEvent(w, new MousePressEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "release")
         {

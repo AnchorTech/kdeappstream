@@ -7,7 +7,7 @@
 #include "paint/PaintDevice.h"
 #include "paint/PaintEngine.h"
 #include "events/EventFilter.h"
-#include "events/EventDispather.h"
+#include "events/EventDispatcher.h"
 #include "websocket/WebsocketThread.h"
 
 using namespace KAppStream;
@@ -18,14 +18,19 @@ QString getSocketName()
     return result;
 }
 
-static EventFilter *evFilter = 0;
+static EventFilter * evFilter = 0;
+static EventDispatcher * evDispatcher = 0;
 
 void installUIExtractorEventFilter()
 {
     if ( !evFilter )
         evFilter = new EventFilter();
+    if ( !evDispatcher )
+        evDispatcher = new EventDispatcher();
     qDebug( "Installing UI Extractor event filter." );
     qApp->installEventFilter( evFilter );
+    qDebug( "Installing events dispatcher." );
+    qApp->installEventFilter( evDispatcher );
 }
 
 extern "C" void Q_CORE_EXPORT qt_startup_hook()

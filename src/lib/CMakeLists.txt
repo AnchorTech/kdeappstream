@@ -4,7 +4,9 @@ SET( KAPPSTREAM_LIB_SRCS
      ${CMAKE_CURRENT_SOURCE_DIR}/hooking/Probe.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/hooking/UnixFunctionOverwriter.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/hooking/WidgetsCollection.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/events/EventDispather.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/events/Event.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/events/EventConverter.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/events/EventDispatcher.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/events/EventFilter.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/paint/ImagesBuffer.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/paint/ImagesHostServer.cpp

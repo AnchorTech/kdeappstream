@@ -11,7 +11,6 @@ SOURCES +=\
     hooking/UnixFunctionOverwriter.cpp \
     hooking/FunctionOverwriterFactory.cpp \
     hooking/Probe.cpp \
-    events/EventDispather.cpp \
     websocket/WebsocketServer.cpp \
     websocket/QWsSocket.cpp \
     websocket/QWsServer.cpp \
@@ -22,7 +21,10 @@ SOURCES +=\
     websocket/WebsocketThread.cpp \
     hooking/WidgetsCollection.cpp \
     paint/ImagesBuffer.cpp \
-    paint/ImagesHostServer.cpp
+    paint/ImagesHostServer.cpp \
+    events/EventConverter.cpp \
+    events/EventDispatcher.cpp \
+    events/Event.cpp
 
 HEADERS  += \
     paint/PaintEngine.h \
@@ -38,10 +40,12 @@ HEADERS  += \
     paint/WebRenderer.h \
     websocket/WebsocketThread.h \
     events/EventFilter.h \
-    events/EventDispather.h \
     hooking/WidgetsCollection.h \
     paint/ImagesBuffer.h \
-    paint/ImagesHostServer.h
+    paint/ImagesHostServer.h \
+    events/EventConverter.h \
+    events/EventDispatcher.h \
+    events/Event.h
 
 unix {
     LIBS += -ldl
@@ -51,6 +55,14 @@ OTHER_FILES += \
     websocket/index.html \
     ../CMakeLists.txt \
     CMakeLists.txt
+
+
+
+
+
+
+
+
 
 
 

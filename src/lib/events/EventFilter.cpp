@@ -14,6 +14,7 @@
 #include <QTextEdit>
 #include <QMouseEvent>
 #include <QSizeGrip>
+#include <QList>
 
 using namespace KAppStream;
 
@@ -45,6 +46,8 @@ void EventFilter::disconnected()
 
 bool EventFilter::eventFilter(QObject * recv, QEvent * e)
 {
+    static QList<QWidget*> windowsStack;
+
     QWidget * w = dynamic_cast<QWidget*>(recv);
 
     if (!www)
@@ -135,8 +138,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::Clipboard" << recv;
                 break;
             case QEvent::Close:
-//                qDebug() << "QEvent::Close" << recv;
                 {
+                    qDebug() << "QEvent::Close" << recv;
+                    if (w->isWindow())
+                        windowsStack.removeAll(w);
                     WidgetsCollection::instance()->remove(w);
                     WebRenderer::instance()->dequeue(w);
                 }
@@ -172,7 +177,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
 //                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::EnabledChange" << recv;
                 break;
             case QEvent::Enter:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Enter" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Enter" << recv;
                 break;
             case QEvent::EnterWhatsThisMode:
                 //qDebug() << "QEvent::EnterWhatsThisMode" << recv;
@@ -181,15 +186,19 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::FileOpen" << recv;
                 break;
             case QEvent::FocusIn:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusIn\033[0m" << recv << QApplication::focusWidget();
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusIn\033[0m" << recv << QApplication::focusWidget();
                 {
-                    if (QApplication::focusWidget() != w)
-                        w->setFocus();
+                    if (!w->isWindow())
+                        w = w->window();
+                    if (w && !w->isActiveWindow())
+                        QApplication::setActiveWindow(w);
                 }
                 break;
             case QEvent::FocusOut:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusOut\033[0m" << recv << QApplication::focusWidget();
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusOut\033[0m" << recv << QApplication::focusWidget();
                 {
+//                    if (QApplication::focusWidget() == w)
+//                        w->clearFocus();
                 }
                 break;
             case QEvent::FontChange:
@@ -220,25 +229,25 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::GraphicsSceneHelp" << recv;
                 break;
             case QEvent::GraphicsSceneHoverEnter:
-                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneHoverEnter" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneHoverEnter" << recv;
                 break;
             case QEvent::GraphicsSceneHoverLeave:
-                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneHoverLeave" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneHoverLeave" << recv;
                 break;
             case QEvent::GraphicsSceneHoverMove:
-                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneHoverMove" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneHoverMove" << recv;
                 break;
             case QEvent::GraphicsSceneMouseDoubleClick:
-                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneMouseDoubleClick" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneMouseDoubleClick" << recv;
                 break;
             case QEvent::GraphicsSceneMouseMove:
-                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneMouseMove" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneMouseMove" << recv;
                 break;
             case QEvent::GraphicsSceneMousePress:
-                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneMousePress" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneMousePress" << recv;
                 break;
             case QEvent::GraphicsSceneMouseRelease:
-                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneMouseRelease" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::GraphicsSceneMouseRelease" << recv;
                 break;
             case QEvent::GraphicsSceneMove:
                 //qDebug() << "QEvent::GraphicsSceneMove" << recv;
@@ -262,13 +271,13 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 JSONBuilder::instance()->hideWidget(w);
                 break;
             case QEvent::HoverEnter:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverEnter" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverEnter" << recv;
                 break;
             case QEvent::HoverLeave:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverLeave" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverLeave" << recv;
                 break;
             case QEvent::HoverMove:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverMove" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverMove" << recv;
                 break;
             case QEvent::IconDrag:
 //                qDebug() << "QEvent::IconDrag" << recv;
@@ -277,7 +286,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
 //                qDebug() << "QEvent::IconTextChange" << recv;
                 break;
             case QEvent::InputMethod:
-//                qDebug() << "QEvent::InputMethod" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::InputMethod" << recv;
                 break;
             case QEvent::KeyPress:
                 {
@@ -301,7 +310,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::LayoutRequest" << recv;
                 break;
             case QEvent::Leave:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Leave" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Leave" << recv;
                 break;
             case QEvent::LeaveWhatsThisMode:
                 //qDebug() << "QEvent::LeaveWhatsThisMode" << recv;
@@ -319,7 +328,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::NonClientAreaMouseButtonRelease" << recv;
                 break;
             case QEvent::NonClientAreaMouseMove:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::NonClientAreaMouseMove" << recv;
+                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::NonClientAreaMouseMove" << recv;
                 break;
             case QEvent::MacSizeChange:
                 //qDebug() << "QEvent::MacSizeChange" << recv;
@@ -334,19 +343,19 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ModifiedChange" << recv;
                 break;
             case QEvent::MouseButtonDblClick:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseButtonDblClick" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseButtonDblClick" << recv;
                 break;
             case QEvent::MouseButtonPress:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonPress \033[0m" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonPress \033[0m" << recv;
                 break;
             case QEvent::MouseButtonRelease:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonRelease \033[0m" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonRelease \033[0m" << recv;
                 break;
             case QEvent::MouseMove:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseMove" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseMove" << recv;
                 break;
             case QEvent::MouseTrackingChange:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseTrackingChange" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseTrackingChange" << recv;
                 break;
             case QEvent::Move:
                 //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Move" << recv;
@@ -356,7 +365,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 }
                 break;
             case QEvent::Paint:
-//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Paint" << recv;
+                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Paint" << recv;
                 {
                     QPaintEvent * pe = dynamic_cast<QPaintEvent*>(e);
                     WebRenderer::instance()->queue(w, pe);
@@ -428,13 +437,13 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::StyleChange" << recv;
                 break;
             case QEvent::TabletMove:
-                //qDebug() << "QEvent::TabletMove" << recv;
+                qDebug() << "QEvent::TabletMove" << recv;
                 break;
             case QEvent::TabletPress:
-                //qDebug() << "QEvent::TabletPress" << recv;
+                qDebug() << "QEvent::TabletPress" << recv;
                 break;
             case QEvent::TabletRelease:
-                //qDebug() << "QEvent::TabletRelease" << recv;
+                qDebug() << "QEvent::TabletRelease" << recv;
                 break;
             case QEvent::OkRequest:
                 //qDebug() << "QEvent::OkRequest" << recv;
@@ -458,10 +467,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ToolTipChange" << recv;
                 break;
             case QEvent::UngrabKeyboard:
-//                qDebug() << "\033[36;1m QEvent::UngrabKeyboard \033[0m" << recv;
+                qDebug() << "\033[36;1m QEvent::UngrabKeyboard \033[0m" << recv;
                 break;
             case QEvent::UngrabMouse:
-//                qDebug() << "\033[36;1m QEvent::UngrabMouse \033[0m" << recv;
+                qDebug() << "\033[36;1m QEvent::UngrabMouse \033[0m" << recv;
                 break;
             case QEvent::UpdateLater:
 //                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::UpdateLater" << recv;
@@ -482,13 +491,20 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::WinEventAct" << recv;
                 break;
             case QEvent::WindowActivate:
-                //qDebug() << "QEvent::WindowActivate" << recv;
+                {
+                    qDebug() << "QEvent::WindowActivate" << recv << QApplication::activeWindow();
+                    if (w->isWindow())
+                    {
+                        windowsStack.removeAll(w);
+                        windowsStack.push_front(w);
+                    }
+                }
                 break;
             case QEvent::WindowBlocked:
                 //qDebug() << "QEvent::WindowBlocked" << recv;
                 break;
             case QEvent::WindowDeactivate:
-                //qDebug() << "QEvent::WindowDeactivate" << recv << e;
+                qDebug() << "QEvent::WindowDeactivate" << recv << e << QApplication::activeWindow();
                 break;
             case QEvent::WindowIconChange:
                 //qDebug() << "QEvent::WindowIconChange" << recv;
