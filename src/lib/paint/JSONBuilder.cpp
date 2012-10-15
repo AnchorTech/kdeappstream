@@ -168,8 +168,10 @@ void JSONBuilder::showWidget(QWidget * widget)
 {
     _sem.acquire();
     buffer.append("{\"command\":\"show\"")
-          .append(",\"id\":").append(QString::number((long long)widget).toAscii())
-          .append("},");
+          .append(",\"id\":").append(QString::number((long long)widget).toAscii());
+    if (widget->isWindow())
+        buffer.append(",\"modality\":").append(QString::number((long long)widget->windowModality()).toAscii());
+    buffer.append("},");
     _sem.release();
     this->finish();
 }

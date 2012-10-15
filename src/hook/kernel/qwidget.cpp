@@ -62,24 +62,24 @@ QWidget * QApplication::focusWidget()
 
     QWidget * result = QApplication_focusWidget_method();
 
-    qDebug() << "QApplication_activeModalWidget_method" << QApplication_activeModalWidget_method();
-    qDebug() << "QApplication_activePopupWidget_method" << QApplication_activePopupWidget_method();
-    qDebug() << "QApplication_activeWindow_method" << QApplication_activeWindow_method();
-    qDebug() << "QApplication_focusWidget_method" << QApplication_focusWidget_method();
-    QWidgetList list = QApplication_topLevelWidgets_method();
-    foreach (QWidget * w, list)
-        qDebug() << "QApplication_topLevelWidgets_method" << w;
+//    qDebug() << "QApplication_activeModalWidget_method" << QApplication_activeModalWidget_method();
+//    qDebug() << "QApplication_activePopupWidget_method" << QApplication_activePopupWidget_method();
+//    qDebug() << "QApplication_activeWindow_method" << QApplication_activeWindow_method();
+//    qDebug() << "QApplication_focusWidget_method" << QApplication_focusWidget_method();
+//    QWidgetList list = QApplication_topLevelWidgets_method();
+//    foreach (QWidget * w, list)
+//        qDebug() << "QApplication_topLevelWidgets_method" << w;
 
-    if (!result)
-    {
-        QWidgetList list = QApplication_topLevelWidgets_method();
-        foreach(QWidget * w, list)
-        {
-            result = QWidget_focusWidget_method(w);
-            if (result)
-                break;
-        }
-    }
+//    if (!result)
+//    {
+//        QWidgetList list = QApplication_topLevelWidgets_method();
+//        foreach(QWidget * w, list)
+//        {
+//            result = QWidget_focusWidget_method(w);
+//            if (result)
+//                break;
+//        }
+//    }
 
     return result;
 }
