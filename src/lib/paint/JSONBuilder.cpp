@@ -138,6 +138,8 @@ void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSi
 {
     if (w->windowType() & Qt::Window)
     {
+        if (!_sem.tryAcquire())
+            return;
         buffer.append("{\"command\":\"resize\"")
               .append(",\"id\":").append(QString::number((long long)w).toAscii())
               .append(",\"old\":")
@@ -147,6 +149,7 @@ void JSONBuilder::resize(QWidget * w, const QSize & oldSize, const QSize & newSi
                 .append("{\"w\":").append(QString::number(newSize.width()).toAscii())
                 .append(",\"h\":").append(QString::number(newSize.height()).toAscii())
               .append("}},");
+        _sem.release();
         this->finish();
     }
 }
@@ -187,8 +190,6 @@ void JSONBuilder::move(QWidget * widget, const QPoint & pos)
 {
     if (!_sem.tryAcquire())
         return;
-    if (dynamic_cast<QListWidget*>(widget->parentWidget()))
-        qDebug() << widget->pos();
     buffer.append("{\"command\":\"move\"")
           .append(",\"id\":").append(QString::number((long long)widget).toAscii())
           .append(",\"x\":").append(QString::number(pos.x()).toAscii())
