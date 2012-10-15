@@ -100,6 +100,16 @@ void JSONBuilder::activateWindow(QWidget * window)
     this->finish();
 }
 
+void JSONBuilder::deactivateWindow(QWidget * window)
+{
+    _sem.acquire();
+    buffer.append("{\"command\":\"deactivate\"")
+          .append(",\"id\":").append(QString::number((long long)window).toAscii())
+          .append("},");
+    _sem.release();
+    this->finish();
+}
+
 void JSONBuilder::addChild(QWidget * child, QWidget * parent)
 {
     _sem.acquire();
