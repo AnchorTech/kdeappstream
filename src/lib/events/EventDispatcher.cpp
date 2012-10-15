@@ -30,7 +30,6 @@ bool EventDispatcher::eventFilter(QObject * recv, QEvent * e)
     {
         MouseMoveEvent * mEvent = (MouseMoveEvent*) event;
         this->processEnterEvents(widget, mEvent->pos());
-
         if (widget->isEnabled())
         {
             QMouseEvent mouseEvent(QEvent::MouseMove, mEvent->pos(), mEvent->globalPos(), mEvent->button(), mEvent->buttons(), mEvent->modifiers());
@@ -67,28 +66,33 @@ bool EventDispatcher::eventFilter(QObject * recv, QEvent * e)
     else if (type == MousePressEvent::eventType())
     {
         MousePressEvent * mEvent = (MousePressEvent*) event;
-
         if (widget->isEnabled() && mEvent->button())
         {
             if (widget->focusProxy())
                 widget = widget->focusProxy();
             if (widget->focusPolicy() & Qt::ClickFocus)
                 widget->setFocus(Qt::MouseFocusReason);
-//            {
-//                QWidget * prevW = QApplication::focusWidget();
-//                if (prevW)
-//                    QCoreApplication::postEvent(prevW, new QFocusEvent(QEvent::FocusOut, Qt::MouseFocusReason));
-//                QCoreApplication::postEvent(w, new QFocusEvent(QEvent::FocusIn, Qt::MouseFocusReason));
-//            }
             QMouseEvent mouseEvent(QEvent::MouseButtonPress, mEvent->pos(), mEvent->pos(), mEvent->button(), mEvent->buttons(), mEvent->modifiers());
             QCoreApplication::sendEvent(widget, &mouseEvent);
         }
     }
     else if (type == MouseReleaseEvent::eventType())
     {
+        MouseReleaseEvent * mEvent = (MouseReleaseEvent*) event;
+        if (widget->isEnabled() && mEvent->button())
+        {
+            QMouseEvent mouseEvent(QEvent::MouseButtonRelease, mEvent->pos(), mEvent->pos(), mEvent->button(), mEvent->buttons(), mEvent->modifiers());
+            QCoreApplication::sendEvent(widget, &mouseEvent);
+        }
     }
     else if (type == MouseDbClickEvent::eventType())
     {
+        MouseDbClickEvent * mEvent = (MouseDbClickEvent*) event;
+        if (widget->isEnabled() && mEvent->button())
+        {
+            QMouseEvent mouseEvent(QEvent::MouseButtonDblClick, mEvent->pos(), mEvent->pos(), mEvent->button(), mEvent->buttons(), mEvent->modifiers());
+            QCoreApplication::sendEvent(widget, &mouseEvent);
+        }
     }
     else if (type == Activate::eventType())
     {

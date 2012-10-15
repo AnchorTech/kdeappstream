@@ -507,7 +507,14 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::WindowBlocked" << recv;
                 break;
             case QEvent::WindowDeactivate:
-                qDebug() << "QEvent::WindowDeactivate" << recv << QApplication::activeWindow();
+                {
+                    qDebug() << "QEvent::WindowDeactivate" << recv << QApplication::activeWindow();
+                    if (w->isWindow())
+                    {
+                        if (!EventDispatcher::isActivateEvent())
+                            JSONBuilder::instance()->deactivateWindow(w);
+                    }
+                }
                 break;
             case QEvent::WindowIconChange:
                 //qDebug() << "QEvent::WindowIconChange" << recv;

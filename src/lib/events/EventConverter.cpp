@@ -76,11 +76,13 @@ void EventConverter::parse(const QString & message)
         {
             int button = value.property("btn").toInt32();
             int modifiers = value.property("modifiers").toInt32();
-            if (w->isEnabled() && button)
-                QCoreApplication::postEvent(w, new QMouseEvent(QEvent::MouseButtonRelease, QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
+            QCoreApplication::postEvent(w, new MouseReleaseEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "dbclick")
         {
+            int button = value.property("btn").toInt32();
+            int modifiers = value.property("modifiers").toInt32();
+            QCoreApplication::postEvent(w, new MouseDbClickEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
         }
     }
     else if (command == "wheel")

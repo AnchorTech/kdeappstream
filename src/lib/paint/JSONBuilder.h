@@ -66,6 +66,8 @@ namespace KAppStream
             void endRender();
 
             void activateWindow(QWidget * window);
+            void deactivateWindow(QWidget * window);
+
             void addChild(QWidget * child, QWidget * parent);
             void removeChild(QWidget * child, QWidget * parent);
 
