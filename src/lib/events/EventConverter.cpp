@@ -96,11 +96,15 @@ void EventConverter::parse(const QString & message)
         if (!WidgetsCollection::instance()->contains(w))
             return;
         int width = value.property("w").toInt32();
-        if (w->minimumWidth() > width || w->maximumWidth() < width)
-            return;
+        if (w->minimumWidth() > width)
+            width = w->minimumWidth();
+        else if (w->maximumWidth() < width)
+            width = w->maximumWidth();
         int height = value.property("h").toInt32();
-        if (w->minimumHeight() > height || w->maximumHeight() < height)
-            return;
+        if (w->minimumHeight() > height)
+            height = w->minimumHeight();
+        else if (w->maximumHeight() < height)
+            height = w->maximumHeight();
         QCoreApplication::postEvent(w, new QResizeEvent(QSize(width, height), w->size()));
     }
     else if (command == "move")
