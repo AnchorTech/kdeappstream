@@ -532,9 +532,9 @@ QtLogic.prototype = {
                 this.setPosition(data);
                 break;
             case "activate":
-                this.activateDialog(this.getWidget(data.id));
+                this.activateDialog(data.id);
             case "deactivate":
-                this.deactivateDialog(this.getWidget(data.id));
+                this.deactivateDialog(data.id);
                 break;
             default:
                 debug(data);
@@ -556,7 +556,6 @@ QtLogic.prototype = {
         }
     },
     hideElement:function (data) {
-        console.log(data);
         var canvas = this.widgets[data.id].canvas;
         canvas.hide();
         if (canvas.hasClass("DialogCanvas")) {
@@ -744,7 +743,7 @@ QtLogic.prototype = {
                 });
 
         container.find('.XButton').click(function () {
-            QtLogic.deactivateDialog(widget); // TODO
+            QtLogic.deactivateDialog(widget.id);
         });
 
         container.find('.MinButton').click(function () {
@@ -800,52 +799,57 @@ QtLogic.prototype = {
         widget.dialog = container;
 
         container.click(function() {
-            QtLogic.activateDialog(widget);
+            console.log(widget);
+            self.activateDialog(widget.id);
         });
 
     },
     activateDialog:function (widgetId) {
+        var widget = this.getWidget(widgetId);
         var container = widget.dialog;
-        var d = QtLogic.dialogs;
-        var i = d.indexOf(container);
-        if (i != -1)
-        {
-            if (i == d.length-1)
-                return;
-            var a = [];
-            var b = [];
-            if (i > 0)
-                a = d.slice(0,i);
-            if (i+1 < d.length)
-                b = d.slice(i+1, d.length-1);
-            QtLogic.dialogs = a.concat(b);
-        }
-        QtLogic.dialogs.push(container);
+        if(container.hasClass('Active')) return;
+        $('.Active').removeClass('Active');
+        container.addClass('Active');
+//        var d = QtLogic.dialogs;
+//        var i = d.indexOf(container);
+//        if (i != -1)
+//        {
+//            if (i == d.length-1)
+//                return;
+//            var a = [];
+//            var b = [];
+//            if (i > 0)
+//                a = d.slice(0,i);
+//            if (i+1 < d.length)
+//                b = d.slice(i+1, d.length-1);
+//            QtLogic.dialogs = a.concat(b);
+//        }
+//        QtLogic.dialogs.push(container);
 
         // Notify the server
         wsConnector.sendEvent({
             command:"activate",
-            id:container.data('wid')
+            id:widgetId
         });
     },
     deactivateDialog:function (widgetId) {
-        var container = widget.dialog;
-        var d = QtLogic.dialogs;
-        var i = d.indexOf(container);
-        if (i != -1)
-        {
-            if (i == d.length-1)
-                return;
-            var a = [];
-            var b = [];
-            if (i > 0)
-                a = d.slice(0,i);
-            if (i+1 < d.length)
-                b = d.slice(i+1, d.length-1);
-            QtLogic.dialogs = a.concat(b);
-        }
-        QtLogic.dialogs.
-        QtLogic.dialogs.push(container);
+//        var container = widget.dialog;
+//        var d = QtLogic.dialogs;
+//        var i = d.indexOf(container);
+//        if (i != -1)
+//        {
+//            if (i == d.length-1)
+//                return;
+//            var a = [];
+//            var b = [];
+//            if (i > 0)
+//                a = d.slice(0,i);
+//            if (i+1 < d.length)
+//                b = d.slice(i+1, d.length-1);
+//            QtLogic.dialogs = a.concat(b);
+//        }
+//        QtLogic.dialogs.
+//        QtLogic.dialogs.push(container);
         // don't send deactivate event to the server!
     },
     addWidgetChild:function (id, childId, flags, name) {
@@ -901,8 +905,8 @@ QtLogic.prototype = {
         var autoRepeatRelease = false;
 
         $('#widgets, #dialogs')
-                .on('mouseenter', 'canvas', function (evt) {
-                    var widget = $(this).data('widget');
+                .on('mouseenter', '.Dialog', function (evt) {
+                    var widget = $(this).find('canvas.DialogCanvas').data('widget');
                     var eventData = parseMouseEvent(evt, widget.canvas);
                     wsConnector.sendEvent({
                         command:"mouse",
@@ -914,8 +918,8 @@ QtLogic.prototype = {
                     widget.mousePositionX = eventData.x;
                     widget.mousePositionY = eventData.y;
                 })
-                .on('mouseleave', 'canvas', function (evt) {
-                    var widget = $(this).data('widget');
+                .on('mouseleave', '.Dialog', function (evt) {
+                    var widget = $(this).find('canvas.DialogCanvas').data('widget');
 
                     var eventData = parseMouseEvent(evt, widget.canvas);
                     wsConnector.sendEvent({
