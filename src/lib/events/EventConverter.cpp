@@ -162,7 +162,7 @@ void EventConverter::parse(const QString & message)
         QWidget * w = (QWidget*) id;
         if (!WidgetsCollection::instance()->contains(w))
             return;
-        if (!QApplication::activeModalWidget())
+        //if (!QApplication::activeModalWidget())
             QCoreApplication::postEvent(w, new Activate());
     }
 }

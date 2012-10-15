@@ -570,7 +570,7 @@ void JSONBuilder::state(const QPaintEngineState & s)
 void JSONBuilder::saveStatePriv()
 {
     QPaintEngine::DirtyFlags f = cur_state.state;
-    if (f & QPaintEngine::AllDirty)
+    if (f & ~(QPaintEngine::DirtyHints))
     {
         render_buffer.append("{\"t\":\"state\"")
               .append(",\"data\":{");

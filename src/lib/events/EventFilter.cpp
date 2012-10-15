@@ -200,7 +200,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 {
                     if (!w->isWindow())
                         w = w->window();
-                    if (w && !QApplication::activeModalWidget() && !w->isActiveWindow())
+                    if (w && !w->isActiveWindow())
                         QApplication::setActiveWindow(w);
                 }
                 break;
@@ -277,13 +277,13 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 JSONBuilder::instance()->hideWidget(w);
                 break;
             case QEvent::HoverEnter:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverEnter" << recv;
+//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverEnter" << recv;
                 break;
             case QEvent::HoverLeave:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverLeave" << recv;
+//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverLeave" << recv;
                 break;
             case QEvent::HoverMove:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverMove" << recv;
+//                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::HoverMove" << recv;
                 break;
             case QEvent::IconDrag:
 //                qDebug() << "QEvent::IconDrag" << recv;

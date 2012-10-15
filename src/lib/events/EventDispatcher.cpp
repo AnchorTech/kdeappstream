@@ -7,6 +7,7 @@
 #include <QStack>
 #include <QDebug>
 #include <QApplication>
+#include <kurlcombobox.h>
 
 bool EventDispatcher::_isActivateEvent = false;
 
@@ -86,7 +87,6 @@ bool EventDispatcher::eventFilter(QObject * recv, QEvent * e)
                 if (keyboardGrabber)
                     keyboardGrabber->releaseKeyboard();
                 fWidget->setFocus(Qt::MouseFocusReason);
-                fWidget->grabKeyboard();
             }
             QMouseEvent mouseEvent(QEvent::MouseButtonPress, mEvent->pos(), mEvent->pos(), mEvent->button(), mEvent->buttons(), mEvent->modifiers());
             QCoreApplication::sendEvent(widget, &mouseEvent);

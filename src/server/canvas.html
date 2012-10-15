@@ -578,6 +578,9 @@ QtLogic.prototype = {
             widget.canvas.addClass("Main");
         }
 
+        if (widgetData.name == 'KateViewInternal')
+            i = 0;
+
         this.updateWidget(widgetId, { // store
             w:widgetData.w,
             h:widgetData.h,
@@ -1320,8 +1323,13 @@ CanvasDrawer.prototype = {
         }
     },
     drawRect:function (data) {
+        var t_transform = this.transform;
+        t_transform[2][0] = 0;
+        t_transform[2][1] = 0;
+        this.setupTransform(t_transform);
         this.t_ctx.fillRect(data.x, data.y, data.w, data.h);
         //this.t_ctx.strokeRect(data.x, data.y, data.w, data.h);
+        this.setupTransform(this.transform);
     },
     drawState:function (data) {
         var bbrush = data.data.bbrush;
