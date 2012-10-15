@@ -799,7 +799,6 @@ QtLogic.prototype = {
         widget.dialog = container;
 
         container.click(function() {
-            console.log(widget);
             self.activateDialog(widget.id);
         });
 
@@ -833,6 +832,7 @@ QtLogic.prototype = {
         });
     },
     deactivateDialog:function (widgetId) {
+        $('.Active').removeClass('Active')
 //        var container = widget.dialog;
 //        var d = QtLogic.dialogs;
 //        var i = d.indexOf(container);
@@ -1654,7 +1654,6 @@ $(document).ready(function () {
     (function () {
         var calculatePosition = function () {
             $('#main').css('height', $('body').height() - 30);
-            console.log($('body').height() - 30);
         };
         $(window).resize(calculatePosition);
         calculatePosition();
