@@ -5,168 +5,221 @@
     Websocket client test
 </title>
 <style type="text/css">
-    #widgets {
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#main {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+#taskbar {
+    width: 100%;
+    height: 30px;
+    position: relative;
+}
+
+#widgets {
+    position: absolute;
+}
+
+#widgets {
+    background-color: gray;
+}
+
+.TaskTemplate {
+    width: 150px;
+    height: 90%;
+    background-color: #d3d3d3;
+    margin-top: 2px;
+    margin-right: 5px;
+    position: relative;
+}
+
+.TaskTemplate .Title {
+    left: 5px;
+    width: 125px;
+    overflow: hidden;
+    position: absolute;
+}
+
+.TaskTemplate .DeMinButton {
+    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    display: block;
+}
+
+.Minimized {
+    display: none !important;
+}
+
+.Dialog {
+    display: none;
+    position: absolute;
+    background-color: gray;
+}
+
+.ui-resizable-handle {
+    position: absolute;
+}
+
+.ui-resizable-n {
+    cursor: n-resize;
+}
+
+.ui-resizable-s {
+    cursor: s-resize;
+}
+
+.ui-resizable-w {
+    cursor: w-resize;
+}
+
+.ui-resizable-e {
+    cursor: e-resize;
+}
+
+.ui-resizable-nw {
+    cursor: nw-resize;
+}
+
+.ui-resizable-ne {
+    cursor: ne-resize;
+}
+
+.ui-resizable-sw {
+    cursor: sw-resize;
+}
+
+.ui-resizable-se {
+    cursor: se-resize;
+}
+
+.XButton {
+    right: 5px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    position: absolute;
+    display: none;
+}
+
+.MaxButton {
+    right: 23px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    position: absolute;
+    display: none;
+}
+
+.ResButton {
+    right: 23px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    position: absolute;
+    display: none;
+}
+
+.MinButton {
+    right: 40px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    position: absolute;
+    display: none;
+}
+
+.LT, .LB, .RT, .RB {
+    width: 9px;
+    height: 9px;
+}
+
+.Bar {
+    position: absolute;
+    background-color: #a9a9a9;
+    width: 100%;
+    height: 20px;
+    font-size: 9pt;
+    text-align: center;
+}
+
+.Left {
+    width: 5px;
+    height: 100%;
+}
+
+.Right {
+    width: 5px;
+    height: 100%;
+    right: 0;
+}
+
+.Bottom {
+    width: 100%;
+    height: 5px;
+    bottom: 0;
+}
+
+.LT {
+    left: 0;
+    top: 0;
+}
+
+.LB {
+    left: 0;
+    bottom: 0;
+}
+
+.RT {
+    right: 0;
+    top: 0;
+}
+
+.RB {
+    right: 0;
+    bottom: 0;
+}
+
+.Popup {
+    z-index: 25000;
+}
+
+.CanvasContainer {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.DialogRoot {
+    position: absolute;
+    left: 5;
+    top: 20;
+}
+
+    /*canvas {
         position: absolute;
-    }
-
-    #widgets {
-        background-color: gray;
-    }
-
-    .Dialog {
-        display: none;
-        position: absolute;
-        background-color: gray;
-    }
-
-    .ui-resizable-handle {
-        position: absolute;
-    }
-
-    .ui-resizable-n {
-        cursor: n-resize;
-    }
-
-    .ui-resizable-s {
-        cursor: s-resize;
-    }
-
-    .ui-resizable-w {
-        cursor: w-resize;
-    }
-
-    .ui-resizable-e {
-        cursor: e-resize;
-    }
-
-    .ui-resizable-nw {
-        cursor: nw-resize;
-    }
-
-    .ui-resizable-ne {
-        cursor: ne-resize;
-    }
-
-    .ui-resizable-sw {
-        cursor: sw-resize;
-    }
-
-    .ui-resizable-se {
-        cursor: se-resize;
-    }
-
-    .XButton {
-        right: 5px;
-        top: 5px;
-        width: 12px;
-        height: 12px;
-        background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
-        position: absolute;
-    }
-
-    .MaxButton {
-        right: 23px;
-        top: 5px;
-        width: 12px;
-        height: 12px;
-        background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
-        position: absolute;
-    }
-
-    .ResButton {
-        right: 23px;
-        top: 5px;
-        width: 12px;
-        height: 12px;
-        background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
-        position: absolute;
-    }
-
-    .MinButton {
-        right: 40px;
-        top: 5px;
-        width: 12px;
-        height: 12px;
-        background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
-        position: absolute;
-    }
-
-    .LT, .LB, .RT, .RB {
-        width: 9px;
-        height: 9px;
-    }
-
-    .Bar {
-        position: absolute;
-        background-color: #a9a9a9;
-        width: 100%;
-        height: 20px;
-        font-size: 9pt;
-        text-align: center;
-    }
-
-    .Left {
-        width: 5px;
-        height: 100%;
-    }
-
-    .Right {
-        width: 5px;
-        height: 100%;
-        right: 0;
-    }
-
-    .Bottom {
-        width: 100%;
-        height: 5px;
-        bottom: 0;
-    }
-
-    .LT {
         left: 0;
-        top: 0;
-    }
-
-    .LB {
-        left: 0;
-        bottom: 0;
-    }
-
-    .RT {
         right: 0;
-        top: 0;
-    }
+    }*/
 
-    .RB {
-        right: 0;
-        bottom: 0;
-    }
-
-    .Popup {
-        z-index: 50;
-    }
-
-    .CanvasContainer {
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-
-    .DialogRoot {
-        position: absolute;
-        left: 5;
-        top: 20;
-    }
-
-        /*canvas {
-            position: absolute;
-            left: 0;
-            right: 0;
-        }*/
-
-    canvas:not([data-name]) {
-        display: none;
-    }
+canvas:not([data-name]) {
+    display: none;
+}
 </style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript"
@@ -411,7 +464,7 @@ QtLogic.prototype = {
             };
             if (QtLogic.images_timeouts[key]) {
                 clearTimeout(QtLogic.images_timeouts[key]);
-                if(QtLogic.images_ajax[key]) {
+                if (QtLogic.images_ajax[key]) {
                     QtLogic.images_ajax[key].abort();
                 }
             }
@@ -526,7 +579,8 @@ QtLogic.prototype = {
             h:widgetData.h,
             x:widgetData.x,
             y:widgetData.y,
-            name:widgetData.name
+            name:widgetData.name,
+            flags:widgetData.flags
         });
 
         current_widget = widget;
@@ -615,17 +669,39 @@ QtLogic.prototype = {
                 var parents_dialog = canvasElement.parents(".Dialog");
                 parents_dialog
                         .css({ width:data.w + WINDOW_LT.x + WINDOW_RB.x, height:data.h + WINDOW_LT.y + WINDOW_RB.y});
-                if(!parents_dialog.hasClass('Hidden')) parents_dialog.show();
+                if (!parents_dialog.hasClass('Hidden')) parents_dialog.show();
                 if (!canvasElement.hasClass("Set")) {
                     parents_dialog.css({left:data.x, top:data.y});
                 }
                 widget.x = WINDOW_LT.x;
                 widget.y = WINDOW_LT.y;
+                parents_dialog.attr('flags', data.flags);
+                parents_dialog.find('.ToolbarButton').hide();
+                if ((data.flags & 0x00004000) === 0x00004000) { // Qt::WindowMinimizeButtonHint
+                    parents_dialog.find('.MinButton').show();
+                }
+                if ((data.flags & 0x00008000) === 0x00008000) {  // Qt::WindowMaximizeButtonHint
+                    parents_dialog.find('.MaxButton').show();
+                }
+                if ((data.flags & 0x08000000) === 0x08000000) { // Qt::WindowCloseButtonHint
+                    parents_dialog.find('.XButton').show();
+                }
             }
         } else {
         }
     },
+
+    onResized:function (widgetId, w, h) {
+        console.log(widgetId, w, h);
+        wsConnector.sendEvent({
+            command:"resize",
+            id:widgetId,
+            w:w,
+            h:h
+        });
+    },
     createDialog:function (widgetId, flags) {
+        var self = this;
         var widget = this.getWidget(widgetId);
         var container = $('<div class="Dialog">' +
                 '<div class="Bar"></div>' +
@@ -636,40 +712,75 @@ QtLogic.prototype = {
                 '<div class="LB ui-resizable-handle ui-resizable-sw"></div>' +
                 '<div class="RT ui-resizable-handle ui-resizable-ne"></div>' +
                 '<div class="RB ui-resizable-handle ui-resizable-se"></div>' +
-                '<div class="MinButton"></div>' +
-                '<div class="MaxButton"></div>' +
-                '<div class="ResButton"></div>' +
-                '<div class="XButton"></div>' +
+                '<div class="MinButton ToolbarButton"></div>' +
+                '<div class="MaxButton ToolbarButton"></div>' +
+                '<div class="XButton ToolbarButton"></div>' +
                 '</div>')
                 .appendTo($('#dialogs'))
                 .draggable({
                     handle:'.Bar'
+                })
+                .resizable({
+                    handles:{
+                        w:'.Left',
+                        e:'.Right',
+                        s:'.Bottom',
+                        nw:'.LT',
+                        ne:'.RT',
+                        sw:'.LB',
+                        se:'.RB'
+                    },
+                    stop:function (e, ui) {
+                        var new_width = ui.size.width - WINDOW_LT.x - WINDOW_RB.x,
+                                new_height = ui.size.height - WINDOW_LT.y - WINDOW_RB.y;
+                        self.onResized(widgetId, new_width, new_height);
+                        return false;
+                    },
+                    ghost:true
                 });
-        if ((flags & 0x00000100) == 0) {
-            container.resizable({
-                handles:{
-                    w:'.Left',
-                    e:'.Right',
-                    s:'.Bottom',
-                    nw:'.LT',
-                    ne:'.RT',
-                    sw:'.LB',
-                    se:'.RB'
-                },
-                stop:function (e, ui) {
-                    var new_width = ui.size.width - WINDOW_LT.x - WINDOW_RB.x,
-                            new_height = ui.size.height - WINDOW_LT.y - WINDOW_RB.y;
-                    wsConnector.sendEvent({
-                        command:"resize",
-                        id:widgetId,
-                        w:new_width,
-                        h:new_height
-                    });
-                    return false;
-                },
-                ghost:true
+        container.find('.XButton').click(function () {
+
+        });
+        container.find('.MinButton').click(function () {
+            container.addClass("Minimized");
+            var task = $('.TaskTemplate:first').clone()
+                    .show();
+            task.find('.DeMinButton').click(function () {
+                container.removeClass("Minimized");
+                task.remove();
             });
-        }
+            task.find('.Title').html(container.find('.Bar').html());
+            $('#taskbar').append(task);
+        });
+
+        container.find('.MaxButton').click(function () {
+            var oldPosition = container.data('old-position');
+            if (oldPosition) {
+                container.css(oldPosition);
+                container.removeData('old-position');
+                self.onResized(widgetId, oldPosition.width, oldPosition.height);
+                return;
+            }
+            var $this = $(this);
+//            var width =document.documentElement.clientWidth,
+//                    height = document.documentElement.clientHeight;
+            var body = $('#main'),
+                    width = body.width() - 10, height = body.height() - 25;
+            container.data('old-position', {
+                width:container.width(),
+                height:container.height(),
+                left:container.css('left'),
+                top:container.css('top')
+            });
+            container.css({
+                left:0,
+                top:0,
+                width:width,
+                height:height
+            });
+            self.onResized(widgetId, width, height);
+        });
+
         container.attr('data-flags', flags);
         widget.canvas
                 .addClass("DialogCanvas")
@@ -732,55 +843,30 @@ QtLogic.prototype = {
         $('#widgets, #dialogs')
                 .on('mouseenter', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
-                    var parent = widget.parent;
-                    var array = [widget];
-                    while (parent) {
-                        array.pushFront(parent);
-                        parent = parent.parent;
-                    }
-                    this.enterQue = array;
-                    var len = array.length;
-                    for (var i = 0; i < len; i++) {
-                        for (var j = 0; j <= i; j++) {
-                            widget = array[j];
-                            var eventData = parseMouseEvent(evt, widget.canvas);
-                            wsConnector.sendEvent({
-                                command:"mouse",
-                                type:"enter",
-                                id:widget.id,
-                                x:eventData.x,
-                                y:eventData.y
-                            });
-                            widget.mousePositionX = eventData.x;
-                            widget.mousePositionY = eventData.y;
-                        }
-                    }
+                    var eventData = parseMouseEvent(evt, widget.canvas);
+                    wsConnector.sendEvent({
+                        command:"mouse",
+                        type:"enter",
+                        id:widget.id,
+                        x:eventData.x,
+                        y:eventData.y
+                    });
+                    widget.mousePositionX = eventData.x;
+                    widget.mousePositionY = eventData.y;
                 })
                 .on('mouseleave', 'canvas', function (evt) {
                     var widget = $(this).data('widget');
-                    var parent = widget.parent;
-                    var array = [widget];
-                    while (parent) {
-                        array.pushFront(parent);
-                        parent = parent.parent;
-                    }
-                    this.enterQue = array;
-                    var len = array.length;
-                    for (var i = 0; i < len; i++) {
-                        for (var j = 0; j <= i; j++) {
-                            widget = array[j];
-                            var eventData = parseMouseEvent(evt, widget.canvas);
-                            wsConnector.sendEvent({
-                                command:"mouse",
-                                type:"leave",
-                                id:widget.id,
-                                x:eventData.x,
-                                y:eventData.y
-                            });
-                            widget.mousePositionX = undefined;
-                            widget.mousePositionY = undefined;
-                        }
-                    }
+
+                    var eventData = parseMouseEvent(evt, widget.canvas);
+                    wsConnector.sendEvent({
+                        command:"mouse",
+                        type:"leave",
+                        id:widget.id,
+                        x:eventData.x,
+                        y:eventData.y
+                    });
+                    widget.mousePositionX = undefined;
+                    widget.mousePositionY = undefined;
                 })
                 .on('mousedown', 'canvas', function (evt) {
                     currentButton |= evt.which;
@@ -1497,15 +1583,31 @@ function init() {
     wsConnector.init();
 }
 
+
 $(document).ready(function () {
     init();
+    (function () {
+        var calculatePosition = function () {
+            $('#main').css('height', $('body').height() - 30);
+            console.log($('body').height() - 30);
+        };
+        $(window).resize(calculatePosition);
+        calculatePosition();
+    })();
 });
 
 </script>
 </head>
 <body>
-<div id="widgets">
+<div class="TaskTemplate" style="display: none;"><span class="Title"></span>
+
+    <div class="DeMinButton"></div>
 </div>
-<div id="dialogs"></div>
+<div id="main">
+    <div id="widgets">
+    </div>
+    <div id="dialogs"></div>
+</div>
+<div id="taskbar"></div>
 </body>
 </html>
