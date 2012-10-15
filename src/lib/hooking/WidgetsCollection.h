@@ -13,6 +13,7 @@ class WidgetsCollection : public QObject
 
         explicit WidgetsCollection(QObject *parent = 0);
 
+    public:
         QSet<QWidget*> m_widgets;
 
         QSemaphore m_sem;

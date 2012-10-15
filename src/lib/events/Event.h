@@ -146,6 +146,36 @@ class MouseDbClickEvent : public MouseEvent
         }
 };
 
+class MouseWheelEvent : public MouseEvent
+{
+        static int _type;
+        int _delta;
+        Qt::Orientation _orientation;
+
+    public:
+
+        MouseWheelEvent(const QPoint & pos, const QPoint & globalPos, int delta, Qt::Orientation orientation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers) :
+            MouseEvent((QEvent::Type)_type, pos, globalPos, (Qt::MouseButton) 0, buttons, modifiers),
+            _delta(delta),
+            _orientation(orientation)
+        {}
+
+        int delta()
+        {
+            return _delta;
+        }
+
+        Qt::Orientation orientation()
+        {
+            return (Qt::Orientation) _orientation;
+        }
+
+        static QEvent::Type eventType()
+        {
+            return (QEvent::Type) _type;
+        }
+};
+
 class EnterEvent : public Event
 {
         static int _type;

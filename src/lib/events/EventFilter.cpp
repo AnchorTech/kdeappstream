@@ -48,7 +48,6 @@ void EventFilter::disconnected()
 bool EventFilter::eventFilter(QObject * recv, QEvent * e)
 {
     static QList<QWidget*> windowsStack;
-
     QWidget * w = dynamic_cast<QWidget*>(recv);
 
     if (!www)
@@ -62,6 +61,12 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
     {
         switch (e->type())
         {
+            case QEvent::Destroy:
+                {
+                    WidgetsCollection::instance()->remove(w);
+                    WebRenderer::instance()->dequeue(w);
+                }
+                break;
             case QEvent::None:
 //                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::None" << recv;
                 break;
@@ -105,7 +110,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ApplicationWindowIconChange" << recv;
                 break;
             case QEvent::ChildAdded:
-//                qDebug() << "QEvent::ChildAdded" << (long long) recv;
+                qDebug() << "QEvent::ChildAdded" << recv;
                 {
                     WidgetsCollection::instance()->add(w);
                     QChildEvent * ce = (QChildEvent*)e;
@@ -119,8 +124,11 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 }
                 break;
             case QEvent::ChildPolished:
-                JSONBuilder::instance()->move(w, w->pos());
-                //qDebug() << "QEvent::ChildPolished" << (long long) recv;
+                if (WidgetsCollection::instance()->contains(w))
+                {
+                    //qDebug() << "QEvent::ChildPolished" << (long long) recv;
+                    JSONBuilder::instance()->move(w, w->pos());
+                }
                 break;
             case QEvent::ChildRemoved:
                 //qDebug() << "QEvent::ChildRemoved" << (long long) recv << e;
@@ -141,10 +149,10 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
             case QEvent::Close:
                 {
                     qDebug() << "QEvent::Close" << recv;
-                    if (w->isWindow())
-                        windowsStack.removeAll(w);
                     WidgetsCollection::instance()->remove(w);
                     WebRenderer::instance()->dequeue(w);
+                    if (w->isWindow())
+                        windowsStack.removeAll(w);
                 }
                 break;
             case QEvent::CloseSoftwareInputPanel:
@@ -188,19 +196,16 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::FocusIn:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusIn\033[0m" << recv << QApplication::focusWidget();
+                if (WidgetsCollection::instance()->contains(w))
                 {
                     if (!w->isWindow())
                         w = w->window();
-                    if (w && !w->isActiveWindow())
+                    if (w && !QApplication::activeModalWidget() && !w->isActiveWindow())
                         QApplication::setActiveWindow(w);
                 }
                 break;
             case QEvent::FocusOut:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[25;1mQEvent::FocusOut\033[0m" << recv << QApplication::focusWidget();
-                {
-//                    if (QApplication::focusWidget() == w)
-//                        w->clearFocus();
-                }
                 break;
             case QEvent::FontChange:
 //                qDebug() << "QEvent::FontChange" << recv;
@@ -347,7 +352,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseButtonDblClick" << recv;
                 break;
             case QEvent::MouseButtonPress:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonPress \033[0m" << recv;
+                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonPress \033[0m" << recv << w->parentWidget();
                 break;
             case QEvent::MouseButtonRelease:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonRelease \033[0m" << recv;
@@ -360,13 +365,19 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::Move:
                 //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Move" << recv;
+                if (WidgetsCollection::instance()->contains(w))
                 {
                     QMoveEvent * me = dynamic_cast<QMoveEvent*>(e);
                     JSONBuilder::instance()->move(w, me->pos());
                 }
+                else
+                {
+                    return true;
+                }
                 break;
             case QEvent::Paint:
                 //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::Paint" << recv;
+                if (WidgetsCollection::instance()->contains(w))
                 {
                     QPaintEvent * pe = dynamic_cast<QPaintEvent*>(e);
                     WebRenderer::instance()->queue(w, pe);
@@ -395,6 +406,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 break;
             case QEvent::Resize:
 //                qDebug() << "QEvent::Resize" << recv;
+                if (WidgetsCollection::instance()->contains(w))
                 {
                     QResizeEvent * re = (QResizeEvent*)e;
                     if (re->size().width() == w->width() && re->size().height() == w->height())
@@ -419,8 +431,8 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 JSONBuilder::instance()->showWidget(w);
                 break;
             case QEvent::ShowToParent:
-                WidgetsCollection::instance()->add(w);
                 //qDebug() << "QEvent::ShowToParent" << recv;
+                WidgetsCollection::instance()->add(w);
                 break;
             case QEvent::SockAct:
                 //qDebug() << "QEvent::SockAct" << recv;
@@ -486,12 +498,16 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::WhatsThisClicked" << recv;
                 break;
             case QEvent::Wheel:
-                //qDebug() << "QEvent::Wheel" << recv;
+                {
+                    QWheelEvent * we = (QWheelEvent*) e;
+                    qDebug() << "\033[36;1m QEvent::Wheel \033[0m" << recv << we->buttons() << we->delta() << we->globalPos() << we->modifiers() << we->orientation() << we->pos();
+                }
                 break;
             case QEvent::WinEventAct:
                 //qDebug() << "QEvent::WinEventAct" << recv;
                 break;
             case QEvent::WindowActivate:
+                if (WidgetsCollection::instance()->contains(w))
                 {
                     qDebug() << "QEvent::WindowActivate" << recv << QApplication::activeWindow();
                     if (w->isWindow())
@@ -507,6 +523,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::WindowBlocked" << recv;
                 break;
             case QEvent::WindowDeactivate:
+                if (WidgetsCollection::instance()->contains(w))
                 {
                     qDebug() << "QEvent::WindowDeactivate" << recv << QApplication::activeWindow();
                     if (w->isWindow())
@@ -523,15 +540,21 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::WindowStateChange" << recv << e;
                 break;
             case QEvent::WindowTitleChange:
-                //qDebug() << "QEvent::WindowTitleChange" << recv;
-                JSONBuilder::instance()->titleChange(w, w->windowTitle());
+                if (WidgetsCollection::instance()->contains(w))
+                {
+                    //qDebug() << "QEvent::WindowTitleChange" << recv;
+                    JSONBuilder::instance()->titleChange(w, w->windowTitle());
+                }
                 break;
             case QEvent::WindowUnblocked:
                 //qDebug() << "QEvent::WindowUnblocked" << recv;
                 break;
             case QEvent::ZOrderChange:
-                //qDebug() << "QEvent::ZOrderChange" << recv;
-                JSONBuilder::instance()->ZOrderChange(w);
+                if (WidgetsCollection::instance()->contains(w))
+                {
+                    //qDebug() << "QEvent::ZOrderChange" << recv;
+                    JSONBuilder::instance()->ZOrderChange(w);
+                }
                 break;
             case QEvent::KeyboardLayoutChange:
                 //qDebug() << "QEvent::KeyboardLayoutChange" << recv;

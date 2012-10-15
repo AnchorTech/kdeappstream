@@ -88,6 +88,16 @@ void EventConverter::parse(const QString & message)
     else if (command == "wheel")
     {
         long long id = value.property("id").toNumber();
+        QWidget * w = (QWidget*) id;
+        if (!WidgetsCollection::instance()->contains(w))
+            return;
+        int x = value.property("x").toInt32();
+        int y = value.property("y").toInt32();
+        int buttons = value.property("btn").toInt32();
+        int modifiers = value.property("modifiers").toInt32();
+        int delta = value.property("delta").toInt32();
+        int orientation = value.property("orientation").toInt32();
+        QCoreApplication::postEvent(w, new MouseWheelEvent(QPoint(x,y), QPoint(x,y), delta, (Qt::Orientation) orientation, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
     }
     else if (command == "resize")
     {
@@ -152,6 +162,7 @@ void EventConverter::parse(const QString & message)
         QWidget * w = (QWidget*) id;
         if (!WidgetsCollection::instance()->contains(w))
             return;
-        QCoreApplication::postEvent(w, new Activate());
+        if (!QApplication::activeModalWidget())
+            QCoreApplication::postEvent(w, new Activate());
     }
 }

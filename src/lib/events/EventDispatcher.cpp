@@ -63,15 +63,25 @@ bool EventDispatcher::eventFilter(QObject * recv, QEvent * e)
             }
         }
     }
+    else if (type == MouseWheelEvent::eventType())
+    {
+        MouseWheelEvent * mEvent = (MouseWheelEvent*) event;
+        if (widget->isEnabled())
+        {
+            QWheelEvent mouseEvent(mEvent->pos(), mEvent->pos(), mEvent->delta(), mEvent->buttons(), mEvent->modifiers(), mEvent->orientation());
+            QCoreApplication::sendEvent(widget, &mouseEvent);
+        }
+    }
     else if (type == MousePressEvent::eventType())
     {
         MousePressEvent * mEvent = (MousePressEvent*) event;
         if (widget->isEnabled() && mEvent->button())
         {
-            if (widget->focusProxy())
-                widget = widget->focusProxy();
-            if (widget->focusPolicy() & Qt::ClickFocus)
-                widget->setFocus(Qt::MouseFocusReason);
+            QWidget * fWidget = widget;
+            if (fWidget->focusProxy())
+                fWidget = fWidget->focusProxy();
+            if (fWidget->focusPolicy() & Qt::ClickFocus)
+                fWidget->setFocus(Qt::MouseFocusReason);
             QMouseEvent mouseEvent(QEvent::MouseButtonPress, mEvent->pos(), mEvent->pos(), mEvent->button(), mEvent->buttons(), mEvent->modifiers());
             QCoreApplication::sendEvent(widget, &mouseEvent);
         }
@@ -125,7 +135,7 @@ void EventDispatcher::processEnterEvents(QWidget * mouseGrabber, const QPoint & 
         parentEnter = parentEnter->parentWidget();
     }
 
-    if (currentMouseGrabber && !parentEnter)
+    if (WidgetsCollection::instance()->contains(currentMouseGrabber) && currentMouseGrabber && !parentEnter)
     {
         QWidget * parentLeave = currentMouseGrabber;
         while (parentLeave && parentLeave != parentEnter)

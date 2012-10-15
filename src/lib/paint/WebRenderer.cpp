@@ -1,6 +1,7 @@
 #include "WebRenderer.h"
 #include "JSONBuilder.h"
 #include "PaintDevice.h"
+#include "hooking/WidgetsCollection.h"
 
 #include <QString>
 #include <QWidget>
@@ -78,8 +79,6 @@ void WebRenderer::dequeue(QWidget * widget)
 
 void WebRenderer::render()
 {
-    int i = 0;
-
     while (!_render.isEmpty())
     {
         Widget w = _render.dequeue();
@@ -97,14 +96,15 @@ void WebRenderer::render()
 //                    qDebug() << item << item->pos() << item->scenePos();
 //            }
 //        }
-
 //        qDebug() << w.w << w.w->graphicsProxyWidget() << w.w->parentWidget() << w.w->focusProxy();
 
-        JSONBuilder::instance()->beginRender(w.w, w.rect);
-        w.w->render(pd, w.rect.topLeft(), QRegion(w.rect), 0);
-        JSONBuilder::instance()->endRender();
-        JSONBuilder::instance()->finish();
-        ++i;
+        if (WidgetsCollection::instance()->contains(w.w))
+        {
+            JSONBuilder::instance()->beginRender(w.w, w.rect);
+            w.w->render(pd, w.rect.topLeft(), QRegion(w.rect), 0);
+            JSONBuilder::instance()->endRender();
+            JSONBuilder::instance()->finish();
+        }
     }
 
     renderSemaphore.release();
