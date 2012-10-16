@@ -41,6 +41,12 @@ body {
     position: relative;
 }
 
+.TaskTemplate:hover {
+    box-shadow: 0 0 1em gray;
+}
+
+
+
 .TaskTemplate .Title {
     left: 5px;
     width: 125px;
@@ -49,7 +55,7 @@ body {
 }
 
 .TaskTemplate .DeMinButton {
-    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    background-image: url(http://www.2al.pl/phpAjaxTags/img/maximize.png);
     position: absolute;
     right: 5px;
     top: 5px;
@@ -66,6 +72,8 @@ body {
     display: none;
     position: absolute;
     background-color: gray;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 .ui-resizable-handle {
@@ -109,7 +117,7 @@ body {
     top: 5px;
     width: 12px;
     height: 12px;
-    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    background-image: url(http://www.2al.pl/phpAjaxTags/img/close.png);
     position: absolute;
     display: none;
 }
@@ -119,7 +127,7 @@ body {
     top: 5px;
     width: 12px;
     height: 12px;
-    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    background-image: url(http://www.2al.pl/phpAjaxTags/img/maximize.png);
     position: absolute;
     display: none;
 }
@@ -129,7 +137,7 @@ body {
     top: 5px;
     width: 12px;
     height: 12px;
-    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    background-image: url(http://jedrychowski.org/kde-appstream/restore.gif);
     position: absolute;
     display: none;
 }
@@ -139,7 +147,7 @@ body {
     top: 5px;
     width: 12px;
     height: 12px;
-    background-image: url(http://www.brookhills.org/admin/images/button_x.gif);
+    background-image: url(http://www.2al.pl/phpAjaxTags/img/minimize.png);
     position: absolute;
     display: none;
 }
@@ -156,6 +164,8 @@ body {
     height: 20px;
     font-size: 9pt;
     text-align: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 .Left {
@@ -205,10 +215,14 @@ body {
     top: 0;
 }
 
+.CanvasContainer:not(.Popup) {
+    /*overflow: hidden;*/
+}
+
 .DialogRoot {
     position: absolute;
-    left: 5;
-    top: 20;
+    left: 5px;
+    top: 20px;
 }
 
     /*canvas {
@@ -453,6 +467,7 @@ QtLogic.prototype = {
         }
         var setupImageTimeout = function (key) {
             var timeoutFunc = function (key) {
+                return;
                 QtLogic.images_ajax[key] = $.ajax({
                     url:"http://" + window.location.hostname + ":" + imagesHostPortNumber + "/rm?i=" + key,
                     complete:function () {
@@ -698,7 +713,6 @@ QtLogic.prototype = {
         }
     },
     onResized:function (widgetId, w, h) {
-        console.log(widgetId, w, h);
         wsConnector.sendEvent({
             command:"resize",
             id:widgetId,
@@ -746,7 +760,7 @@ QtLogic.prototype = {
                 });
 
         container.find('.XButton').click(function () {
-            QtLogic.deactivateDialog(widget.id);
+            self.deactivateDialog(widget.id);
         });
 
         container.find('.MinButton').click(function () {
@@ -809,6 +823,7 @@ QtLogic.prototype = {
     activateDialog:function (widgetId) {
         var widget = this.getWidget(widgetId);
         var container = widget.dialog;
+        if(!container) return;
         if(container.hasClass('Active')) return;
         $('.Active').removeClass('Active');
         container.addClass('Active');
@@ -898,6 +913,7 @@ QtLogic.prototype = {
             y += parent.y;
             parent = parent.parent;
         }
+        console.log({x:x, y:y});
         return {x:x, y:y};
     },
     bindGlobalEvents:function () {
@@ -950,13 +966,13 @@ QtLogic.prototype = {
                             modifiers:eventData.modifiers
                         });
                     }
+                    evt.preventDefault();
                 })
                 .on('mouseup', 'canvas', function (evt) {
                     currentButton ^= evt.which;
                     var widget = $(this).data('widget');
                     if (widget) {
                         var eventData = parseMouseEvent(evt);
-
                         wsConnector.sendEvent({
                             command:"mouse",
                             type:"release",
@@ -967,6 +983,7 @@ QtLogic.prototype = {
                             modifiers:eventData.modifiers
                         });
                     }
+                    evt.preventDefault();
                 })
                 .on('mousewheel', 'canvas', function (evt, delta) {
                     var widget = $(this).data('widget');
@@ -1064,11 +1081,12 @@ function parseMouseEvent(evt, widget) {
         case 1: // left
             data.button = 1;
             break;
-        case 2: // right
+        case 3: // right
             data.button = 2;
             break;
-        case 3: // midle
+        case 2: // midle
             data.button = 4;
+            break;
         default:
             data.button = 0;
     }
@@ -1661,7 +1679,7 @@ $(document).ready(function () {
     init();
     (function () {
         var calculatePosition = function () {
-            $('#main').css('height', $('body').height() - 30);
+            $('#main').css('height', $('body').height() - 33);
         };
         $(window).resize(calculatePosition);
         calculatePosition();
