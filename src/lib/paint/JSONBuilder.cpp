@@ -92,6 +92,18 @@ void JSONBuilder::endRender()
     _render_sem.release();
 }
 
+void JSONBuilder::createWidget(QWidget * widget)
+{
+    _layout_sem.acquire();
+    layout_buffer.append("{\"command\":\"create\"")
+          .append(",\"id\":").append(QString::number((long long)widget).toAscii())
+          .append(",\"name\":\"").append(widget->metaObject()->className()).append("\"")
+          .append(",\"type\":").append(QString::number(widget->windowType()).toAscii())
+          .append("},");
+    _layout_sem.release();
+    this->finish();
+}
+
 void JSONBuilder::activateWindow(QWidget * window)
 {
     _layout_sem.acquire();
@@ -278,7 +290,8 @@ void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & s
 
 void JSONBuilder::image(const QImage & image, const QPointF & p)
 {
-        QByteArray id = ImagesHostServer::instance()->hostImage(image);
+    QByteArray id = ImagesHostServer::instance()->hostImage(image);
+    if (!id.isNull())
         this->image(id, p);
 }
 
@@ -368,7 +381,7 @@ void JSONBuilder::pixmap(const QRectF & r, const QPixmap & pm, const QRectF & sr
 
 void JSONBuilder::pixmap(const QPixmap & pm, const QPointF & p)
 {
-    QByteArray id = ImagesHostServer::instance()->hostImage(pm.toImage());
+    QByteArray id = ImagesHostServer::instance()->hostImage(pm);
     this->pixmap(id, p);
 }
 

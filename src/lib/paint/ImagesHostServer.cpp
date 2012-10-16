@@ -158,6 +158,49 @@ QByteArray ImagesHostServer::hostImage(const QImage & image)
         return key;
     }
 
+    int j = 0;
+    bool allTransparent = true;
+    const uchar * pixelData = image.bits();
+    int bytes = image.byteCount();
+    for (const QRgb* pixel = reinterpret_cast<const QRgb*>(pixelData); bytes > 0; pixel++, bytes -= sizeof(QRgb)) {
+        if (qAlpha(*pixel) != 0) {
+            allTransparent = false;
+            break;
+        }
+    }
+
+    if (allTransparent)
+    {
+        m_sem.release();
+        return QByteArray();
+    }
+
+    m_cached.insert(key);
+
+    QImage img = image.copy();
+    m_data.insert(key, img);
+
+    while (m_data.count() > 1000)
+        m_data.remove(m_data.begin().key());
+
+    m_sem.release();
+
+    return key;
+}
+
+QByteArray ImagesHostServer::hostImage(const QPixmap & pm)
+{
+    m_sem.acquire();
+
+    QImage image = pm.toImage();
+
+    QByteArray key = fastmd5(image).toBase64();
+    if (m_cached.contains(key))
+    {
+        m_sem.release();
+        return key;
+    }
+
     m_cached.insert(key);
 
     QImage img = image.copy();

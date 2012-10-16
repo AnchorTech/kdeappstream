@@ -25,6 +25,7 @@ class ImagesHostServer : public QTcpServer
         static ImagesHostServer * instance(QObject * parent = 0);
 
         QByteArray hostImage(const QImage & image);
+        QByteArray hostImage(const QPixmap & image);
 
         static inline QByteArray fastmd5( const QImage & image )
         {

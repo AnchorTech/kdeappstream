@@ -69,6 +69,7 @@ namespace KAppStream
             void beginRender(QWidget * widget, const QRect & rect);
             void endRender();
 
+            void createWidget(QWidget * widget);
             void activateWindow(QWidget * window);
             void deactivateWindow(QWidget * window);
 

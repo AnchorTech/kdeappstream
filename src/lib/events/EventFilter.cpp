@@ -61,6 +61,12 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
     {
         switch (e->type())
         {
+            case QEvent::Create:
+                {
+                    WidgetsCollection::instance()->add(w);
+                    JSONBuilder::instance()->createWidget(w);
+                }
+                break;
             case QEvent::Destroy:
                 {
                     WidgetsCollection::instance()->remove(w);
@@ -110,14 +116,12 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ApplicationWindowIconChange" << recv;
                 break;
             case QEvent::ChildAdded:
-                qDebug() << "QEvent::ChildAdded" << recv;
+                //qDebug() << "QEvent::ChildAdded" << recv;
                 {
-                    WidgetsCollection::instance()->add(w);
                     QChildEvent * ce = (QChildEvent*)e;
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
                     if (cw)
                     {
-                        WidgetsCollection::instance()->add(cw);
                         JSONBuilder::instance()->addChild(cw, w);
                         JSONBuilder::instance()->move(w, w->pos());
                     }
@@ -358,7 +362,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "\033[34;1m QEvent::MouseButtonRelease \033[0m" << recv;
                 break;
             case QEvent::MouseMove:
-                qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseMove" << recv;
+                //qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseMove" << recv;
                 break;
             case QEvent::MouseTrackingChange:
                 qDebug() << QTime::currentTime().toString("mm:ss:zzz") << "QEvent::MouseTrackingChange" << recv;
