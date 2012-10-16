@@ -62,6 +62,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
         switch (e->type())
         {
             case QEvent::Create:
+                qDebug() << "QEvent::Create" << recv;
                 {
                     WidgetsCollection::instance()->add(w);
                     JSONBuilder::instance()->createWidget(w);
@@ -116,12 +117,14 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ApplicationWindowIconChange" << recv;
                 break;
             case QEvent::ChildAdded:
-                //qDebug() << "QEvent::ChildAdded" << recv;
                 {
                     QChildEvent * ce = (QChildEvent*)e;
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
+                    WidgetsCollection::instance()->add(w);
+                    qDebug() << "QEvent::ChildAdded" << cw;
                     if (cw)
                     {
+                        WidgetsCollection::instance()->add(cw);
                         JSONBuilder::instance()->addChild(cw, w);
                         JSONBuilder::instance()->move(w, w->pos());
                     }
