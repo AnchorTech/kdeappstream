@@ -1,0 +1,83 @@
+%&latex
+
+% NOTE: There is no templated provided by the Class author.
+%       we just copy basic report template.
+
+\documentclass[polish]{inz}
+
+%+Make Index
+\usepackage{makeidx}
+\makeindex
+%-Make Index
+
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[OT4]{fontenc}
+
+%+Title
+\title{Graficzne interfejsy aplikacji opartych o biblioteki Qt i KDE}
+\author{Jan Jędrychowski\\Łukasz Spas}
+\date{2012}
+\advisor{dr inż. Igor Wojnicki}
+%-Title
+
+\begin{document}
+
+\maketitle
+
+
+
+%+Contents
+\chapter{Wstęp}
+
+W dzisiejszych czasach coraz bardziej powszechne staje się wykorzystanie przeglądarek do zadań, do których wcześniej używane były duże aplikacje klienckie. Powstają rozwiązania, które starają się oddzielić logikę obliczeniową od warstwy prezentacji, przenosząc jednocześnie tę pierwszą na stronę serwera. Rozwój technologii HTML5 rozszerzającej standard o elementy canvas, websocket, webworkers i inne umożliwia tworzenie aplikacji o możliwościach takich samych jakie niegdyś były dostępne tylko w programach desktopowych. Co więcej gwarantuje międzyplatformowość nie tylko w rozumieniu softwareowym - jedna aplikacja dostępna jest zarówno na komputerach osobistych, tabletach, telefonach i innych urządzeniach wyposażonych w przeglądarkę.
+
+W niektórych rozwiązaniach zastąpienie starych aplikacji desktopowych nowymi aplikacjami webowymi (przeglądarkowymi) jest jednak niemożliwe, czasochłonne lub zbyt kosztowne.
+
+Podczas badań rynku pod kątem aktualnie dostępnych rozwiązań dostrzeżono braki w solucjach umożliwiających zdalną interakcję z pojedynczymi aplikacjami. Większość solucji dostępnych na rynku wymusza udostępnienie całego pulpitu oraz wymaga od użytkownika końcowego (klienta) posiadania odpowiedniego, nierzadko płatnego oprogramowania (np. TeamViewer, VNC, Citrix i inne). Celem projektu jest stworzenie alternatywy wymagającej od strony klienta jedynie przeglądarki obsługującej HTML5 bez konieczności instalacji jakichkolwiek pluginów (np. Java, Flash).
+
+Głównym wzorcem dla tej pracy jest projekt GTK+ Broadway powstały w 2011 roku oferujący dostęp przez przeglądarkę internetową do aplikacji działających pod kontrolą biblioteki GTK na zdalnym serwerze. Do tej pory nie istniało rozwiązanie oferujące podobną funkcjonalność dla biblioteki QT i stworzony na potrzeby tej pracy projekt jest pierwszą taką implementacją.
+Kluczowym czynnikiem wyróżniającym tę pracę na tle innych jest innowacyjny sposób przesyłu danych do wizualizacji okien i ich elementów, który nie opieraja się na transmisji bitmap. 
+
+\chapter{Podstawy teoretyczne}
+Text in first chapter ...
+
+\section{Szczegóły niektórych rozwiązań HTML5}
+Text in section ...
+
+\section{Opis biblioteki Qt}
+Text in first chapter ...
+
+\chapter{Określenie problemu i proponowane rozwiązanie}
+Text in first chapter ...
+
+\chapter{Implementacja}
+Text in first chapter ...
+
+\section{Po stronie serwera}
+Text ...
+
+\section{Po stronie klienta}
+Text ...
+
+\section{Napotkane problemy}
+Text ...
+
+\chapter{Testy aplikacji}
+Text ...
+
+\section{Testy w środowisku lokalnym}
+Text ...
+
+\section{Testy w sieci Internet}
+Text ...
+
+\chapter{Podsumowanie}
+Text ...
+
+%+Make Index
+\printindex
+%-Make Index
+
+\end{document}
+
