@@ -24,8 +24,8 @@
 \floatstyle{boxed}
 \restylefloat{figure}
 
-\def\advisor#1{\gdef\@advisor{#1}} 
-\def\advisorpl#1{\gdef\@advisorpl{#1}} 
+\def\advisor#1{\gdef\@advisor{#1}}
+\def\advisorpl#1{\gdef\@advisorpl{#1}}
 \def\titlepl#1{\gdef\@titlepl{#1}}
 
 \def\copyr{
