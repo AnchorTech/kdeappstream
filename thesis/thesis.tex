@@ -21,7 +21,7 @@
 
 \chapter{Wstęp}
 
-W dzisiejszych czasach coraz bardziej powszechne staje się wykorzystanie przeglądarek do zadań, do których wcześniej używane były duże aplikacje klienckie. Powstają rozwiązania, które starają się oddzielić logikę obliczeniową od warstwy prezentacji, przenosząc jednocześnie tę pierwszą na stronę serwera. Rozwój technologii HTML5 rozszerzającej standard o elementy canvas, websocket, webworkers i inne umożliwia tworzenie aplikacji o możliwościach takich samych jakie niegdyś były dostępne tylko w programach desktopowych. Co więcej gwarantuje międzyplatformowość nie tylko w rozumieniu softwareowym - jedna aplikacja dostępna jest zarówno na komputerach osobistych, tabletach, telefonach i innych urządzeniach wyposażonych w nowoczesną przeglądarkę.
+W dzisiejszych czasach coraz bardziej powszechne staje się wykorzystanie przeglądarek do zadań, do których wcześniej używane były duże aplikacje klienckie. Powstają rozwiązania, które starają się oddzielić logikę obliczeniową od warstwy prezentacji, przenosząc jednocześnie tę pierwszą na stronę serwera. Rozwój technologii HTML5 rozszerzającej standard o elementy canvas, websocket, webworkers i inne umożliwia tworzenie aplikacji o możliwościach takich samych jakie niegdyś były dostępne tylko w programach desktopowych. Co więcej gwarantuje międzyplatformowość nie tylko w rozumieniu softwareowym - jedna aplikacja dostępna jest zarówno na komputerach osobistych, tabletach, telefonach i innych urządzeniach wyposażonych w nowoczesną przeglądarkę. Przy użyciu bardzo związanej z HTML5 technologii CSS3 możliwie jest tworzenie jednej aplikacji, która będzie użytkowalna niezależnie od wielkości ekranu urządzenia.
 
 W niektórych rozwiązaniach zastąpienie starych aplikacji desktopowych nowymi aplikacjami webowymi (przeglądarkowymi) jest jednak niemożliwe, czasochłonne lub zbyt kosztowne.
 
@@ -33,7 +33,19 @@ Głównym wzorcem dla tej pracy jest projekt GTK+ Broadway powstały w 2011 roku
 W rodziale tym przedstawione zostaną najważniejsze informacje dotyczące technologii wykorzystanych w projekcie. 
 
 \section{Wybrane rozwiązania HTML5}
-Text in section ...
+HTML5 (ang. HyperText Markup Language) jest najnowszą wersją popularnego języka znaczników HTML. Pojęcie to nie jest do końca jasne i oczywiste, ponieważ ta edycja języka niesie ze sobą nie tylko zmiany w znacznikach, ale bardzo mocno rozszerza możliwości stron WWW. Co więcej łączy się bezpośrednio z innymi technologiami takimi jak Javscript oraz CSS3 i nie jest w stanie bez nich istnieć. W związku z tym sama definicja HTML jako jedynie język znaczników jest niepełna. We wcześniejszych etapach samo konsorcjum W3 miało problemy z jasną definicją HTML5 i na krótki czas składowymi tej technologii był język CSS3 oraz SVG.
+Standard nie jest jeszcze ukończony i zgodnie z zapowiedziami W3C zostanie ukończony około roku 2014.
+HTML5 jest rozwijany w ścisłej współpracy z twórcami najpopularniejszych przeglądarek. Została powołana specjalna grupa WHATWG (Web Hypertext Application Technology Working Group), która skupia producentów takich jak Mozilla Foundation, Google, Opera Software oraz Apple Inc. Przeglądarki internetowe takie jak Mozilla Firefox, Google Chrome oraz Opera już teraz implementują większość z planowanych nowości przedstawionych w aktualnym szkicu w wersjach produkcyjnych. Z powodu dojrzałości obecnej formy standard oraz wielkiej popularności już na obecną chwilę można założyć, że jego podstawowe założenia oraz komponenty pozostaną w obecnej formie bez rewolucyjnych zmian.
+
+W rozwiązaniu przedstawionym w pracy po stronie klienta stosujemy dwa nowe komponenty HTML5: canvas (ang. płótno) oraz WebSocket.
+
+\subsection{Element canvas}
+Nowy element drzewa DOM canvas pozwala na renderowanie dynamicznych bitmap na stronie przy pomocy skryptów języka Javascript. Aktualnie wszystkie przeglądarki producentów z WHATWG implementują obecny standard w pełni poprawnie.
+ Wprowadzenie tego komponentu pozwala na tworzenie dowolnych animacji oraz grafik, których użycie wcześniej wymagało użycia zewnętrznych pluginów (np. Flash lub Java).
+W projekcie elemntu ten używany jest do rysowania pojedynczych widgetów. 
+\subsection{Technologia WebSocket}
+WebSocket jest technologią oferującą ustandaryzowaną pełną dwustronną komunikację między klientem (przeglądarką internetową) a serwerem. Podobną funkcjonalność można było wcześniej zasymulować przy pomocy modelu Comet korzystającego z długotrwałych połączeń HTTP, na które leniwie były wysyłane dane. Poprzednie rozwiązanie z powodu braku ustandaryzowania oraz wykorzystywania obejścia było trudne w utrzymaniu oraz nie oferowało synchronicznej komunikacji dwustronnej.
+W projekcie technologia wykorzystywana jest do komunikacji z serwerem. Łączność ta jest dwustronna.
 
 \section{Opis biblioteki Qt}
 W tym podrozdziale zostaną przedstawione mechanizmy biblioteki Qt wykorzystane przy tworzeniu projektu, o którym stanowi niniejsza praca. 
