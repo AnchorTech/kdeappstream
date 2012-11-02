@@ -121,12 +121,34 @@ Odbiorcą zdarzenia jest widget, który wygenerował dane zdarzenie po stronie p
 \chapter{Implementacja}
 Text in first chapter ...
 
+
+
 \section{Po stronie serwera}
 \label{sec:implementation_server}
-Text ...
 
 \section{Po stronie klienta}
-Text ...
+
+\subsection{Biblioteki pomocniczne}
+Podczas pracy z projektem zostały wykorzystane popularne biblioteki ułatwiające podstawowe zadania. Wszystkie z nich są darmowe nawet w wykorzystaniu komercyjnym oraz całkowicie otwarte.
+* jQuery
+* jQuery-UI
+* jQuery-mousewheel
+* sylvester.js
+
+\subsection{Połączenie}
+Klient po załadowaniu początkowej strony dokonuje połączenia WebSocket z serwerem na port podany na stronie. Następnie nasłuchuje na informacje od serwera i na każdą z nich reaguje. Komunikaty w formacie JSON w drugą stronę wysyłane są po zajściu zdarzeń po stronie klienta, np. ruchu myszą. Dokładny opis zdarzeń znajduję się w sekcji **TODO**
+
+\subsection{Window manager (ang. zarządca okien)}
+
+
+\subsection{Rysowanie widgetów przy pomocy elementu canvas}
+
+
+\section{Format danych}
+
+\subsection{Dane wysyłane przez serwera}
+
+\subsection{Dane wysyłane przez klienta}
 
 \section{Napotkane problemy}
 \begin{enumerate}
