@@ -90,6 +90,7 @@ W rozwiązaniu przedstawionym w pracy po stronie klienta stosujemy dwa nowe komp
 Nowy element drzewa DOM canvas pozwala na renderowanie dynamicznych bitmap na stronie przy pomocy skryptów języka Javascript. Aktualnie wszystkie przeglądarki producentów z WHATWG implementują obecny standard w pełni poprawnie.
  Wprowadzenie tego komponentu pozwala na tworzenie dowolnych animacji oraz grafik, których użycie wcześniej wymagało użycia zewnętrznych pluginów (np. Flash lub Java).
 W projekcie elemntu ten używany jest do rysowania pojedynczych widgetów. 
+
 \subsection{Technologia WebSocket}
 WebSocket jest technologią oferującą ustandaryzowaną pełną dwustronną komunikację między klientem (przeglądarką internetową) a serwerem. Podobną funkcjonalność można było wcześniej zasymulować przy pomocy modelu Comet korzystającego z długotrwałych połączeń HTTP, na które leniwie były wysyłane dane. Poprzednie rozwiązanie z powodu braku ustandaryzowania oraz wykorzystywania obejścia było trudne w utrzymaniu oraz nie oferowało synchronicznej komunikacji dwustronnej.
 W projekcie technologia wykorzystywana jest do komunikacji z serwerem. Łączność ta jest dwustronna.
@@ -161,7 +162,7 @@ Interakcja użytkownika z aplikacją sprowadza się do obsługi następujących 
   \item Zmiana rozmiaru okna aplikacji poprzez przeciąganie jego krawędzi
   \item Zamknięcie, minimalizacja lub maksymalizacja okna aplikacji
 \end{enumerate}
-Większość z wyżej wymienionych elementów jest obsługiwana jako zdarzenia w języku JavaScript większości dzisiejszych przeglądarek. Proponowane podejście na rozwiązanie tego zagadnienia polega na stworzeniu formatu danych bazując na notacji JSON (JavaScript Object Notation). Dane w tym formacie przesyłane do serwera są następnie poddawane walidacji i konwersji na obiekty zdarzeń biblioteki Qt. Zdarzenia takie są następnie przesyłane do kolejki zdarzeń w głównym wątku aplikacji. 
+Większość z wyżej wymienionych elementów jest obsługiwana jako zdarzenia w języku JavaScript większości dzisiejszych przeglądarek. Proponowane podejście na rozwiązanie tego zagadnienia polega na stworzeniu formatu danych bazując na notacji JSON (JavaScript Object Notation). Dane w tym formacie przesyłane do serwera są następnie poddawane walidacji i konwersji na obiekty zdarzeń biblioteki Qt. Zdarzenia takie są następnie przesyłane do kolejki zdarzeń w głównym wątku aplikacji.
 
 Odbiorcą zdarzenia jest widget, który wygenerował dane zdarzenie po stronie przeglądarki bazując na hierarchicznej budowie interfejsu użytkownika. Wyjątkami są tutaj zdarzenia klawiatury, które nie mają bezpośredniego odbiorcy w momencie ich zaistnienia. Aplikacja sama decyduje o tym, który element powinien odebrać zdarzenie. Domyślnie jest to widget, który atualnie posiada tzw. focus, a to z kolei zależy od poprzednich zdarzeń oraz logiki samego programu. W celu symulacji podobnego zachowania decyzja o odbiorcy zdarzeń klawiatury podejmowana jest po stronie serwera bazując na aktualnym stanie aplikacji.
 
@@ -170,6 +171,62 @@ Odbiorcą zdarzenia jest widget, który wygenerował dane zdarzenie po stronie p
 \input{implementation/render.tex}
 \section{Zdarzenia}
 \input{implementation/events.tex}
+
+\section{Szczegóły implementacji po stronie serwera}
+\label{sec:implementation_server}
+
+\section{Szczegóły implementacji po stronie klienta}
+
+\subsection{Biblioteki pomocniczne}
+Podczas pracy z projektem zostały wykorzystane popularne biblioteki ułatwiające podstawowe zadania. Wszystkie z nich są darmowe nawet w wykorzystaniu komercyjnym oraz całkowicie otwarte.
+\begin{enumerate}
+  \item jQuery - biblioteka ułatwijąca operacje na elementach DOM
+  \item jQuery-UI - plugin do biblioteki jQuery umożliwiający tworzenie zaawansowanych wizualnych elementów, takich jak okna dialogowe, elementy rozszerzalne (ang. resizable), elementy przesuwalne (ang. draggable).
+  \item jQuery-mousewheel - plugin do biblioteki jQuery dodający obsługę kółka myszy
+  \item sylvester.js - biblioteka służąca do zaawansowanych obliczeń na macierzach i wektorach
+\end{enumerate}
+
+
+\subsection{Połączenie}
+Klient po załadowaniu początkowej strony dokonuje połączenia WebSocket z serwerem na port podany na stronie. Następnie nasłuchuje na informacje od serwera i na każdą z nich reaguje. Komunikaty w formacie JSON w drugą stronę wysyłane są po zajściu zdarzeń po stronie klienta, np. ruchu myszą. Dokładny opis zdarzeń znajduję się w sekcji \bf{TODO - muszę się bliżej zaprzyjaźnić z latexem ;)}
+
+\subsection{Window manager (ang. zarządca okien) na szybkości}
+Typowe programy komputerowe składaja się z wielu okien. Sposób implementacji pseudookien i zarządcy w projekcie był możliwy na dwa sposoby.
+Pierwszym wariantem jest zastosowanie osobnych okien przeglądarki (tzw. popupów), które odpowiadałyby rzeczywistym oknom przeglądarki.
+Drugą opcją jest stworzenie minimalistycznego managera okien w języku Javascript.
+
+Minusem pierwszym rozwiązania jest całkowitym brak możliwości sterowania oknami. Przeglądarka nie jest w stanie zablokować możliwości zamknięcia okna, sterować ich modalnościa oraz przyciskami sterowania (minimalizacji, maksymalizacji, zamknięcia i innymi). Co więcej stosowanie dodatkowych okien przeglądarki jest uważane za złą praktykę.
+Z powodu tak dużej ilości problemów w projekcie zdecydowano się na użycie drugiego wariantu. Do stworzenia okien wykorzystana została biblioteka jQuery-UI dostarczająca metody umożliwiający w przystępny sposób tworzenie elementów rozszerzalnych (ang. resizable) oraz przeciągalnych (ang. draggable). Celem funkcjonalnym było upodobnienie zachowania pseudookien w przeglądarce do prawdziwych okien programu:
+\begin{enumerate}
+  \item zmiana rozmiaru okna przy pomocy uchwytów w rogach i na krawędziach
+  \item przenoszenie okien za pomocą paska tytułowego
+  \item minimalizacja, maksymalizacja oraz zamykanie okien za pomocą przycisków w prawym górnym rogu
+\end{enumerate}
+
+%* TODO - tutaj rysunk okienka z zaznaczonymi elementami typu pasek Bar, przyciski _,[],X, chywataki resizable.
+
+Wszystkie elementy są prostymi obiektami blokowymi typu div. Odpowiednie usytułowanie elementów zapewniają właściwości CSS.
+Funkcjonalność maksymalizacji różni się od funkcjonalności w rzeczywistym środowisku. Jest to równoważne ze zwiększeniem rozmiaru okna do maksymalnego dostępnu obszaru (100 procent szerokości i wysokości ciała strony).
+
+Taka implementacja problemu wynika z możliwości uruchomienia serwera aplikacji w serwerze X w dowolnej rozdzielczości. Po faktycznym zmaksymalizowaniu okna na serwerze użytkownik po stronie przeglądarki widziałby okno o rozmiarze innym niż pełny dostępny obszar widoku. W przypadku rozmiaru mniejszego skutkowałoby to pustym, niezagospodarowanym miejscem w oknie przeglądarki, natomiast większy rozmiar powodowałby pojawienie się suwaków przewijania (ang. scrollbar).
+
+Funkcjonalność minimalizacji okna jest również symulowana. Okno jest chowane poprzez zmianę wartości CSS display na none. Dodatkowo tworzony jest element na pasku zadań, który po kliknięciu przywraca ukryte okno. Pasek zadań jest elementem strony znajdującym się na samym dole.
+
+** TODO rysunek paska zadań **
+
+\subsection{Rysowanie pojedynczego widgeta}
+Na stronie widget reprezentowany jest przez element kontenera div oraz zawarty w nim element canvas oraz kontener na dzieci widgeta. Element kontenera ma jedynie funkcję pomocniczą i rozmieszcza w odpowiedniej pozycji canvas oraz dzieci. Jest całkowicie przezroczysty i nie jest widoczny na stronie. Taka implementacja relacji rodzic-dziecko widgetów na stronie zapewnia drzewiastość i łatwość zarządzania widgetami. Zmiana rodzica widgeta, który posiada zagnieżdzone dzieci nie jest problematyczna, a ze względu na format przesyłanych danych od serwera ta operacja jest bardzo często używana na etapie tworzenia okien. Najstarsze widgety (bezpośrednio dziedziczące po QDialog) stoją najwyżej w strukturze i są dodatkowo opakowane w kontener okna z całą jego strukturą.
+
+** TODO rysunek struktury **
+
+\section{Format danych}
+
+\subsection{Dane wysyłane przez serwera}
+
+** Trójki - QT | JSON | canvas **
+
+\subsection{Dane wysyłane przez klienta}
+
 \section{Napotkane problemy}
 \input{implementation/problems.tex}
 
