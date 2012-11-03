@@ -152,15 +152,23 @@ Z powodu tak dużej ilości problemów w projekcie zdecydowano się na użycie d
 
 **TODO - tutaj rysunk okienka z zaznaczonymi elementami typu pasek Bar, przyciski _,[],X, chywataki resizable.
 
+Wszystkie elementy są prostymi obiektami blokowymi typu div. Odpowiednie usytułowanie elementów zapewniają właściwości CSS.
+Funkcjonalność maksymalizacji różni się od funkcjonalności w rzeczywistym środowisku. Jest to równoważne ze zwiększeniem rozmiaru okna do maksymalnego dostępnu obszaru (100 procent szerokości i wysokości ciała strony).
+Taka implementacja problemu wynika z możliwości uruchomienia serwera aplikacji w serwerze X w dowolnej rozdzielczości. Po faktycznym zmaksymalizowaniu okna na serwerze użytkownik po stronie przeglądarki widziałby okno o rozmiarze innym niż pełny dostępny obszar widoku. W przypadku rozmiaru mniejszego skutkowałoby to pustym, niezagospodarowanym miejscem w oknie przeglądarki, natomiast większy rozmiar powodowałby pojawienie się suwaków przewijania (ang. scrollbar).
+Funkcjonalność minimalizacji okna jest również symulowana. Okno jest chowane poprzez zmianę wartości CSS display na none. Dodatkowo tworzony jest element na pasku zadań, który po kliknięciu przywraca ukryte okno. Pasek zadań jest elementem strony znajdującym się na samym dole.
 
-Okno - po stronie serwera element dziedziczący z klasy QDialog - na stronie jest elementem blokowym div. Wewnątrz niego umiejscowione są inne proste elementy 
+** TODO rysunek paska zadań **
 
-\subsection{Rysowanie widgetów przy pomocy elementu canvas}
+\subsection{Rysowanie pojedynczego widgeta}
+Na stronie widget reprezentowany jest przez element kontenera div oraz zawarty w nim element canvas oraz kontener na dzieci widgeta. Element kontenera ma jedynie funkcję pomocniczą i rozmieszcza w odpowiedniej pozycji canvas oraz dzieci. Jest całkowicie przezroczysty i nie jest widoczny na stronie. Taka implementacja relacji rodzic-dziecko widgetów na stronie zapewnia drzewiastość i łatwość zarządzania widgetami. Zmiana rodzica widgeta, który posiada zagnieżdzone dzieci nie jest problematyczna, a ze względu na format przesyłanych danych od serwera ta operacja jest bardzo często używana na etapie tworzenia okien. Najstarsze widgety (bezpośrednio dziedziczące po QDialog) stoją najwyżej w strukturze i są dodatkowo opakowane w kontener okna z całą jego strukturą.
 
+** TODO rysunek struktury **
 
 \section{Format danych}
 
 \subsection{Dane wysyłane przez serwera}
+
+** Trójki - QT | JSON | canvas **
 
 \subsection{Dane wysyłane przez klienta}
 
