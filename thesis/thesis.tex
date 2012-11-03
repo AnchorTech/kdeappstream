@@ -8,12 +8,59 @@
 \usepackage{polski}
 \usepackage[utf8]{inputenc}
 \usepackage[OT4]{fontenc}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+
+%+Colors definitions
+\definecolor{white}{rgb}{1,1,1}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+%-Colors definitions
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=C++,
+   emph={QPaintEngine,Qt,QTextItem,QRect,QRectF,QPoint,QPointF,QLine,QLineF,QEllipse,QPainterPath,QPixmap,QImage},
+   emphstyle={\color{RedViolet}\bfseries}
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{white},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
 
 %+Title
 \title{Graficzne interfejsy aplikacji opartych o biblioteki Qt i KDE}
-\author{Jan J\k{e}drychowski\\\L{}ukasz Spas}
+\author{Jan Jędrychowski\\Łukasz Spas}
 \date{2012}
-\advisor{dr in\.{z}. Igor Wojnicki}
+\advisor{dr inż. Igor Wojnicki}
 %-Title
 
 \begin{document}
@@ -119,33 +166,12 @@ Większość z wyżej wymienionych elementów jest obsługiwana jako zdarzenia w
 Odbiorcą zdarzenia jest widget, który wygenerował dane zdarzenie po stronie przeglądarki bazując na hierarchicznej budowie interfejsu użytkownika. Wyjątkami są tutaj zdarzenia klawiatury, które nie mają bezpośredniego odbiorcy w momencie ich zaistnienia. Aplikacja sama decyduje o tym, który element powinien odebrać zdarzenie. Domyślnie jest to widget, który atualnie posiada tzw. focus, a to z kolei zależy od poprzednich zdarzeń oraz logiki samego programu. W celu symulacji podobnego zachowania decyzja o odbiorcy zdarzeń klawiatury podejmowana jest po stronie serwera bazując na aktualnym stanie aplikacji.
 
 \chapter{Implementacja}
-Text in first chapter ...
-
-\section{Po stronie serwera}
-\label{sec:implementation_server}
-Text ...
-
-\section{Po stronie klienta}
-Text ...
-
+\section{Renderowanie}
+\input{implementation/render.tex}
+\section{Zdarzenia}
+\input{implementation/events.tex}
 \section{Napotkane problemy}
-\begin{enumerate}
-  \item rysowanie za pomocą zdarzeń (konieczność kolejkowania widgetów)
-  \item Znikający \emph{focus} okna aplikacji
-  \label{problems_focus}
-  \item Kody znaków klawiatury
-  \label{problems_keyboard}
-  \item Łukasz Stanisław więcej problemów nie miał... Kolej na problemy Jana Edwarda
-\end{enumerate}
-
-Ad.\ref{problems_focus} Biblioteka Qt stanowi niejako nakładkę dla natywnego zarządcy okien systemu operacyjnego. W zwizku z tym o kolejności okien na stosie decyduje system operacyjny. Qt podejmuje jedynie odpowiednie czynności w celu aktualizacji graficznego interfejsu aplikacji w zależności od aktualnego stanu konkretnych okien definiowanego przez system operacyjny. W sytuacji kiedy użytkownik nie prowadzi żadnej intrakcji z systemem operacyjnym a jedynie z aplikacją, mogło by się zdarzyć, że niektóe zdarzenia było by ignorowane przez aplikację. Przykładem takiej sytuacji jest wprowadzanie tekstu na klawiaturze. Qt przesyła zdarzenia klawiatury do widgeta, który aktualnie posiada focus w oknie, które znajduje się na szczycie stosu okien w systemie operacyjnym. W momencie kiedy dwóch zdalnych użytkowników uruchomiło by aplikację na tym samym serwerze, zdarzenia jednego użytkownika były by ignorowane ponieważ tylko jedno okno jednej aplikacji może być na szczycie stosu. 
-
-Rozwiązaniem tego problemu była reimplementacja odpowiednich metod Qt w celu symulacji zachowania stosu okien systemu operacyjnego wewnątrz samej aplikacji. W rezultacie aplikacja "myśli", że jest aktywna i znajduje się na szczycie stosu okien.
-
-Ad.\ref{problems_keyboard} 
-Qt platformowo niezależny opis kodów znaków klawiatury za pomocą zdefiniowanego typu wyliczeniowego \emph{Qt::Key}\footnote{http://doc.qt.digia.com/qt/qt.html\#Key-enum}. Niestety przeglądarki nie są dobrze ustandaryzowane i ich numeracja klawiszy znacznie różni się nie tylko między platformami ale również między różnymi ich wersjami. Dodatkowo przeglądarki często nie wspierają wszystkich klawiszy przez to zakres kodów znaków jest inny niż w przypadku biblioteki Qt.
-
-Powyższe problemy wymusiły konieczność zaimplementowania metody konwertującej po stronie klienta kody klawiszy na odpowiadające im wartości typu wyliczeniowego \emph{Qt::Key}.
+\input{implementation/problems.tex}
 
 \chapter{Testy aplikacji}
 Natestowaliśmy się, że hoho

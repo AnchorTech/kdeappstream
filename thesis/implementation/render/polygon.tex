@@ -1,0 +1,24 @@
+\begin{lstlisting}[language=C++,numbers=none]
+virtual void QPaintEngine::drawPolygon( const QPointF * points, 
+                                        int pointCount, 
+                                        PolygonDrawMode mode );
+virtual void QPaintEngine::drawPolygon( const QPoint * points, 
+                                        int pointCount, 
+                                        PolygonDrawMode mode );
+\end{lstlisting}
+\begin{lstlisting}[language=JavaScript,numbers=none]
+{
+  "t":"polygon",
+  "mode":0, // 0: QPaintEngine::OddEvenMode
+            // 1: QPaintEngine::WindingMode
+            // 2: QPaintEngine::ConvexMode
+            // 3: QPaintEngine::PolylineMode	
+            // http://doc.qt.digia.com/stable/qpaintengine.html#PolygonDrawMode-enum
+  "data":   // Lista punktow do polaczenia
+    [
+      [0.0,0.0],
+      [10.0,10.0],
+      [123.0,123.0]
+    ]
+}
+\end{lstlisting}

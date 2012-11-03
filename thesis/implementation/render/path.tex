@@ -1,0 +1,18 @@
+\begin{lstlisting}[language=C++,numbers=none]
+virtual void QPaintEngine::drawPath( const QPainterPath & path );
+\end{lstlisting}
+\begin{lstlisting}[language=JavaScript,numbers=none]
+{
+  "t":"path",
+  "data":          // Lista punktow
+    [
+      ["t":0,"p":[[0,0]]],      // moveTo
+      ["t":1,"p":[[10,10]]],    // lineTo
+      ["t":2,"p":[[10,10],[100,100]]],  // quadTo
+      ["t":2,"p":[[10,10],[100,100],[1000,1000]]],  // cubicTo
+    ],
+  "fill":0 // 0: Qt::OddEvenFill
+           // 1: Qt::WindingFill
+           // http://doc.qt.digia.com/stable/qt.html#FillRule-enum
+}
+\end{lstlisting}

@@ -1,0 +1,17 @@
+\begin{enumerate}
+  \item rysowanie za pomocą zdarzeń (konieczność kolejkowania widgetów)
+  \item Znikający \emph{focus} okna aplikacji
+  \label{problems_focus}
+  \item Kody znaków klawiatury
+  \label{problems_keyboard}
+  \item Łukasz Stanisław więcej problemów nie miał... Kolej na problemy Jana Edwarda
+\end{enumerate}
+
+Ad.\ref{problems_focus} Biblioteka Qt stanowi niejako nakładkę dla natywnego zarządcy okien systemu operacyjnego. W zwizku z tym o kolejności okien na stosie decyduje system operacyjny. Qt podejmuje jedynie odpowiednie czynności w celu aktualizacji graficznego interfejsu aplikacji w zależności od aktualnego stanu konkretnych okien definiowanego przez system operacyjny. W sytuacji kiedy użytkownik nie prowadzi żadnej intrakcji z systemem operacyjnym a jedynie z aplikacją, mogło by się zdarzyć, że niektóe zdarzenia było by ignorowane przez aplikację. Przykładem takiej sytuacji jest wprowadzanie tekstu na klawiaturze. Qt przesyła zdarzenia klawiatury do widgeta, który aktualnie posiada focus w oknie, które znajduje się na szczycie stosu okien w systemie operacyjnym. W momencie kiedy dwóch zdalnych użytkowników uruchomiło by aplikację na tym samym serwerze, zdarzenia jednego użytkownika były by ignorowane ponieważ tylko jedno okno jednej aplikacji może być na szczycie stosu. 
+
+Rozwiązaniem tego problemu była reimplementacja odpowiednich metod Qt w celu symulacji zachowania stosu okien systemu operacyjnego wewnątrz samej aplikacji. W rezultacie aplikacja "myśli", że jest aktywna i znajduje się na szczycie stosu okien.
+
+Ad.\ref{problems_keyboard} 
+Qt platformowo niezależny opis kodów znaków klawiatury za pomocą zdefiniowanego typu wyliczeniowego \emph{Qt::Key}\footnote{http://doc.qt.digia.com/qt/qt.html\#Key-enum}. Niestety przeglądarki nie są dobrze ustandaryzowane i ich numeracja klawiszy znacznie różni się nie tylko między platformami ale również między różnymi ich wersjami. Dodatkowo przeglądarki często nie wspierają wszystkich klawiszy przez to zakres kodów znaków jest inny niż w przypadku biblioteki Qt.
+
+Powyższe problemy wymusiły konieczność zaimplementowania metody konwertującej po stronie klienta kody klawiszy na odpowiadające im wartości typu wyliczeniowego \emph{Qt::Key}.
