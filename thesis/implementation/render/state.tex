@@ -1,0 +1,265 @@
+\begin{lstlisting}[language=C++,numbers=none]
+virtual void QPaintEngine::updateState(const QPaintEngineState& state)
+\end{lstlisting}
+\begin{lstlisting}[language=JavaScript,numbers=none]
+{
+  "t":"state",
+  "data":
+    {
+      // Opis pedzla krawedzi
+      "pen": { /* ... */ },
+      
+      // Opis pedzla wypelnienia 
+      "brush": { /* ... */ },
+      
+      // Czcionka
+      "font": "Opis czcionki w formacie CSS",
+
+      // Offset pedzla
+      "brushorigin":
+        {
+          "x":0.0,
+          "y":0.0
+        },
+
+      // Macierz transformacji 3x3
+      "transform":[[1,0,0],[0,1,0],[0,0,1]], 
+      
+      // Metoda kompozycji
+      "composition":"source-over",
+      
+      // Opis pedzla tla
+      "bbrush": { /* ... */ },
+      
+      // Przezroczystosc
+      "opacity":0.5,
+      
+      // Obcinanie
+      "clip": { /* ... */ }
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Pędzele wypełnienia i tła}
+
+\begin{itemize}
+\item Brak wypełnienia
+\begin{lstlisting}[language=JavaScript,numbers=none]	    "brush":
+  {
+    "style":0,
+  }
+\end{lstlisting}
+
+\item Gradient liniowy
+\begin{lstlisting}[language=JavaScript,numbers=none]	    "brush":			
+{
+  "style":15,
+  "gradient":
+    {  
+      "type":0,
+      "xs":0.0, // Punkt poczatkowy X
+      "ys":0.0, // Punkt poczatkowy Y
+      "xe":0.0, // Punkt koncowy X
+      "ye":0.0, // Punkt koncowy Y
+      "stops":  // Lista kolorow (pary [odleglosc, kolor])
+                // Ogleglosc wzgledna z przedzialu (0;1)
+        [
+          [0,"#FFFFFF"],
+          [1,"#000000"]
+        ],
+      "spread":0, // Wypelnienie poza obszarem gradientu
+                  // 0: QGradient::PadSpread
+                  // 1: QGradient::ReflectSpread
+                  // 2: QGradient::RepeatSpread
+      "mode":0    // Definiuje sposob interpretacji wspolrzednych
+                  // 0: QGradient::LogicalMode
+                  // 1: QGradient::StretchToDeviceMode
+                  // 2: QGradient::ObjectBoundingMode
+    }
+  "transform":[[1,0,0],[0,1,0],[0,0,1]] // Opcjonalne
+}
+\end{lstlisting}
+
+\item Gradient kołowy
+\begin{lstlisting}[language=JavaScript,numbers=none]	    "brush":			
+{
+  "style":16,
+  "gradient":
+    {  
+      "type":1,
+      "xc":0.0, // Punkt srodkowy X
+      "yc":0.0, // Punkt srodkowy Y
+      "xf":0.0, // Punkt koncowy X
+      "yf":0.0, // Punkt koncowy Y
+      "stops":  // Lista kolorow (pary [odleglosc, kolor])
+                // Ogleglosc wzgledna z przedzialu (0;1)
+        [
+          [0,"#FFFFFF"],
+          [1,"#000000"]
+        ],
+      "spread":0,
+      "mode":0
+    }
+  "transform":[[1,0,0],[0,1,0],[0,0,1]] // Opcjonalne
+}
+\end{lstlisting}
+
+\item Gradient stożkowy
+\begin{lstlisting}[language=JavaScript,numbers=none]	    "brush":			
+{
+  "style":17,
+  "gradient":
+    {  
+      "type":2,
+      "xc":0.0, // Punkt srodkowy X
+      "yc":0.0, // Punkt srodkowy Y
+      "a":0.0,  // Kat
+      "stops":  // Lista kolorow (pary [odleglosc, kolor])
+                // Ogleglosc wzgledna z przedzialu (0;1)
+        [
+          [0,"#FFFFFF"],
+          [1,"#000000"]
+        ],
+      "spread":0,
+      "mode":0
+    }
+  "transform":[[1,0,0],[0,1,0],[0,0,1]] // Opcjonalne
+}
+\end{lstlisting}
+
+\item Tekstura
+\begin{lstlisting}[language=JavaScript,numbers=none]
+"brush":			
+  {
+    "style":24,
+    "image":"data:image/png;base64,DIUSHFIUSHRIUDSHIFIUHI329859vdsy7vy87dv8sgv87sdgvgsd8gvyu)",
+    "transform":[[1,0,0],[0,1,0],[0,0,1]] // Opcjonalne
+  }
+\end{lstlisting}
+
+\item Kolor
+\begin{lstlisting}[language=JavaScript,numbers=none]	      	 "brush":			
+  {
+    "style":others,
+    "color":"#FFFFFF"
+    [,"transform":[[1,0,0],[0,1,0],[0,0,1]]]
+  }
+\end{lstlisting}
+
+\end{itemize}
+
+\subsubsection{Pędzel krawędziowy}
+Istnieje kilka rodzajów pędzli krawędziowych. Każdy z nich posiada inną strukturę opisu przedstawione poniżej. W tym miejscu należy również zaznaczyć kilka opcji wspólnych, które występują we wszystkich rodzajach pędzli:
+\begin{enumerate}
+\item Zakończenia linii \emph{cap}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenCapStyle-enum}
+\begin{itemize}
+\item 0x00 Qt::FlatCap
+\item 0x10 Qt::SquareCap
+\item 0x20 Qt::RoundCap
+\end{itemize}
+\item Złączenia (załamania) linii \emph{join}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenJoinStyle-enum}
+\begin{itemize}
+\item 0x00 Qt::MiterJoin
+
+Wraz z tą wartością parametru musi dodatkowo pojawić się parametr \emph{miter} określający promień zaokrąglania załamań linii.
+\item 0x40 Qt::BevelJoin
+\item 0x80 Qt::RoundJoin
+\item 0x100 Qt::SvgMiterJoin
+\end{itemize}
+\item Szerokość linii \emph{width}
+
+Wartość tego parametru stanowi szerokość linii mierzoną w pikselach.
+\end{enumerate}
+
+W celu wyczyszczenia wartości pędzla jako wartość dla klucza \emph{pen} wysyłany jest obiekt pusty.
+
+\begin{itemize}
+\item Kolor
+\begin{lstlisting}[language=JavaScript,numbers=none]
+"pen":
+  {
+    "color":"#FFFFFF",
+    "cap":0,
+    "join":1,
+    "width":10
+  }
+\end{lstlisting}
+
+\item Linia przerywana
+\begin{lstlisting}[language=JavaScript,numbers=none]
+"pen":
+  {
+    "color":"#FFFFFF",
+    "dash":		// !!! optional
+      {
+        "offset":0.5,
+        "pattern":[10,10,30,10,20,10]
+      },
+    "cap":0,
+    "join":1,
+    "width":10
+  }
+\end{lstlisting}
+
+\item Linia z teksturą
+\begin{lstlisting}[language=JavaScript,numbers=none]
+"pen":
+  {
+    "brush": { /* Patrz opis pedzla wypelnienia */ },
+    "cap":0,
+    "join":0,
+    "miter":0.5,
+    "width":10
+  }
+\end{lstlisting}
+
+\end{itemize}
+
+\subsubsection{Czcionka}
+Opis czcionki reprezentowany jest w formacie CSS\footnote{http://www.w3schools.com/cssref/pr\_font\_font.asp} i obejmuje kolejno:
+\begin{itemize}
+\item Styl
+\item Wariant
+\item Rozmiar
+\item Wysokość
+\item Rodzinę (lista nazw rozdzielona przecinkami)
+\end{itemize}
+
+Przykład:
+\begin{lstlisting}[language=JavaScript,numbers=none]
+"font":"italic small-caps lighter 15px Sans-Serif"
+\end{lstlisting}
+
+\subsubsection{Metoda kompozycji}
+Parametr ten określa w jaki sposób łączone są kolejne nakładające się warstwy.\footnote{http://doc.qt.digia.com/qt/qpainter.html\#CompositionMode-enum}
+\begin{itemize}
+\item source-atop
+\item source-in
+\item source-out
+\item source-over
+\item destination-atop
+\item destination-in
+\item destination-out
+\item destination-over
+\item lighter
+\item darker
+\item xor
+\item copy
+\end{itemize}
+
+\subsubsection{Obcinanie}
+\begin{lstlisting}[language=JavaScript,numbers=none]
+"clip":
+  {
+     // Lista punktow sciezki ciecia
+     "data":			
+       [
+         ["t":0,"p":[[0,0]]],                         // moveTo
+         ["t":1,"p":[[10,10]]],                       // lineTo
+         ["t":2,"p":[[10,10],[100,100]]],             // quadTo
+         ["t":2,"p":[[10,10],[100,100],[1000,1000]]], // cubicTo
+       ],
+     "fill":0 // 0: Qt::OddEvenFill
+              // 1: Qt::WindingFill
+  }
+\end{lstlisting}
