@@ -36,7 +36,7 @@
 
 \lstset{
    language=C++,
-   emph={QPaintEngine,Qt,QTextItem,QRect,QRectF,QPoint,QPointF,QLine,QLineF,QEllipse,QPainterPath,QPixmap,QImage},
+   emph={QPaintEngineState,QPaintEngine,Qt,QTextItem,QRect,QRectF,QPoint,QPointF,QLine,QLineF,QEllipse,QPainterPath,QPixmap,QImage},
    emphstyle={\color{RedViolet}\bfseries}
 }
 
@@ -79,9 +79,7 @@ W rodziale tym przedstawione zostaną najważniejsze informacje dotyczące techn
 \input{theory/qt.tex}
 
 \chapter{Określenie problemu i proponowane rozwiązanie}
-
 \input{problem_definition/problem_definition.tex}
-
 \input{problem_definition/communication.tex}
 
 \section{Uzyskanie informacji o wyglądzie elementów graficznego interfejsu aplikacji}
@@ -101,16 +99,7 @@ W rodziale tym przedstawione zostaną najważniejsze informacje dotyczące techn
 \input{implementation/server_details.tex}
 
 \section{Szczegóły implementacji po stronie klienta}
-
 \input{implementation/client_details.tex}
-
-\section{Format danych}
-
-\subsection{Dane wysyłane przez serwera}
-
-** Trójki - QT | JSON | canvas **
-
-\subsection{Dane wysyłane przez klienta}
 
 \section{Napotkane problemy}
 \input{implementation/problems.tex}

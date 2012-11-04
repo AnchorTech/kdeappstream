@@ -3,7 +3,7 @@ Aby umożliwić renderowanie elementów po stronie klienta należało utworzyć 
 Każda komenda rysowania po stronie klienta składa się z podstawowych informacji dotyczących rysowanego obiektu, takich jak: identyfikator, pozycja czy rozmiar, oraz listy prostych elementów z których danych obiekt jest złożony (linie, prostokąty, etc.). Poniżej przedstawiono format pojedyńczej komendy rysowania.
 
 
-\begin{lstlisting}[language=JavaScript,caption=Komenda renderowania elementu interfejsu]
+\begin{lstlisting}[language=JavaScript,numbers=none,caption=Komenda renderowania elementu interfejsu]
 {
   "command":"draw",
   "widget":{
@@ -52,3 +52,6 @@ Poniżej w kolejności alfabetycznej przedstawiono elementy, z których może by
 
 \subsection{Tekst}
 \input{implementation/render/text.tex}
+
+\subsection{Stan pędzli}
+\input{implementation/render/state.tex}
