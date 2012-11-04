@@ -9,3 +9,4 @@ int MouseWheelEvent::_type = QEvent::registerEventType();
 int EnterEvent::_type = QEvent::registerEventType();
 int LeaveEvent::_type = QEvent::registerEventType();
 int CloseEvent::_type = QEvent::registerEventType();
+int ResizeEvent::_type = QEvent::registerEventType();

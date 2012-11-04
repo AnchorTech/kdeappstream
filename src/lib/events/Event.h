@@ -240,4 +240,40 @@ class CloseEvent : public Event
         }
 };
 
+class ResizeEvent : public Event
+{
+        static int _type;
+        int w;
+        int h;
+
+    public:
+
+        ResizeEvent(int w, int h) :
+            Event((QEvent::Type)_type),
+            w(w),
+            h(h)
+        {}
+
+        ResizeEvent(const QSize & s) :
+            Event((QEvent::Type)_type),
+            w(s.width()),
+            h(s.height())
+        {}
+
+        int width() const
+        {
+            return w;
+        }
+
+        int height() const
+        {
+            return h;
+        }
+
+        static QEvent::Type eventType()
+        {
+            return (QEvent::Type) _type;
+        }
+};
+
 #endif // EVENT_H

@@ -47,16 +47,13 @@ void EventConverter::parse(const QString & message)
     if (command == "mouse")
     {
         long long id = value.property("id").toNumber();
-        int x = value.property("x").toInt32();
-        int y = value.property("y").toInt32();
-        QWidget * w = (QWidget*) id;
 
+        QWidget * w = (QWidget*) id;
         if (!WidgetsCollection::instance()->contains(w))
             return;
 
-        //if (dynamic_cast<QSizeGrip*>(w))
-        //    return;
-
+        int x = value.property("x").toInt32();
+        int y = value.property("y").toInt32();
         QString type = value.property("type").toString();
         int buttons = value.property("btn").toInt32();
         int modifiers = value.property("modifiers").toInt32();
@@ -82,9 +79,11 @@ void EventConverter::parse(const QString & message)
     else if (command == "wheel")
     {
         long long id = value.property("id").toNumber();
+
         QWidget * w = (QWidget*) id;
         if (!WidgetsCollection::instance()->contains(w))
             return;
+
         int x = value.property("x").toInt32();
         int y = value.property("y").toInt32();
         int buttons = value.property("btn").toInt32();
@@ -109,11 +108,7 @@ void EventConverter::parse(const QString & message)
             height = w->minimumHeight();
         else if (w->maximumHeight() < height)
             height = w->maximumHeight();
-        QCoreApplication::postEvent(w, new QResizeEvent(QSize(width, height), w->size()));
-    }
-    else if (command == "move")
-    {
-        long long id = value.property("id").toNumber();
+        QCoreApplication::postEvent(w, new ResizeEvent(width, height));
     }
     else if (command == "key")
     {
@@ -148,7 +143,7 @@ void EventConverter::parse(const QString & message)
         QWidget * w = (QWidget*) id;
         if (!WidgetsCollection::instance()->contains(w))
             return;
-        QCoreApplication::postEvent(w, new QCloseEvent());
+        QCoreApplication::postEvent(w, new CloseEvent());
     }
     else if (command == "activate")
     {

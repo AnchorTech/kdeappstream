@@ -64,6 +64,11 @@ bool EventDispatcher::eventFilter(QObject * recv, QEvent * e)
             }
         }
     }
+    else if (type == ResizeEvent::eventType())
+    {
+        ResizeEvent * rEvent = (ResizeEvent*) event;
+        widget->resize(rEvent->width(), rEvent->height());
+    }
     else if (type == MouseWheelEvent::eventType())
     {
         MouseWheelEvent * mEvent = (MouseWheelEvent*) event;
@@ -115,6 +120,10 @@ bool EventDispatcher::eventFilter(QObject * recv, QEvent * e)
         _isActivateEvent = true;
         QApplication::setActiveWindow(widget);
         _isActivateEvent = false;
+    }
+    else if (type == CloseEvent::eventType())
+    {
+        widget->close();
     }
 
     return true;
