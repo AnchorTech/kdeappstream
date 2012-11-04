@@ -1,1 +1,34 @@
+\subsubsection{Wciśnięcie klawisza}
+\begin{lstlisting}[language=JavaScript,numbers=none]
+{
+  "command": "key",
+  "type": "press", 
+  "key": 0x193,    // Kod klawisza
+  "text": "a",     // Ciag znakow UTF8 bedacy rezultatem zdarzenia
+  "autorep": true|false, // Okresla czy zdarzenie jest wynikiem
+                         // przytrzymania klawisza przed dluzszy czas
+  "count": 0,    // Okresla ile powtorzen klawisza mialo miejsce
+  "modifiers": 0x0  // 0x00000000 Qt::NoModifier
+                    // 0x02000000 Qt::ShiftModifier
+                    // 0x04000000 Qt::ControlModifier
+                    // 0x08000000 Qt::AltModifier
+                    // 0x10000000 Qt::MetaModifier
+                    // 0x20000000 Qt::KeypadModifier
+                    // 0x40000000 Qt::GroupSwitchModifier
+}
+\end{lstlisting}
+
+\subsubsection{Zwolnienie klawisza}
+\begin{lstlisting}[language=JavaScript,numbers=none]
+{
+  "command": "key",
+  "type": "release", 
+  "key": 0x193,    // Kod klawisza
+  "text": "a",     // Ciag znakow UTF8 bedacy rezultatem zdarzenia
+  "autorep": true|false, // Okresla czy zdarzenie jest wynikiem
+                         // przytrzymania klawisza przed dluzszy czas
+  "count": 0,    // Okresla ile powtorzen klawisza mialo miejsce
+  "modifiers": 0x0  // Qt::NoModifier
+}
+\end{lstlisting}
  

@@ -58,30 +58,24 @@ void EventConverter::parse(const QString & message)
         //    return;
 
         QString type = value.property("type").toString();
+        int buttons = value.property("btn").toInt32();
+        int modifiers = value.property("modifiers").toInt32();
         if (type == "move")
         {
             int ox = value.property("ox").toInt32();
             int oy = value.property("oy").toInt32();
-            int buttons = value.property("btn").toInt32();
-            int modifiers = value.property("modifiers").toInt32();
             QCoreApplication::postEvent(w, new MouseMoveEvent(QPoint(x,y), QPoint(x,y), QPoint(ox,oy), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "press")
         {
-            int button = value.property("btn").toInt32();
-            int modifiers = value.property("modifiers").toInt32();
             QCoreApplication::postEvent(w, new MousePressEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "release")
         {
-            int button = value.property("btn").toInt32();
-            int modifiers = value.property("modifiers").toInt32();
             QCoreApplication::postEvent(w, new MouseReleaseEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "dbclick")
         {
-            int button = value.property("btn").toInt32();
-            int modifiers = value.property("modifiers").toInt32();
             QCoreApplication::postEvent(w, new MouseDbClickEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
         }
     }
