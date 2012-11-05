@@ -65,15 +65,15 @@ void EventConverter::parse(const QString & message)
         }
         else if (type == "press")
         {
-            QCoreApplication::postEvent(w, new MousePressEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
+            QCoreApplication::postEvent(w, new MousePressEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "release")
         {
-            QCoreApplication::postEvent(w, new MouseReleaseEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
+            QCoreApplication::postEvent(w, new MouseReleaseEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
         }
         else if (type == "dbclick")
         {
-            QCoreApplication::postEvent(w, new MouseDbClickEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) button, (Qt::MouseButtons) button, (Qt::KeyboardModifiers) modifiers));
+            QCoreApplication::postEvent(w, new MouseDbClickEvent(QPoint(x,y), QPoint(x,y), (Qt::MouseButton) buttons, (Qt::MouseButtons) buttons, (Qt::KeyboardModifiers) modifiers));
         }
     }
     else if (command == "wheel")

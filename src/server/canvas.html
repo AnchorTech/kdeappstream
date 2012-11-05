@@ -2,7 +2,7 @@
 <head>
 <meta charset="utf-8">
 <title>
-    QT appstream
+    Websocket client test
 </title>
 <style type="text/css">
 body {
@@ -525,11 +525,11 @@ QtLogic.prototype = {
             case "draw":
                 this.drawCommand(data);
                 break;
-            case "create":
-                this.createCommand(data);
-                break;
             case "addChild":
                 this.addChildCommand(data);
+                break;
+            case "create":
+                this.createCommand(data);
                 break;
             case "show":
                 this.showElement(data);
@@ -558,122 +558,10 @@ QtLogic.prototype = {
                 debug(data);
         }
     },
-    createCommand:function (data) {
-        var widget = this.getWidget(data.id);
-        var flags = data.type;
-        var self = this;
-
-        var createDialog = function() {
-            var container = $('<div class="Dialog">' +
-                    '<div class="Bar"></div>' +
-                    '<div class="Left ui-resizable-handle ui-resizable-w"></div>' +
-                    '<div class="Bottom ui-resizable-handle ui-resizable-s"></div>' +
-                    '<div class="Right ui-resizable-handle ui-resizable-e"></div>' +
-                    '<div class="LT ui-resizable-handle ui-resizable-nw"></div>' +
-                    '<div class="LB ui-resizable-handle ui-resizable-sw"></div>' +
-                    '<div class="RT ui-resizable-handle ui-resizable-ne"></div>' +
-                    '<div class="RB ui-resizable-handle ui-resizable-se"></div>' +
-                    '<div class="MinButton ToolbarButton"></div>' +
-                    '<div class="MaxButton ToolbarButton"></div>' +
-                    '<div class="XButton ToolbarButton"></div>' +
-                    '</div>')
-                    .appendTo($('#dialogs'))
-                    .draggable({
-                        handle:'.Bar'
-                    })
-                    .resizable({
-                        handles:{
-                            w:'.Left',
-                            e:'.Right',
-                            s:'.Bottom',
-                            nw:'.LT',
-                            ne:'.RT',
-                            sw:'.LB',
-                            se:'.RB'
-                        },
-                        stop:function (e, ui) {
-                            var new_width = ui.size.width - WINDOW_LT.x - WINDOW_RB.x,
-                                    new_height = ui.size.height - WINDOW_LT.y - WINDOW_RB.y;
-                            self.onResized(data.id, new_width, new_height);
-                            return false;
-                        },
-                        ghost:true
-                    });
-
-            container.find('.XButton').click(function () {
-                self.deactivateDialog(widget.id);
-            });
-
-            container.find('.MinButton').click(function () {
-                container.addClass("Minimized");
-                var task = $('.TaskTemplate:first').clone()
-                        .show();
-                task.find('.DeMinButton').click(function () {
-                    container.removeClass("Minimized");
-                    task.remove();
-                });
-                task.find('.Title').html(container.find('.Bar').html());
-                $('#taskbar').append(task);
-                QtLogic.deactivateDialog(widget); // TODO
-            });
-
-            container.find('.MaxButton').click(function () {
-                var oldPosition = container.data('old-position');
-                if (oldPosition) {
-                    container.css(oldPosition);
-                    container.removeData('old-position');
-                    self.onResized(widgetId, oldPosition.width, oldPosition.height);
-                    return;
-                }
-                var $this = $(this);
-//            var width =document.documentElement.clientWidth,
-//                    height = document.documentElement.clientHeight;
-                var body = $('#main'),
-                    width = body.width() - 10, height = body.height() - 25;
-                container.data('old-position', {
-                    width:container.width(),
-                    height:container.height(),
-                    left:container.css('left'),
-                    top:container.css('top')
-                });
-                container.css({
-                    left:0,
-                    top:0,
-                    width:width,
-                    height:height
-                });
-                self.onResized(widgetId, width, height);
-            });
-
-            container.data('wid', widget.id);
-
-            container.attr('data-flags', flags);
-            widget.canvas
-                    .addClass("DialogCanvas")
-                    .parent()
-                    .addClass("DialogRoot")
-                    .detach().appendTo(container);
-
-            widget.dialog = container;
-
-            container.click(function() {
-                self.activateDialog(widget.id);
-            });
-        }
-
-        var createPopup = function() {
-            widget.canvas.addClass('Popup');
-            widget.container.addClass('Popup');
-        }
-
-debug('create: ' + data.id + ' ' + flags);
-        if ((flags & 3) === 3 || !widget.parent)
-            createDialog();
-        else if (flags & 8)
-            createPopup();
-    },
     addChildCommand:function (data) {
         this.addWidgetChild(data.id, data.child, data.flags, data.name);
+    },
+    createCommand: function(data) {
     },
     removeChildCommand:function (data) {
         console.log(data);
@@ -760,27 +648,24 @@ debug('create: ' + data.id + ' ' + flags);
             });
         }
     },
-    createWidget: function (id) {
-        this.widgets[id] = {
-            id:id,
-            parent:null,
-            children:[]
-        };
-        var widget = this.widgets[id];
-        widget.canvas = $('<canvas width=0 height=0></canvas>')
-                .data('widget', widget);
-        widget.children_container = $("<div class='Children'></div>");
-        widget.container = $("<div class='CanvasContainer'></div>");
-        widget.container.append(widget.canvas)
-                .append(widget.children_container)
-                .appendTo($('#widgets'));
-
-        widget.canvasDrawer = new CanvasDrawer(widget.canvas);
-        return widget;
-    },
     getWidget:function (id) {
-        if (!this.widgets[id])
-            return this.createWidget(id);
+        if (!this.widgets[id]) {
+            this.widgets[id] = {
+                id:id,
+                parent:null,
+                children:[]
+            };
+            var widget = this.widgets[id];
+            widget.canvas = $('<canvas width=0 height=0></canvas>')
+                    .data('widget', widget);
+            widget.children_container = $("<div class='Children'></div>");
+            widget.container = $("<div class='CanvasContainer'></div>");
+            widget.container.append(widget.canvas)
+                    .append(widget.children_container)
+                    .appendTo($('#widgets'));
+
+            widget.canvasDrawer = new CanvasDrawer(widget.canvas);
+        }
         return this.widgets[id];
     },
     updateWidget:function (id, data) {
@@ -959,13 +844,12 @@ debug('create: ' + data.id + ' ' + flags);
     },
     addWidgetChild:function (id, childId, flags, name) {
         var widget = this.getWidget(id);
-        debug('add: ' + id + ' ' + childId + ' ' + flags);
-        //if (Object.keys(this.widgets).length == 1) {
-        //    widget.main = true;
-        //    this.createDialog(id, 3);
-        //}
+        if (Object.keys(this.widgets).length == 1) {
+            widget.main = true;
+            this.createDialog(id, 3);
+        }
         var children = widget.children;
-        //widget.name = name;
+        widget.name = name;
         var found = false;
         $.each(children, function (_, child) {
             if (child.id == childId) {
@@ -975,15 +859,15 @@ debug('create: ' + data.id + ' ' + flags);
         });
         if (!found) {
             var newChildWidget = this.getWidget(childId);
-            //if ((flags & 3) === 3) {
-            //    this.createDialog(childId, flags);
-            //} else {
-            //    if (flags & 8) {
-            //        newChildWidget.canvas.addClass('Popup');
-            //        newChildWidget.container.addClass('Popup');
-            //    }
+            if ((flags & 3) === 3) {
+                this.createDialog(childId, flags);
+            } else {
+                if (flags & 8) {
+                    newChildWidget.canvas.addClass('Popup');
+                    newChildWidget.container.addClass('Popup');
+                }
                 newChildWidget.canvas.parent().detach().appendTo(widget.children_container);
-            //}
+            }
             children.push(newChildWidget);
             this.updateWidget(childId, {parent:this.getWidget(id)});
         }
