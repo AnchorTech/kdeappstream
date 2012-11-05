@@ -98,7 +98,7 @@ void JSONBuilder::createWidget(QWidget * widget)
     layout_buffer.append("{\"command\":\"create\"")
           .append(",\"id\":").append(QString::number((long long)widget).toAscii())
           .append(",\"name\":\"").append(widget->metaObject()->className()).append("\"")
-          .append(",\"flags\":").append(QString::number(child->windowFlags()).toAscii())
+          .append(",\"type\":").append(QString::number(widget->windowType()).toAscii())
           .append("},");
     _layout_sem.release();
     this->finish();
@@ -130,6 +130,7 @@ void JSONBuilder::addChild(QWidget * child, QWidget * parent)
     layout_buffer.append("{\"command\":\"addChild\"")
           .append(",\"id\":").append(QString::number((long long)parent).toAscii())
           .append(",\"child\":").append(QString::number((long long)child).toAscii())
+          .append(",\"flags\":").append(QString::number(child->windowFlags()).toAscii())
           .append(",\"name\":\"").append(child->metaObject()->className()).append("\"")
           .append("},");
     _layout_sem.release();
