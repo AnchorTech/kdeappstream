@@ -1,6 +1,8 @@
+\bf{TODO: OPIS KLASY WebRenderer ORAZ POJEDYŃCZY CYKL RENDEROWANIA.}
+
 Aby umożliwić renderowanie elementów po stronie klienta należało utworzyć wspólny format danych bazując na wejściu ze strony biblioteki Qt oraz potrzebnych danych wyjściowych dla obiektu Canvas w języku HTML5. 
 
-Każda komenda rysowania po stronie klienta składa się z podstawowych informacji dotyczących rysowanego obiektu, takich jak: identyfikator, pozycja czy rozmiar, oraz listy prostych elementów z których danych obiekt jest złożony (linie, prostokąty, etc.). Poniżej przedstawiono format pojedyńczej komendy rysowania.
+Każda komenda rysowania po stronie klienta składa się z podstawowych informacji dotyczących rysowanego obiektu, takich jak: identyfikator, pozycja czy rozmiar, oraz listy prostych elementów z których danych obiekt jest złożony (linie, prostokąty, etc.). Poniżej przedstawiono format pojedyńczej komendy rysowania wraz z wszystkimi możliwymi elementami budującymi widgety w aplikacjach opartych o bibliotekę Qt.
 
 
 \begin{lstlisting}[language=JavaScript,numbers=none,caption=Komenda renderowania elementu interfejsu]
@@ -27,7 +29,7 @@ Każda komenda rysowania po stronie klienta składa się z podstawowych informac
 }
 \end{lstlisting}
 
-Poniżej w kolejności alfabetycznej przedstawiono elementy, z których może być zbudowany każdy obiekt klasy QWidget. Każdy opis zawiera deklarację metody podklasy QPaintEngine wykorzystywanej po stronie serwera, format przesyłanych danych oraz sposób interpretacji tych danych po stronie klienta.
+Poniżej w kolejności alfabetycznej przedstawiono elementy, z których może być zbudowany każdy obiekt klasy QWidget. Każdy opis zawiera deklarację metody podklasy QPaintEngine wykorzystywanej po stronie serwera, format przesyłanych danych oraz opis metody interpretacji tych danych po stronie klienta.
 
 \subsection{Elipsy}
 \input{implementation/render/ellipse.tex}
