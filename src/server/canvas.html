@@ -563,19 +563,14 @@ QtLogic.prototype = {
         var id = data.id;
         var flags = data.type;
         var widget = this.getWidget(id);
-        console.log(flags);
-        console.log(widget.canvas);
-//        if (Object.keys(this.widgets).length == 1) {
-//            console.log(widget);
-//            widget.main = true;
-//            this.createDialog(id, 3);
-//        }
         widget.name = name;
 
         if ((flags & 3) === 3) {
+            widget.type = "Dialog";
             this.createDialog(id, flags);
         } else {
             if (flags & 8) {
+                widget.type = "Popup";
                 widget.canvas.addClass('Popup');
                 widget.container.addClass('Popup');
             }
@@ -864,21 +859,34 @@ QtLogic.prototype = {
     addWidgetChild:function (id, childId, flags, name) {
         var widget = this.getWidget(id);
         var children = widget.children;
+        if(!this.main) {
+            this.main = widget;
+            this.createDialog(id,3);
+        }
         widget.name = name;
         var found = false;
         $.each(children, function (_, child) {
             if (child.id == childId) {
-                console.log(child);
-                console.log(childId);
                 found = true;
                 return false; // break
             }
         });
+
         if (!found) {
             var newChildWidget = this.getWidget(childId);
             newChildWidget.container.detach().appendTo(widget.children_container);
             children.push(newChildWidget);
             this.updateWidget(childId, {parent:this.getWidget(id)});
+            if ((flags & 3) === 3 && !newChildWidget.type) {
+                newChildWidget.type = "Dialog";
+                this.createDialog(childId, flags);
+            } else {
+                if (flags & 8 && !newChildWidget.type) {
+                    newChildWidget.type = "Popup";
+                    newChildWidget.canvas.addClass('Popup');
+                    newChildWidget.container.addClass('Popup');
+                }
+            }
         }
     },
     calculateTranslation:function (widget) {
@@ -894,7 +902,6 @@ QtLogic.prototype = {
             y += parent.y;
             parent = parent.parent;
         }
-        console.log({x:x, y:y});
         return {x:x, y:y};
     },
     bindGlobalEvents:function () {
