@@ -45,8 +45,6 @@ body {
     box-shadow: 0 0 1em gray;
 }
 
-
-
 .TaskTemplate .Title {
     left: 5px;
     width: 125px;
@@ -561,7 +559,28 @@ QtLogic.prototype = {
     addChildCommand:function (data) {
         this.addWidgetChild(data.id, data.child, data.flags, data.name);
     },
-    createCommand: function(data) {
+    createCommand:function (data) {
+        var id = data.id;
+        var flags = data.type;
+        var widget = this.getWidget(id);
+        console.log(flags);
+        console.log(widget.canvas);
+//        if (Object.keys(this.widgets).length == 1) {
+//            console.log(widget);
+//            widget.main = true;
+//            this.createDialog(id, 3);
+//        }
+        widget.name = name;
+
+        if ((flags & 3) === 3) {
+            this.createDialog(id, flags);
+        } else {
+            if (flags & 8) {
+                widget.canvas.addClass('Popup');
+                widget.container.addClass('Popup');
+            }
+        }
+
     },
     removeChildCommand:function (data) {
         console.log(data);
@@ -820,7 +839,7 @@ QtLogic.prototype = {
 
         widget.dialog = container;
 
-        container.click(function() {
+        container.click(function () {
             self.activateDialog(widget.id);
         });
 
@@ -828,8 +847,8 @@ QtLogic.prototype = {
     activateDialog:function (widgetId) {
         var widget = this.getWidget(widgetId);
         var container = widget.dialog;
-        if(!container) return;
-        if(container.hasClass('Active')) return;
+        if (!container) return;
+        if (container.hasClass('Active')) return;
         $('.Active').removeClass('Active');
         container.addClass('Active');
         // Notify the server
@@ -844,30 +863,20 @@ QtLogic.prototype = {
     },
     addWidgetChild:function (id, childId, flags, name) {
         var widget = this.getWidget(id);
-        if (Object.keys(this.widgets).length == 1) {
-            widget.main = true;
-            this.createDialog(id, 3);
-        }
         var children = widget.children;
         widget.name = name;
         var found = false;
         $.each(children, function (_, child) {
             if (child.id == childId) {
+                console.log(child);
+                console.log(childId);
                 found = true;
                 return false; // break
             }
         });
         if (!found) {
             var newChildWidget = this.getWidget(childId);
-            if ((flags & 3) === 3) {
-                this.createDialog(childId, flags);
-            } else {
-                if (flags & 8) {
-                    newChildWidget.canvas.addClass('Popup');
-                    newChildWidget.container.addClass('Popup');
-                }
-                newChildWidget.canvas.parent().detach().appendTo(widget.children_container);
-            }
+            newChildWidget.container.detach().appendTo(widget.children_container);
             children.push(newChildWidget);
             this.updateWidget(childId, {parent:this.getWidget(id)});
         }
