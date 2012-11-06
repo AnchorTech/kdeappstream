@@ -1,10 +1,12 @@
 SET( KAPPSTREAM_SERVER_SRCS 
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/ACLProvider.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HttpService.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/HttpServer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationWrapperThread.cpp )
 
 SET( KAPPSTREAM_SERVER_HEADERS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/ACLProvider.h
     ${CMAKE_CURRENT_SOURCE_DIR}/HttpService.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/HttpServer.h  
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationWrapperThread.h )

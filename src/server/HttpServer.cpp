@@ -8,6 +8,7 @@
 #include <QProcessEnvironment>
 #include <QLocalSocket>
 
+#include "ACLProvider.h"
 #include "ApplicationWrapperThread.h"
 
 HttpServer::HttpServer(uint _port, QObject * parent) :
@@ -59,9 +60,17 @@ void HttpServer::readClient()
                         QStringList kv = arg.split("=");
                         if (kv.count() == 2 && kv[0] == "app")
                         {
-                            qDebug() << "Sending canvas.html page";
-                            this->sendCanvas(os, kv[1]);
-                            goto close_socket;
+                            if (ACLProvider::instance()->isAccepted(kv[1]))
+                            {
+                                qDebug() << "Sending canvas.html page";
+                                this->sendCanvas(os, kv[1]);
+                                goto close_socket;
+                            }
+                            else
+                            {
+                                this->sendRejection(os, kv[1]);
+                                goto close_socket;
+                            }
                         }
                     }
                     qDebug() << "Cannot find application name";
@@ -211,4 +220,20 @@ void HttpServer::sendCanvas(QTextStream & os, QString applicationName)
         return;
     }
     qDebug() << "Can't read canvas";
+}
+
+void HttpServer::sendRejection(QTextStream & os, QString applicationName)
+{
+    static const QString message("You don't need \"%1\"... Trust me.");
+    QProcess * p = new QProcess(this);
+    p->start("cowsay", QProcess::ReadWrite);
+    p->write(message.arg(applicationName).toAscii());
+    p->closeWriteChannel();
+    p->waitForFinished(10000);
+    QString msg = p->readAll();
+    if (msg.isEmpty())
+        msg = message.arg(applicationName);
+
+    this->sendStatus(os, 200);
+    os << "<html><head></head><body><pre>" << msg << "</pre></body></head>";
 }

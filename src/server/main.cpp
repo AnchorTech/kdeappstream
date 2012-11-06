@@ -7,16 +7,31 @@
 #include <QLocalSocket>
 
 #include "HttpService.h"
+#include "ACLProvider.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    while (true)
+    app.setApplicationName("kappstream");
+    app.setOrganizationName("kde");
+
+    if (argc == 1)
     {
-        HttpService service;
-        int result = app.exec();
-        if (result != 2)
-            return result;
+        while (true)
+        {
+            HttpService service;
+            int result = app.exec();
+            if (result != 2)
+                return result;
+        }
+    }
+    else if (argc == 3)
+    {
+        if (!strcmp(argv[1], "accept") || !strcmp(argv[1], "a"))
+            ACLProvider::instance()->accept(QString::fromAscii(argv[2]));
+        else if (!strcmp(argv[1], "reject") || !strcmp(argv[1], "r"))
+            ACLProvider::instance()->reject(QString::fromAscii(argv[2]));
+        ACLProvider::instance()->printInfo();
     }
 
 //    QLocalServer localSocket;

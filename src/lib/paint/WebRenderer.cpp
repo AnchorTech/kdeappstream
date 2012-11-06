@@ -62,7 +62,7 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
         if (renderSemaphore.available())
         {
             renderSemaphore.acquire();
-            t->start(100);
+            t->start(50);
         }
     }
     else

@@ -183,7 +183,14 @@ void JSONBuilder::showWidget(QWidget * widget)
     layout_buffer.append("{\"command\":\"show\"")
           .append(",\"id\":").append(QString::number((long long)widget).toAscii());
     if (widget->isWindow())
-        layout_buffer.append(",\"modality\":").append(QString::number((long long)widget->windowModality()).toAscii());
+    {
+        Qt::WindowModality modal = widget->windowModality();
+        layout_buffer.append(",\"modality\":");
+        if (modal & Qt::ApplicationModal)
+            layout_buffer.append(QString::number(3).toAscii());
+        else
+            layout_buffer.append(QString::number((ushort)modal).toAscii());
+    }
     layout_buffer.append("},");
     _layout_sem.release();
     this->finish();

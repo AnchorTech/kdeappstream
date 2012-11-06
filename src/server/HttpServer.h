@@ -35,6 +35,7 @@ class HttpServer : public QTcpServer
         void sendStatus(QTextStream & os, int status);
         void sendIndex(QTextStream & os);
         void sendCanvas(QTextStream & os, QString applicationName);
+        void sendRejection(QTextStream & os, QString applicationName);
 
     private slots:
 

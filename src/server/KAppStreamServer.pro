@@ -12,12 +12,14 @@
     SOURCES += main.cpp \
         HttpServer.cpp \
         HttpService.cpp \
-    ApplicationWrapperThread.cpp
+    ApplicationWrapperThread.cpp \
+    ACLProvider.cpp
 
     HEADERS  += \
         HttpServer.h \
         HttpService.h \
-    ApplicationWrapperThread.h
+    ApplicationWrapperThread.h \
+    ACLProvider.h
 
     unix {
         LIBS += -ldl
@@ -27,6 +29,8 @@ OTHER_FILES += \
     CMakeLists.txt \
     canvas.html \
     index.html
+
+
 
 
 

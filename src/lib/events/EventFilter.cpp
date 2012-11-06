@@ -62,7 +62,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
         switch (e->type())
         {
             case QEvent::Create:
-                qDebug() << "QEvent::Create" << recv;
+                qDebug() << "QEvent::Create" << recv << w->isWindow() << w->isModal() << w->windowFlags() << w->windowState() << w->windowModality();;
                 {
                     WidgetsCollection::instance()->add(w);
                     JSONBuilder::instance()->createWidget(w);
@@ -121,9 +121,9 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                     QChildEvent * ce = (QChildEvent*)e;
                     QWidget * cw = dynamic_cast<QWidget*>(ce->child());
                     WidgetsCollection::instance()->add(w);
-                    qDebug() << "QEvent::ChildAdded" << cw;
                     if (cw)
                     {
+                        qDebug() << "QEvent::ChildAdded" << cw << recv << cw->isWindow() << cw->isModal() << cw->windowFlags() << cw->windowState() << cw->windowModality();
                         WidgetsCollection::instance()->add(cw);
                         JSONBuilder::instance()->addChild(cw, w);
                         JSONBuilder::instance()->move(w, w->pos());
@@ -433,12 +433,12 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::ShortcutOverride" << recv;
                 break;
             case QEvent::Show:
-                //qDebug() << "QEvent::Show" << recv;
+                qDebug() << "QEvent::Show" << recv << w->isWindow() << w->isModal() << w->windowFlags() << w->windowState() << w->windowModality();
                 WidgetsCollection::instance()->add(w);
                 JSONBuilder::instance()->showWidget(w);
                 break;
             case QEvent::ShowToParent:
-                //qDebug() << "QEvent::ShowToParent" << recv;
+                qDebug() << "QEvent::ShowToParent" << recv << w->isWindow() << w->isModal() << w->windowFlags() << w->windowState() << w->windowModality();
                 WidgetsCollection::instance()->add(w);
                 break;
             case QEvent::SockAct:
@@ -516,6 +516,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
             case QEvent::WindowActivate:
                 if (WidgetsCollection::instance()->contains(w))
                 {
+                    qDebug() << "QEvent::WindowActivate" << recv << w->isWindow() << w->isModal() << w->windowFlags() << w->windowState() << w->windowModality();
                     qDebug() << "QEvent::WindowActivate" << recv << QApplication::activeWindow();
                     if (w->isWindow())
                     {
@@ -527,7 +528,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 }
                 break;
             case QEvent::WindowBlocked:
-                //qDebug() << "QEvent::WindowBlocked" << recv;
+                qDebug() << "QEvent::WindowBlocked" << recv << w->isWindow() << w->isModal() << w->windowFlags() << w->windowState() << w->windowModality();
                 break;
             case QEvent::WindowDeactivate:
                 if (WidgetsCollection::instance()->contains(w))
@@ -544,7 +545,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 //qDebug() << "QEvent::WindowIconChange" << recv;
                 break;
             case QEvent::WindowStateChange:
-                //qDebug() << "QEvent::WindowStateChange" << recv << e;
+                qDebug() << "QEvent::WindowStateChange" << recv << w->isWindow() << w->isModal() << w->windowFlags() << w->windowState() << w->windowModality();
                 break;
             case QEvent::WindowTitleChange:
                 if (WidgetsCollection::instance()->contains(w))

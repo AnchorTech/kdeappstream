@@ -46,15 +46,15 @@ void TestWindow::on_pushButton_clicked()
 {
     //QMessageBox::information(this, "pracoza inzynieroza", "Testoza pracoza projektoza... www.biedoza.pl");
     Klasa k(this);
-    k.setModal(true);
-    k.exec();
+    k.setModal(false);
+    k.show();
 }
 
 void TestWindow::on_pushButton2_clicked()
 {
     //QMessageBox::information(this, "pracoza inzynieroza", "Testoza pracoza projektoza... www.biedoza.pl");
     Klasa k(this);
-    k.setModal(false);
+    k.setModal(true);
     k.exec();
 }
 
@@ -63,7 +63,7 @@ void TestWindow::on_pushButton3_clicked()
     //QMessageBox::information(this, "pracoza inzynieroza", "Testoza pracoza projektoza... www.biedoza.pl");
     Klasa k(this);
     k.setModal(false);
-    k.show();
+    k.exec();
 }
 
 bool TestWindow::event(QEvent *event)
