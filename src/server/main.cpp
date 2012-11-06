@@ -25,6 +25,14 @@ int main(int argc, char *argv[])
                 return result;
         }
     }
+    else if (argc == 2)
+    {
+        if (!strcmp(argv[1], "accept-all"))
+            ACLProvider::instance()->acceptAll();
+        else if (!strcmp(argv[1], "reject-all"))
+            ACLProvider::instance()->rejectAll();
+        ACLProvider::instance()->printInfo();
+    }
     else if (argc == 3)
     {
         if (!strcmp(argv[1], "accept") || !strcmp(argv[1], "a"))
