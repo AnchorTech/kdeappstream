@@ -24,7 +24,6 @@ QWsSocket::QWsSocket( QObject * parent, QTcpSocket * socket, EWebsocketVersion w
     maskingKey( 4, 0 ),
     serverSideSocket( false )
 {
-    qDebug() << "QWsSocket::QWsSocket";
     tcpSocket->setParent( this );
 
     QAbstractSocket::setSocketState( tcpSocket->state() );
@@ -44,7 +43,6 @@ QWsSocket::QWsSocket( QObject * parent, QTcpSocket * socket, EWebsocketVersion w
 
 QWsSocket::~QWsSocket()
 {
-    qDebug() << "QWsSocket::~QWsSocket";
     QAbstractSocket::SocketState state = QAbstractSocket::state();
     if ( state != QAbstractSocket::UnconnectedState )
     {
@@ -59,13 +57,11 @@ QWsSocket::~QWsSocket()
 
 void QWsSocket::connectToHost( const QString & hostName, quint16 port, OpenMode mode )
 {
-    qDebug() << "QWsSocket::connectToHost";
     QWsSocket::connectToHost( QHostAddress(hostName), port, mode );
 }
 
 void QWsSocket::connectToHost( const QHostAddress &address, quint16 port, OpenMode mode )
 {
-    qDebug() << "QWsSocket::connectToHost";
     handshakeResponse.clear();
     setPeerAddress( address );
     setPeerPort( port );
@@ -75,20 +71,17 @@ void QWsSocket::connectToHost( const QHostAddress &address, quint16 port, OpenMo
 
 void QWsSocket::disconnectFromHost()
 {
-    qDebug() << "QWsSocket::disconnectFromHost";
     QWsSocket::close();
 }
 
 void QWsSocket::abort( QString reason )
 {
-    qDebug() << "QWsSocket::abort";
     QWsSocket::close( CloseAbnormalDisconnection, reason );
     tcpSocket->abort();
 }
 
 void QWsSocket::close( ECloseStatusCode closeStatusCode, QString reason )
 {
-    qDebug() << "QWsSocket::close";
     if ( QAbstractSocket::state() == QAbstractSocket::UnconnectedState )
         return;
 
@@ -178,7 +171,6 @@ void QWsSocket::close( ECloseStatusCode closeStatusCode, QString reason )
 
 qint64 QWsSocket::write( const QString & string )
 {
-    qDebug() << "QWsSocket::write";
     if ( _version == WS_V0 )
     {
         return QWsSocket::write( string.toUtf8() );
@@ -190,7 +182,6 @@ qint64 QWsSocket::write( const QString & string )
 
 qint64 QWsSocket::write( const QByteArray & byteArray )
 {
-    qDebug() << "QWsSocket::write";
     if ( _version == WS_V0 )
     {
         QByteArray BA;
@@ -210,7 +201,6 @@ qint64 QWsSocket::write( const QByteArray & byteArray )
 
 void QWsSocket::processHandshake()
 {
-    qDebug() << "QWsSocket::processHandshake";
     //copy from QWsServer::dataReceived();
     QTcpSocket * tcpSocket = qobject_cast<QTcpSocket*>( sender() );
     if (tcpSocket == 0)
@@ -287,7 +277,6 @@ void QWsSocket::processHandshake()
 
 void QWsSocket::processDataV0()
 {
-    qDebug() << "QWsSocket::processDataV0";
     if( state() == QAbstractSocket::ConnectingState )
     {
         processHandshake();
@@ -360,7 +349,6 @@ void QWsSocket::processDataV0()
 
 void QWsSocket::processDataV4()
 {
-    qDebug() << "QWsSocket::processDataV4";
     if( state() == QAbstractSocket::ConnectingState )
         processHandshake();
     else
@@ -493,13 +481,11 @@ void QWsSocket::processDataV4()
 
 qint64 QWsSocket::writeFrame ( const QByteArray & byteArray )
 {
-    qDebug() << "QWsSocket::writeFrame";
     return tcpSocket->write( byteArray );
 }
 
 qint64 QWsSocket::writeFrames ( const QList<QByteArray> & framesList )
 {
-    qDebug() << "QWsSocket::writeFrames";
     qint64 nbBytesWritten = 0;
     for ( int i=0 ; i<framesList.size() ; i++ )
     {
@@ -511,7 +497,6 @@ qint64 QWsSocket::writeFrames ( const QList<QByteArray> & framesList )
 void QWsSocket::processTcpStateChanged( QAbstractSocket::SocketState tcpSocketState )
 {
     QAbstractSocket::SocketState wsSocketState = QAbstractSocket::state();
-    qDebug() << "QWsSocket::processTcpStateChanged" << tcpSocketState << wsSocketState;
     switch ( tcpSocketState )
     {
         case QAbstractSocket::HostLookupState:
@@ -568,7 +553,6 @@ void QWsSocket::processTcpStateChanged( QAbstractSocket::SocketState tcpSocketSt
 
 QByteArray QWsSocket::generateMaskingKey()
 {
-    qDebug() << "QWsSocket::generateMaskingKey";
     QByteArray key;
     for ( int i=0 ; i<4 ; i++ )
     {
@@ -579,7 +563,6 @@ QByteArray QWsSocket::generateMaskingKey()
 
 QByteArray QWsSocket::generateMaskingKeyV4( QString key, QString nonce )
 {
-    qDebug() << "QWsSocket::generateMaskingKeyV4";
     QString concat = key + nonce + QLatin1String("61AC5F19-FBBA-4540-B96F-6561F1AB40A8");
     QByteArray hash = QCryptographicHash::hash ( concat.toUtf8(), QCryptographicHash::Sha1 );
     return hash;
@@ -587,7 +570,6 @@ QByteArray QWsSocket::generateMaskingKeyV4( QString key, QString nonce )
 
 QByteArray QWsSocket::mask( const QByteArray & data, QByteArray & maskingKey )
 {
-    qDebug() << "QWsSocket::mask";
     QByteArray result;
     result.reserve( data.size() );
 
@@ -601,7 +583,6 @@ QByteArray QWsSocket::mask( const QByteArray & data, QByteArray & maskingKey )
 
 QList<QByteArray> QWsSocket::composeFrames( QByteArray byteArray, bool asBinary, int maxFrameBytes )
 {
-    qDebug() << "QWsSocket::composeFrames";
     if ( maxFrameBytes == 0 )
         maxFrameBytes = maxBytesPerFrame;
 
@@ -650,7 +631,6 @@ QList<QByteArray> QWsSocket::composeFrames( QByteArray byteArray, bool asBinary,
 
 QByteArray QWsSocket::composeHeader( bool end, EOpcode opcode, quint64 payloadLength, QByteArray maskingKey )
 {
-    qDebug() << "QWsSocket::composeHeader";
     QByteArray BA;
     quint8 byte;
 
@@ -710,7 +690,6 @@ QByteArray QWsSocket::composeHeader( bool end, EOpcode opcode, quint64 payloadLe
 
 void QWsSocket::ping()
 {
-    qDebug() << "QWsSocket::ping";
     pingTimer.restart();
     QByteArray pingFrame = QWsSocket::composeHeader( true, OpPing, 0 );
     writeFrame( pingFrame );
@@ -718,91 +697,76 @@ void QWsSocket::ping()
 
 void QWsSocket::setResourceName( QString rn )
 {
-    qDebug() << "QWsSocket::setResourceName" << rn;
     _resourceName = rn;
 }
 
 void QWsSocket::setHost( QString h )
 {
-    qDebug() << "QWsSocket::setHost" << h;
     _host = h;
 }
 
 void QWsSocket::setHostAddress( QString ha )
 {
-    qDebug() << "QWsSocket::setHostAddress" << ha;
     _hostAddress = ha;
 }
 
 void QWsSocket::setHostPort( int hp )
 {
-    qDebug() << "QWsSocket::setHostPort" << hp;
     _hostPort = hp;
 }
 
 void QWsSocket::setOrigin( QString o )
 {
-    qDebug() << "QWsSocket::setOrigin" << o;
     _origin = o;
 }
 
 void QWsSocket::setProtocol( QString p )
 {
-    qDebug() << "QWsSocket::setProtocol" << p;
     _protocol = p;
 }
 
 void QWsSocket::setExtensions( QString e )
 {
-    qDebug() << "QWsSocket::setExtensions" << e;
     _extensions = e;
 }
 
 EWebsocketVersion QWsSocket::version()
 {
-    qDebug() << "QWsSocket::version" << _version;
     return _version;
 }
 
 QString QWsSocket::resourceName()
 {
-    qDebug() << "QWsSocket::resourceName" << _resourceName;
     return _resourceName;
 }
 
 QString QWsSocket::host()
 {
-    qDebug() << "QWsSocket::host" << _host;
     return _host;
 }
 
 QString QWsSocket::hostAddress()
 {
-    qDebug() << "QWsSocket::hostAddress" << _hostAddress;
     return _hostAddress;
 }
 
 int QWsSocket::hostPort()
 {
-    qDebug() << "QWsSocket::hostPort" << _hostPort;
     return _hostPort;
 }
 
 QString QWsSocket::origin()
 {
-    qDebug() << "QWsSocket::origin" << _origin;
     return _origin;
 }
 
 QString QWsSocket::protocol()
 {
-    qDebug() << "QWsSocket::protocol" << _protocol;
     return _protocol;
 }
 
 QString QWsSocket::extensions()
 {
-    qDebug() << "QWsSocket::extensions" << _extensions;
     return _extensions;
 }
 
@@ -818,6 +782,5 @@ QString QWsSocket::composeOpeningHandShake( QString resourceName, QString host, 
     hs.append(QLatin1String("Sec-WebSocket-Extensions: ") + extensions + QLatin1String("\r\n"));
     hs.append(QLatin1String("Sec-WebSocket-Version: 13\r\n"));
     hs.append(QLatin1String("\r\n"));
-    qDebug() << "QWsSocket::composeOpeningHandShake" << hs;
     return hs;
 }

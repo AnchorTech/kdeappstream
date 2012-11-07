@@ -403,7 +403,6 @@ WSConnector.prototype = {
                 WebSocket = MozWebSocket;
             this.websocket = new WebSocket(this.wsUri);
             socket = this.websocket;
-
             this.websocket.onopen = function () {
                 debug('Connected');
             };
@@ -425,7 +424,6 @@ WSConnector.prototype = {
             };
             this.websocket.onclose = function (evt) {
                 debug('Connection closed.');
-                alert('Con closed');
             };
         } catch (exception) {
             debug('ERROR: ' + exception);

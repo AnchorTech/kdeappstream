@@ -20,26 +20,26 @@ ImagesHostServer::ImagesHostServer(QObject * parent) :
 {
     qDebug() << "Listening for images fetching:" << this->listen(QHostAddress::Any);
 
-//    QDirIterator it(":", QDirIterator::Subdirectories);
-//    while (it.hasNext())
-//    {
-//        QResource r(it.next());
-//        if (r.data())
-//        {
-////            QPixmap p(r.fileName());
-////            if (!p.isNull())
-////            {
-////                qDebug() << "Pixmap:" << p.cacheKey() << r.fileName();
-////                continue;
-////            }
-//            QImage i(r.fileName());
-//            if (!i.isNull())
+    QDirIterator it(":", QDirIterator::Subdirectories);
+    while (it.hasNext())
+    {
+        QResource r(it.next());
+        if (r.data())
+        {
+//            QPixmap p(r.fileName());
+//            if (!p.isNull())
 //            {
-//                qDebug() << "Image:" << i.cacheKey() << r.fileName();
+//                qDebug() << "Pixmap:" << p.cacheKey() << r.fileName();
 //                continue;
 //            }
-//        }
-//    }
+            QImage i(r.fileName());
+            if (!i.isNull())
+            {
+                qDebug() << "Image:" << i.cacheKey() << r.fileName();
+                continue;
+            }
+        }
+    }
 }
 
 ImagesHostServer * ImagesHostServer::instance(QObject * parent)
