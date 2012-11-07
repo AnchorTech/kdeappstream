@@ -158,7 +158,6 @@ QByteArray ImagesHostServer::hostImage(const QImage & image)
         return key;
     }
 
-    int j = 0;
     bool allTransparent = true;
     const uchar * pixelData = image.bits();
     int bytes = image.byteCount();

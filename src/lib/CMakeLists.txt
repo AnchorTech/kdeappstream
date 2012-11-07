@@ -42,3 +42,4 @@ TARGET_LINK_LIBRARIES( kappstream
                        ${DL_LIB} )
 
 INSTALL( TARGETS kappstream ${INSTALL_TARGETS_DEFAULT_ARGS} )
+

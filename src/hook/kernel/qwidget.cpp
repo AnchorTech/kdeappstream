@@ -15,13 +15,13 @@ typedef QWidget * QApplication_focusWidget();
 typedef void QApplication_setActiveWindow(QWidget *);
 typedef QWidgetList QApplication_topLevelWidgets();
 
-static QWidgetFindMethod * findMethod = 0;
+//static QWidgetFindMethod * findMethod = 0;
 static QWidget_focusWidget * QWidget_focusWidget_method = 0;
 static QApplication_activeModalWidget * QApplication_activeModalWidget_method = 0;
 static QApplication_activePopupWidget * QApplication_activePopupWidget_method = 0;
 static QApplication_activeWindow * QApplication_activeWindow_method = 0;
 static QApplication_focusWidget * QApplication_focusWidget_method = 0;
-static QApplication_setActiveWindow * QApplication_setActiveWindow_method = 0;
+//static QApplication_setActiveWindow * QApplication_setActiveWindow_method = 0;
 static QApplication_topLevelWidgets * QApplication_topLevelWidgets_method = 0;
 
 //QWidget * QWidget::find(WId id)

@@ -160,11 +160,10 @@ void EventDispatcher::processEnterEvents(QWidget * mouseGrabber, const QPoint & 
         }
     }
 
-    QWidget * w = 0;
     QPoint tp(0,0);
     while (enterStack.size() && leaveStack.size() && enterStack.top() == leaveStack.top())
     {
-        w = enterStack.pop();
+        enterStack.pop();
         tp = enterPoints.pop();
         leaveStack.pop();
     }

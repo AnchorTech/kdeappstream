@@ -15,14 +15,14 @@ QWsSocket::QWsSocket( QObject * parent, QTcpSocket * socket, EWebsocketVersion w
     tcpSocket( socket ? socket : new QTcpSocket(this) ),
     _version( ws_v ),
     _hostPort( -1 ),
+    serverSideSocket( false ),
     closingHandshakeSent( false ),
     closingHandshakeReceived( false ),
     readingState( HeaderPending ),
     isFinalFragment( false ),
     hasMask( false ),
     payloadLength( 0 ),
-    maskingKey( 4, 0 ),
-    serverSideSocket( false )
+    maskingKey( 4, 0 )
 {
     tcpSocket->setParent( this );
 
@@ -78,6 +78,16 @@ void QWsSocket::abort( QString reason )
 {
     QWsSocket::close( CloseAbnormalDisconnection, reason );
     tcpSocket->abort();
+}
+
+void QWsSocket::close( )
+{
+    this->close(NoCloseStatusCode);
+}
+
+void QWsSocket::close( ECloseStatusCode closeStatusCode )
+{
+    this->close(closeStatusCode, QString());
 }
 
 void QWsSocket::close( ECloseStatusCode closeStatusCode, QString reason )
@@ -353,7 +363,9 @@ void QWsSocket::processDataV4()
         processHandshake();
     else
         while (true)
-            switch ( readingState ) {
+        {
+            switch ( readingState )
+            {
                 case HeaderPending: {
                         if (tcpSocket->bytesAvailable() < 2)
                             return;
@@ -475,8 +487,12 @@ void QWsSocket::processDataV4()
                         }
 
                         currentFrame.clear();
-                    }; break;
+                    };
+                    break;
+                default:
+                    return;
             } /* while (true) switch */
+        }
 }
 
 qint64 QWsSocket::writeFrame ( const QByteArray & byteArray )

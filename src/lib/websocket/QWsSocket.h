@@ -7,14 +7,14 @@
 
 enum EWebsocketVersion
 {
-        WS_VUnknow = -1,
-        WS_V0 = 0,
-        WS_V4 = 4,
-        WS_V5 = 5,
-        WS_V6 = 6,
-        WS_V7 = 7,
-        WS_V8 = 8,
-        WS_V13 = 13
+    WS_VUnknow = -1,
+    WS_V0 = 0,
+    WS_V4 = 4,
+    WS_V5 = 5,
+    WS_V6 = 6,
+    WS_V7 = 7,
+    WS_V8 = 8,
+    WS_V13 = 13
 };
 
 class QWsSocket : public QAbstractSocket
@@ -23,47 +23,50 @@ class QWsSocket : public QAbstractSocket
 
         friend class QWsServer;
 
-public:
+    public:
+
         enum EOpcode
         {
-                OpContinue = 0x0,
-                OpText = 0x1,
-                OpBinary = 0x2,
-                OpReserved3 = 0x3,
-                OpReserved4 = 0x4,
-                OpReserved5 = 0x5,
-                OpReserved6 = 0x6,
-                OpReserved7 = 0x7,
-                OpClose = 0x8,
-                OpPing = 0x9,
-                OpPong = 0xA,
-                OpReservedB = 0xB,
-                OpReservedV = 0xC,
-                OpReservedD = 0xD,
-                OpReservedE = 0xE,
-                OpReservedF = 0xF
-        };
-        enum ECloseStatusCode
-        {
-                NoCloseStatusCode = 0,
-                CloseNormal = 1000,
-                CloseGoingAway = 1001,
-                CloseProtocolError = 1002,
-                CloseDataTypeNotSupported = 1003,
-                CloseReserved1004 = 1004,
-                CloseMissingStatusCode = 1005,
-                CloseAbnormalDisconnection = 1006,
-                CloseWrongDataType = 1007,
-                ClosePolicyViolated = 1008,
-                CloseTooMuchData = 1009,
-                CloseMissingExtension = 1010,
-                CloseBadOperation = 1011,
-                CloseTLSHandshakeFailed = 1015
+            OpContinue = 0x0,
+            OpText = 0x1,
+            OpBinary = 0x2,
+            OpReserved3 = 0x3,
+            OpReserved4 = 0x4,
+            OpReserved5 = 0x5,
+            OpReserved6 = 0x6,
+            OpReserved7 = 0x7,
+            OpClose = 0x8,
+            OpPing = 0x9,
+            OpPong = 0xA,
+            OpReservedB = 0xB,
+            OpReservedV = 0xC,
+            OpReservedD = 0xD,
+            OpReservedE = 0xE,
+            OpReservedF = 0xF
         };
 
-public:
+        enum ECloseStatusCode
+        {
+            NoCloseStatusCode = 0,
+            CloseNormal = 1000,
+            CloseGoingAway = 1001,
+            CloseProtocolError = 1002,
+            CloseDataTypeNotSupported = 1003,
+            CloseReserved1004 = 1004,
+            CloseMissingStatusCode = 1005,
+            CloseAbnormalDisconnection = 1006,
+            CloseWrongDataType = 1007,
+            ClosePolicyViolated = 1008,
+            CloseTooMuchData = 1009,
+            CloseMissingExtension = 1010,
+            CloseBadOperation = 1011,
+            CloseTLSHandshakeFailed = 1015
+        };
+
+    public:
+
         // ctor
-    QWsSocket( QObject * parent = 0, QTcpSocket * socket = 0, EWebsocketVersion ws_v = WS_V13 );
+        QWsSocket( QObject * parent = 0, QTcpSocket * socket = 0, EWebsocketVersion ws_v = WS_V13 );
         // dtor
         virtual ~QWsSocket();
 
@@ -88,38 +91,45 @@ public:
         qint64 write( const QString & string ); // write data as text
         qint64 write( const QByteArray & byteArray ); // write data as binary
 
-public slots:
+    public slots:
+
         void connectToHost( const QString & hostName, quint16 port, OpenMode mode = ReadWrite );
-    void connectToHost( const QHostAddress & address, quint16 port, OpenMode mode = ReadWrite );
-    void disconnectFromHost();
-    void abort( QString reason = QString() );
+        void connectToHost( const QHostAddress & address, quint16 port, OpenMode mode = ReadWrite );
+        void disconnectFromHost();
+        void abort( QString reason = QString() );
         void ping();
 
-signals:
+    signals:
+
         void frameReceived(QString frame);
         void frameReceived(QByteArray frame);
         void pong(quint64 elapsedTime);
 
-protected:
+    protected:
+
         qint64 writeFrames ( const QList<QByteArray> & framesList );
         qint64 writeFrame ( const QByteArray & byteArray );
 
-protected slots:
-        virtual void close( ECloseStatusCode closeStatusCode = NoCloseStatusCode, QString reason = QString() );
+    protected slots:
+
+        virtual void close( );
+        virtual void close( ECloseStatusCode closeStatusCode );
+        virtual void close( ECloseStatusCode closeStatusCode, QString reason );
         void processDataV0();
         void processDataV4();
-    void processHandshake();
+        void processHandshake();
         void processTcpStateChanged( QAbstractSocket::SocketState socketState );
 
-private:
+    private:
+
         enum EReadingState
-    {
-                HeaderPending,
-                PayloadLengthPending,
-                BigPayloadLenghPending,
-                MaskPending,
-                PayloadBodyPending,
-                CloseDataPending
+        {
+            HeaderPending,
+            PayloadLengthPending,
+            BigPayloadLenghPending,
+            MaskPending,
+            PayloadBodyPending,
+            CloseDataPending
         };
 
         // private vars
@@ -148,13 +158,14 @@ private:
         QByteArray maskingKey;
         ECloseStatusCode closeStatusCode;
 
-    static const QString regExpAcceptStr;
-    static const QString regExpUpgradeStr;
-    static const QString regExpConnectionStr;
-    QString handshakeResponse;
-    QString key;
+        static const QString regExpAcceptStr;
+        static const QString regExpUpgradeStr;
+        static const QString regExpConnectionStr;
+        QString handshakeResponse;
+        QString key;
 
-public:
+    public:
+
         // Static functions
         static QByteArray generateMaskingKey();
         static QByteArray generateMaskingKeyV4( QString key, QString nonce );

@@ -68,7 +68,7 @@ namespace KAppStream
                 Widget & first()
                 {
                     _sem.acquire();
-                    Widget result = queue.first();
+                    Widget & result = queue.first();
                     _sem.release();
                     return result;
                 }

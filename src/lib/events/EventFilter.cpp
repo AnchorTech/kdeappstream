@@ -588,6 +588,8 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
             case QEvent::GestureOverride:
                 //qDebug() << "QEvent::GestureOverride" << recv;
                 break;
+            default:
+                break;
         }
     }
     return false;

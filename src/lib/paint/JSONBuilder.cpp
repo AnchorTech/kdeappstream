@@ -290,7 +290,7 @@ void JSONBuilder::ellipse(const QRectF & r)
           .append("},");
 }
 
-void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags flags)
+void JSONBuilder::image(const QRectF & r, const QImage & image, const QRectF & sr, Qt::ImageConversionFlags /*flags*/)
 {
     this->image(image.copy(sr.toRect()).scaled(r.size().toSize()), r.topLeft());
 }
