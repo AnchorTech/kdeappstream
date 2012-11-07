@@ -74,6 +74,14 @@ body {
     border-top-right-radius: 8px;
 }
 
+.Curtain {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.2;
+    position: absolute;
+}
+
 .ui-resizable-handle {
     position: absolute;
 }
@@ -581,21 +589,30 @@ QtLogic.prototype = {
         console.log(data);
     },
     showElement:function (data) {
+
         var canvas = this.widgets[data.id].canvas;
         canvas.show();
         if (canvas.hasClass("DialogCanvas")) {
-            canvas.parents('.Dialog')
+            var modal = data.modality & 1 === 1;
+            var dialog = canvas.parents('.Dialog')
                     .removeClass("Hidden")
                     .show();
+            if(modal) {
+                dialog.before($('<div class="Curtain"></div>'));
+            }
         }
     },
     hideElement:function (data) {
         var canvas = this.widgets[data.id].canvas;
         canvas.hide();
         if (canvas.hasClass("DialogCanvas")) {
-            canvas.parents('.Dialog')
+            var dialog = canvas.parents('.Dialog')
                     .addClass("Hidden")
                     .hide();
+            var prev = dialog.prev();
+            if(prev.hasClass('Curtain')) {
+                prev.remove();
+            }
         }
     },
     resizeCommand:function (data) {
