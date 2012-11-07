@@ -21,6 +21,7 @@ const QString QWsServer::regExpExtensionsStr( QLatin1String("\r\nSec-WebSocket-E
 QWsServer::QWsServer(QObject * parent)
         : QObject(parent)
 {
+    qDebug() << "QWsServer::QWsServer";
         tcpServer = new QTcpServer(this);
         connect( tcpServer, SIGNAL(newConnection()), this, SLOT(newTcpConnection()) );
         qsrand( QDateTime::currentMSecsSinceEpoch() );
@@ -28,31 +29,37 @@ QWsServer::QWsServer(QObject * parent)
 
 QWsServer::~QWsServer()
 {
+    qDebug() << "QWsServer::~QWsServer";
         tcpServer->deleteLater();
 }
 
 bool QWsServer::listen(const QHostAddress & address, quint16 port)
 {
+    qDebug() << "QWsServer::";
         return tcpServer->listen(address, port);
 }
 
 void QWsServer::close()
 {
+    qDebug() << "QWsServer::close";
         tcpServer->close();
 }
 
 QAbstractSocket::SocketError QWsServer::serverError()
 {
+    qDebug() << "QWsServer::serverError";
         return tcpServer->serverError();
 }
 
 QString QWsServer::errorString()
 {
+    qDebug() << "QWsServer::errorString";
         return tcpServer->errorString();
 }
 
 void QWsServer::newTcpConnection()
 {
+    qDebug() << "QWsServer::newTcpConnection";
         QTcpSocket * tcpSocket = tcpServer->nextPendingConnection();
         connect( tcpSocket, SIGNAL(readyRead()), this, SLOT(dataReceived()) );
         headerBuffer.insert( tcpSocket, QStringList() );
@@ -60,6 +67,7 @@ void QWsServer::newTcpConnection()
 
 void QWsServer::closeTcpConnection()
 {
+    qDebug() << "QWsServer::closeTcpConnection";
         QTcpSocket * tcpSocket = qobject_cast<QTcpSocket*>( sender() );
         if (tcpSocket == 0)
                 return;
@@ -69,6 +77,7 @@ void QWsServer::closeTcpConnection()
 
 void QWsServer::dataReceived()
 {
+    qDebug() << "QWsServer::dataReceived";
         QTcpSocket * tcpSocket = qobject_cast<QTcpSocket*>( sender() );
         if (tcpSocket == 0)
                 return;
@@ -94,6 +103,8 @@ void QWsServer::dataReceived()
             return;
 
         QString request( headerBuffer[ tcpSocket ].join("") );
+
+        qDebug() << request;
 
         QRegExp regExp;
         regExp.setMinimal( true );
@@ -157,6 +168,7 @@ void QWsServer::dataReceived()
         ////////////////////////////////////////////////////////////////////
 
         // If the mandatory fields are not specified, we abord the connection to the Websocket server
+        qDebug() << resourceName << hostAddress << key << key1 << key2 << key3;
         if ( version == WS_VUnknow || resourceName.isEmpty() || hostAddress.isEmpty() || ( key.isEmpty() && ( key1.isEmpty() || key2.isEmpty() || key3.isEmpty() ) ) )
         {
                 // Send bad request response
@@ -207,7 +219,11 @@ void QWsServer::dataReceived()
         }
         else
         {
+            qDebug() << "Key1[" << key1 << "]";
+            qDebug() << "Key2[" << key2 << "]";
+            qDebug() << "Key3[" << key3 << "]";
                 QString accept = computeAcceptV0( key1, key2, key3 );
+                qDebug() << "Result[" << accept << "]";
                 response = QWsServer::composeOpeningHandshakeResponseV0( accept, origin, hostAddress, hostPort, resourceName , protocol );
         }
 
@@ -242,6 +258,7 @@ void QWsServer::dataReceived()
 
 void QWsServer::incomingConnection( int socketDescriptor )
 {
+    qDebug() << "QWsServer::incomingConnection";
         QTcpSocket * tcpSocket = new QTcpSocket( tcpServer );
         tcpSocket->setSocketDescriptor( socketDescriptor, QAbstractSocket::ConnectedState );
         QWsSocket * wsSocket = new QWsSocket( this, tcpSocket );
@@ -252,17 +269,20 @@ void QWsServer::incomingConnection( int socketDescriptor )
 
 void QWsServer::addPendingConnection( QWsSocket * socket )
 {
+    qDebug() << "QWsServer::addPendingConnection";
         if ( pendingConnections.size() < maxPendingConnections() )
                 pendingConnections.enqueue( socket );
 }
 
 QWsSocket * QWsServer::nextPendingConnection()
 {
+    qDebug() << "QWsServer::nextPendingConnection";
         return pendingConnections.dequeue();
 }
 
 bool QWsServer::hasPendingConnections()
 {
+    qDebug() << "QWsServer::hasPendingConnections";
         if ( pendingConnections.size() > 0 )
                 return true;
         return false;
@@ -270,56 +290,67 @@ bool QWsServer::hasPendingConnections()
 
 int QWsServer::maxPendingConnections()
 {
+    qDebug() << "QWsServer::maxPendingConnections";
         return tcpServer->maxPendingConnections();
 }
 
 bool QWsServer::isListening()
 {
+    qDebug() << "QWsServer::isListening";
         return tcpServer->isListening();
 }
 
 QNetworkProxy QWsServer::proxy()
 {
+    qDebug() << "QWsServer::proxy";
         return tcpServer->proxy();
 }
 
 QHostAddress QWsServer::serverAddress()
 {
+    qDebug() << "QWsServer::serverAddress";
         return tcpServer->serverAddress();
 }
 
 quint16 QWsServer::serverPort()
 {
+    qDebug() << "QWsServer::serverPort";
         return tcpServer->serverPort();
 }
 
 void QWsServer::setMaxPendingConnections( int numConnections )
 {
+    qDebug() << "QWsServer::setMaxPendingConnections";
         tcpServer->setMaxPendingConnections( numConnections );
 }
 
 void QWsServer::setProxy( const QNetworkProxy & networkProxy )
 {
+    qDebug() << "QWsServer::setProxy";
         tcpServer->setProxy( networkProxy );
 }
 
 bool QWsServer::setSocketDescriptor( int socketDescriptor )
 {
+    qDebug() << "QWsServer::setSocketDescriptor";
         return tcpServer->setSocketDescriptor( socketDescriptor );
 }
 
 int QWsServer::socketDescriptor()
 {
+    qDebug() << "QWsServer::socketDescriptor";
         return tcpServer->socketDescriptor();
 }
 
 bool QWsServer::waitForNewConnection( int msec, bool * timedOut )
 {
+    qDebug() << "QWsServer::waitForNewConnection";
         return tcpServer->waitForNewConnection( msec, timedOut );
 }
 
 QString QWsServer::computeAcceptV0( QString key1, QString key2, QString key3 )
 {
+    qDebug() << "QWsServer::computeAcceptV0";
         QString numStr1;
         QString numStr2;
 
@@ -337,24 +368,35 @@ QString QWsServer::computeAcceptV0( QString key1, QString key2, QString key3 )
                         numStr2.append( carac );
         }
 
+        qDebug() << numStr1 << numStr2;
+
         quint32 num1 = numStr1.toUInt();
         quint32 num2 = numStr2.toUInt();
 
         int numSpaces1 = key1.count( ' ' );
         int numSpaces2 = key2.count( ' ' );
 
+        qDebug() << numSpaces1 << numSpaces2;
+
         num1 /= numSpaces1;
         num2 /= numSpaces2;
 
+        qDebug() << num1 << num2;
+
         QString concat = serializeInt( num1 ) + serializeInt( num2 ) + key3;
 
+        qDebug() << concat;
+
         QByteArray md5 = QCryptographicHash::hash( concat.toAscii(), QCryptographicHash::Md5 );
+
+        qDebug() << md5;
 
         return QString( md5 );
 }
 
 QString QWsServer::computeAcceptV4(QString key)
 {
+    qDebug() << "QWsServer::computeAcceptV4";
         key += QLatin1String("258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
         QByteArray hash = QCryptographicHash::hash ( key.toUtf8(), QCryptographicHash::Sha1 );
         return hash.toBase64();
@@ -362,6 +404,7 @@ QString QWsServer::computeAcceptV4(QString key)
 
 QString QWsServer::generateNonce()
 {
+    qDebug() << "QWsServer::generateNonce";
         qsrand( QDateTime::currentDateTime().toTime_t() );
 
         QByteArray nonce;
@@ -377,6 +420,7 @@ QString QWsServer::generateNonce()
 
 QByteArray QWsServer::serializeInt( quint32 number, quint8 nbBytes )
 {
+    qDebug() << "QWsServer::serializeInt";
         QByteArray ba;
         quint8 currentNbBytes = 0;
         while (number > 0 && currentNbBytes < nbBytes)
@@ -397,6 +441,7 @@ QByteArray QWsServer::serializeInt( quint32 number, quint8 nbBytes )
 
 QString QWsServer::composeOpeningHandshakeResponseV0( QString accept, QString origin, QString hostAddress, QString hostPort, QString resourceName, QString protocol )
 {
+    qDebug() << "QWsServer::composeOpeningHandshakeResponseV0";
         QString response;
 
         response.append( QLatin1String("HTTP/1.1 101 WebSocket Protocol Handshake\r\n") );
@@ -417,6 +462,7 @@ QString QWsServer::composeOpeningHandshakeResponseV0( QString accept, QString or
 
 QString QWsServer::composeOpeningHandshakeResponseV4( QString accept, QString nonce, QString protocol, QString extensions )
 {
+    qDebug() << "QWsServer::composeOpeningHandshakeResponseV4";
         QString response;
 
         response.append( QLatin1String("HTTP/1.1 101 Switching Protocols\r\n") );
@@ -435,6 +481,7 @@ QString QWsServer::composeOpeningHandshakeResponseV4( QString accept, QString no
 
 QString QWsServer::composeOpeningHandshakeResponseV6( QString accept, QString protocol, QString extensions )
 {
+    qDebug() << "QWsServer::composeOpeningHandshakeResponseV6";
         QString response;
 
         response.append( QLatin1String("HTTP/1.1 101 Switching Protocols\r\n") );
@@ -452,6 +499,7 @@ QString QWsServer::composeOpeningHandshakeResponseV6( QString accept, QString pr
 
 QString QWsServer::composeBadRequestResponse( QList<EWebsocketVersion> versions )
 {
+    qDebug() << "QWsServer::composeBadRequestResponse";
         QString response;
 
         response.append( QLatin1String("HTTP/1.1 400 Bad Request\r\n") );
