@@ -53,12 +53,11 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
             if(!rg.isEmpty())
                 r = rg.boundingRect();
             else
-                r = QRect();
+                r = widget->rect();
         }
-        Widget w(widget, r);
-        if (_render.contains(w))
-            _render.removeAll(w);
-        _render.enqueue(w);
+
+        _render.insert(widget, r);
+
         if (renderSemaphore.available())
         {
             renderSemaphore.acquire();

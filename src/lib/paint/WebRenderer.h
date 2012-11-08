@@ -73,6 +73,27 @@ namespace KAppStream
                     return result;
                 }
 
+                void insert(QWidget * widget, const QRect & rect)
+                {
+                    _sem.acquire();
+
+                    QQueue<Widget>::iterator it = queue.begin();
+                    while (it != queue.end())
+                    {
+                        if (it->w == widget)
+                        {
+                            it->rect = rect.united(it->rect);
+                            break;
+                        }
+                        ++it;
+                    }
+
+                    if (it == queue.end())
+                        queue.enqueue(Widget(widget, rect));
+
+                    _sem.release();
+                }
+
                 bool isEmpty()
                 {
                     _sem.acquire();
@@ -93,6 +114,16 @@ namespace KAppStream
                 {
                     _sem.acquire();
                     queue.removeAll(widget);
+                    _sem.release();
+                }
+
+                void lock()
+                {
+                    _sem.acquire();
+                }
+
+                void unlock()
+                {
                     _sem.release();
                 }
 
