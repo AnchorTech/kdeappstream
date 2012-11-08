@@ -9,9 +9,17 @@ class ApplicationWrapperThread : public QThread
 
         QString applicationName;
 
+        bool _exists;
+
+        bool _crashed;
+
     public:
 
         explicit ApplicationWrapperThread(QString applicationName, QObject * parent = 0);
+
+        bool exists() const;
+
+        bool crashed() const;
 
     protected:
 

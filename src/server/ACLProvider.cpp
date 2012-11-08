@@ -160,7 +160,7 @@ void ACLProvider::save()
 
 
     sw.writeStartElement("rejected");
-    if (_acceptAll)
+    if (_rejectAll)
         sw.writeAttribute("all", "true");
     foreach (QString n, rejectedNames)
     {

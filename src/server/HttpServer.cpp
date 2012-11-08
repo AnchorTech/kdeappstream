@@ -214,9 +214,18 @@ void HttpServer::sendCanvas(QTextStream & os, QString applicationName)
         else
             qDebug() << "Waiting for connection failed";
 
+        if (!wraper->exists())
+        {
+            this->sendError(os, "Application doesn't exists or you have insufficient rights to execute.");
+        }
+        else if (!wraper->exists())
+        {
+            this->sendError(os, "Application crashed at startup. Try again or notify the administrator if the problem occures again.");
+        }
+
         qDebug() << "Cannot get app server port number";
         qDebug() << init_server.errorString();
-        os << "Server internal error";
+
         return;
     }
     qDebug() << "Can't read canvas";
@@ -236,4 +245,11 @@ void HttpServer::sendRejection(QTextStream & os, QString applicationName)
 
     this->sendStatus(os, 200);
     os << "<html><head></head><body><pre>" << msg << "</pre></body></head>";
+}
+
+void HttpServer::sendError(QTextStream & os, QString errorString)
+{
+    os << "<html><head></head><body>";
+    os << errorString;
+    os << "</body></head>";
 }

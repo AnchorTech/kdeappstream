@@ -4,7 +4,9 @@
 
 ApplicationWrapperThread::ApplicationWrapperThread(QString applicationName, QObject * parent) :
     QThread(parent),
-    applicationName(applicationName)
+    applicationName(applicationName),
+    _exists(true),
+    _crashed(false)
 {
 }
 
@@ -17,4 +19,26 @@ void ApplicationWrapperThread::run()
     p.setProcessChannelMode(QProcess::ForwardedChannels);
     p.start(applicationName);
     p.waitForFinished(-1);
+
+    switch (p.error())
+    {
+        case QProcess::FailedToStart:
+            _exists = false;
+            break;
+        case QProcess::Crashed:
+            _crashed = false;
+            break;
+        default:
+            break;
+    }
+}
+
+bool ApplicationWrapperThread::exists() const
+{
+    return _exists;
+}
+
+bool ApplicationWrapperThread::crashed() const
+{
+    return _crashed;
 }
