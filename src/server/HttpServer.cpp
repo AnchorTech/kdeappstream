@@ -218,7 +218,7 @@ void HttpServer::sendCanvas(QTextStream & os, QString applicationName)
         {
             this->sendError(os, "Application doesn't exists or you have insufficient rights to execute.");
         }
-        else if (!wraper->exists())
+        else if (wraper->crashed())
         {
             this->sendError(os, "Application crashed at startup. Try again or notify the administrator if the problem occures again.");
         }
