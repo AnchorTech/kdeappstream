@@ -35,13 +35,19 @@ void installUIExtractorEventFilter()
 
 extern "C" void Q_CORE_EXPORT qt_startup_hook()
 {
+    qDebug() << "Starting websocket thread";
     WebsocketThread * websocketService = new WebsocketThread(0);
     websocketService->start();
+
+    qDebug() << "Wait for communication server port";
     while (!websocketService->serverPort())
         usleep(100000);
+
+    qDebug() << "Wait for imaging server port";
     while (!websocketService->imagesServerPort())
         usleep(100000);
 
+    qDebug() << "Connecting to local initialization server";
     QLocalSocket socket;
     int i = 0;
     do
@@ -61,13 +67,20 @@ extern "C" void Q_CORE_EXPORT qt_startup_hook()
     }
     while(!socket.waitForConnected());
 
+    if (!socket.isOpen())
+    {
+        qDebug() << "Cannot open the local socket: " << socket.errorString();
+    }
+
     installUIExtractorEventFilter();
 
+    qDebug() << "Initializate server communication";
     socket.write((QString::number(websocketService->serverPort()) + " " + QString::number(websocketService->imagesServerPort())).toAscii());
     if (!socket.waitForBytesWritten(30000))
         exit(-1);
     socket.close();
 
+    qDebug() << "Wait for server communication";
     if (!websocketService->waitForConnected(10000))
         exit(-1);
 
