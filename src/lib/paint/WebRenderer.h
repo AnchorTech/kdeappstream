@@ -144,7 +144,7 @@ namespace KAppStream
         public:
 
             static WebRenderer * instance(QObject * parent = 0);
-            void queue(QWidget * widget, QPaintEvent * event);
+            bool queue(QWidget * widget, QPaintEvent * event);
             void dequeue(QWidget * widget);
 
         public slots:

@@ -35,6 +35,7 @@ void WebsocketThread::run()
     qDebug() << "preparing connections";
     server = WebsocketServer::instance();
     connect(server, SIGNAL(newConnection()), this, SLOT(onConnection()));
+    connect(server, SIGNAL(disconnected()), this, SLOT(quit()));
     qDebug() << "WebSocket server started";
     imagesServer = ImagesHostServer::instance();
     exec();

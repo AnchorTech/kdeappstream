@@ -24,6 +24,7 @@ WebsocketServer::WebsocketServer(QObject *parent) :
     connect(server, SIGNAL(newConnection()), this, SLOT(onConnection()));
     connect(JSONBuilder::instance(), SIGNAL(readyRead()), this, SLOT(readData()));
     connect(this, SIGNAL(sendImage(qreal, QIODevice*)), ImagesBuffer::instance(), SLOT(sendData(qreal, QIODevice*)));
+    //connect(this, SIGNAL(disconnected()), qApp, SLOT(quit()));
 }
 
 WebsocketServer::~WebsocketServer()
@@ -85,6 +86,7 @@ void WebsocketServer::onDisconnection()
     client = NULL;
     qDebug() << "Client disconnected";
     emit disconnected();
+    qApp->quit();
 }
 
 void WebsocketServer::sendMessage(QString message)

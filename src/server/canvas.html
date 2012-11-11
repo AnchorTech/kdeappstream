@@ -242,11 +242,10 @@ canvas:not([data-name]) {
 }
 </style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script type="text/javascript"
-        src="http://jqueryjs.googlecode.com/svn-history/r6063/trunk/plugins/simulate/jquery.simulate.js"></script>
+<script type="text/javascript" src="http://jqueryjs.googlecode.com/svn-history/r6063/trunk/plugins/simulate/jquery.simulate.js"></script>
 
-<script type="text/javascript" src="http://jedrychowski.org/jquery-ui/js/jquery-ui-1.8.23.custom.min.js"></script>
-<style type="text/css" src="http://jedrychowski.org/jquery-ui/css/ui-lightness/jquery-ui-1.8.23.custom.css"></style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<style type="text/css" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/ui-lightness/jquery-ui.css"></style>
 
 <script type="text/javascript" charset="utf-8">
 var delayCallback = function (num, callback) {
@@ -1283,7 +1282,10 @@ CanvasDrawer.prototype = {
         this.bbrush = {style:0};
         this.opacity = 1.0;
         this.composition = {};
-        this.font = '9pt Helvetica';
+        this.font = {
+          "size":"12",
+          "family":["Helvetica"]
+          };
         this.clip = {};
         this.transform = [
             [1, 0, 0],
@@ -1418,10 +1420,30 @@ CanvasDrawer.prototype = {
     drawText:function (data) {
         var ctx = this.t_ctx;
         var fdata = data.data;
-        //ctx.font = fdata.font;
+        var width = fdata.w;
+        var height = fdata.h;
+        var text = CanvasHelper.decodeUtf8(fdata.text);
+        var font = fdata.font;
         var fillOld = ctx.strokeStyle;
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.fillText(CanvasHelper.decodeUtf8(fdata.text), fdata.x, fdata.y);
+        this.setupFont(font);
+        var metrix = ctx.measureText(text);
+        if (metrix.width !=  width && width !== null)
+        {
+            font.size = Math.floor(font.size * (width / metrix.width));
+            this.setupFont(font);
+            metrix = ctx.measureText(text);
+            if (metrix.width != width)
+            {
+                ctx.save();
+                ctx.scale(width / metrix.width, height / font.size);
+                ctx.fillText(text, fdata.x * metrix.width / width, fdata.y * font.size / height);
+                ctx.fillStyle = fillOld;
+                ctx.restore();
+                return;
+            }
+        }
+        ctx.fillText(text, fdata.x, fdata.y);
         ctx.fillStyle = fillOld;
     },
     drawLine:function (data) {
@@ -1549,7 +1571,12 @@ CanvasDrawer.prototype = {
             ctx.lineCap = pen.cap;
     },
     setupFont:function (font) {
-        this.t_ctx.font = font;
+        var style = font.style;
+        var caps = font.caps;
+        var weight = font.weight;
+        var size = font.size;
+        var family = font.family.join();
+        this.t_ctx.font = style + " " + caps + " " + weight + " " + size + "px " + family;
     },
     setupTransform:function (transform) {
         this.t_ctx.setTransform(transform[0][0], transform[0][1], transform[1][0], transform[1][1], transform[2][0] + this.currentTranslation.x, transform[2][1] + this.currentTranslation.y);

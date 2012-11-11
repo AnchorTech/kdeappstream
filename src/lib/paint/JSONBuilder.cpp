@@ -4,6 +4,7 @@
 #include "paint/PaintDevice.h"
 #include "paint/PaintEngine.h"
 #include "websocket/QWsSocket.h"
+#include <fontconfig/fontconfig.h>
 
 #include <QString>
 #include <QWidget>
@@ -499,6 +500,10 @@ void JSONBuilder::rect(const QRectF & r)
 void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
 {
     saveStatePriv();
+
+    QFontMetrics fm(textItem.font());
+    QSize size = fm.size(0, textItem.text());
+
     render_buffer.append("{\"t\":\"text\"")
             .append(",\"data\":{")
             .append("\"text\":\"").append(textItem.text().replace("\\", "\\\\").replace("\"", "\\\"").toUtf8()).append("\"")
@@ -506,6 +511,8 @@ void JSONBuilder::text(const QPointF & p, const QTextItem & textItem)
             .append(",\"descent\":").append(QString::number(textItem.descent()).toAscii())
             .append(",\"x\":").append(QString::number(p.x()).toAscii())
             .append(",\"y\":").append(QString::number(p.y()).toAscii())
+            .append(",\"w\":").append(QString::number(size.width()).toAscii())
+            .append(",\"h\":").append(QString::number(size.height()).toAscii())
             .append(",");
     font(textItem.font());
     render_buffer.append("}},");
@@ -795,64 +802,128 @@ void JSONBuilder::color(const QColor & c)
 
 void JSONBuilder::font(const QFont & f)
 {
-    render_buffer.append("\"font\":\"");
+    render_buffer.append("\"font\":{");
 
+    render_buffer.append("\"style\":");
     switch (f.style())
     {
         case QFont::StyleItalic:
-            render_buffer.append("italic ");
+            render_buffer.append("\"italic\"");
             break;
         case QFont::StyleOblique:
-            render_buffer.append("oblique ");
+            render_buffer.append("\"oblique\"");
             break;
         default:
-            render_buffer.append("normal ");
+            render_buffer.append("\"normal\"");
             break;
     }
 
+    render_buffer.append(",\"caps\":");
     switch (f.capitalization())
     {
         case QFont::SmallCaps:
-            render_buffer.append("small-caps ");
+            render_buffer.append("\"small-caps\"");
             break;
         default:
-            render_buffer.append("normal ");
+            render_buffer.append("\"normal\"");
             break;
     }
 
+    render_buffer.append(",\"weight\":");
     switch (f.weight())
     {
         case QFont::Light:
-            render_buffer.append("lighter ");
+            render_buffer.append("\"lighter\"");
             break;
         case QFont::DemiBold:
-            render_buffer.append("600 ");
+            render_buffer.append("600");
             break;
         case QFont::Bold:
-            render_buffer.append("700 ");
+            render_buffer.append("700");
             break;
         case QFont::Black:
-            render_buffer.append("900 ");
+            render_buffer.append("900");
             break;
         default:
-            render_buffer.append("400 ");
+            render_buffer.append("400");
             break;
     }
 
+    // Pixel size!
+    render_buffer.append(",\"size\":");
     if (f.pixelSize() != -1)
-        render_buffer.append(QString::number(f.pixelSize()).toAscii()).append("px ");
+        render_buffer.append(QString::number(f.pixelSize()).toAscii());
     else if (f.pointSize() != -1)
-        render_buffer.append(QString::number(f.pointSize()).toAscii()).append("pt ");
+        render_buffer.append(QString::number(f.pointSize() * 4.0 / 3.0).toAscii());
     else if (f.pointSizeF() != -1)
-        render_buffer.append(QString::number(f.pointSizeF()).toAscii()).append("pt ");
+        render_buffer.append(QString::number(f.pointSizeF() * 4.0 / 3.0).toAscii());
     else
-        render_buffer.append("medium ");
+        render_buffer.append("\"medium\"");
 
-    render_buffer.append(f.family().toAscii());
+    render_buffer.append(",\"family\":[\"")
+                 .append(f.family().toAscii());
     foreach (QString s, QFont::substitutes(f.family()))
-        render_buffer.append(",").append(s.toAscii());
-    render_buffer.append(",").append(f.defaultFamily().toAscii());
-    render_buffer.append("\"");
+        render_buffer.append("\",\"").append(s.toAscii());
+    render_buffer.append("\",\"").append(f.defaultFamily().toAscii());
+    render_buffer.append("\"]}");
+
+
+//    switch (f.style())
+//    {
+//        case QFont::StyleItalic:
+//            render_buffer.append("italic ");
+//            break;
+//        case QFont::StyleOblique:
+//            render_buffer.append("oblique ");
+//            break;
+//        default:
+//            render_buffer.append("normal ");
+//            break;
+//    }
+
+//    switch (f.capitalization())
+//    {
+//        case QFont::SmallCaps:
+//            render_buffer.append("small-caps ");
+//            break;
+//        default:
+//            render_buffer.append("normal ");
+//            break;
+//    }
+
+//    switch (f.weight())
+//    {
+//        case QFont::Light:
+//            render_buffer.append("lighter ");
+//            break;
+//        case QFont::DemiBold:
+//            render_buffer.append("600 ");
+//            break;
+//        case QFont::Bold:
+//            render_buffer.append("700 ");
+//            break;
+//        case QFont::Black:
+//            render_buffer.append("900 ");
+//            break;
+//        default:
+//            render_buffer.append("400 ");
+//            break;
+//    }
+
+//    if (f.pixelSize() != -1)
+//        render_buffer.append(QString::number(f.pixelSize()).toAscii()).append("px ");
+//    else if (f.pointSize() != -1)
+//        render_buffer.append(QString::number(f.pointSize() * 4.0 / 3.0).toAscii()).append("px ");
+//    else if (f.pointSizeF() != -1)
+//        render_buffer.append(QString::number(f.pointSizeF() * 4.0 / 3.0).toAscii()).append("px ");
+//    else
+//        render_buffer.append("medium ");
+
+//    render_buffer.append(f.family().toAscii());
+//    foreach (QString s, QFont::substitutes(f.family()))
+//        render_buffer.append(",").append(s.toAscii());
+//    render_buffer.append(",").append(f.defaultFamily().toAscii());
+//    render_buffer.append("\"");
 }
 
 void JSONBuilder::opacity(qreal op)
