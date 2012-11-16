@@ -2,13 +2,13 @@ HTML5 (ang. HyperText Markup Language) jest najnowszą wersją popularnego języ
 Standard nie jest jeszcze ukończony i zgodnie z zapowiedziami W3C zostanie ukończony około roku 2014.
 HTML5 jest rozwijany w ścisłej współpracy z twórcami najpopularniejszych przeglądarek. Została powołana specjalna grupa WHATWG (Web Hypertext Application Technology Working Group), która skupia producentów takich jak Mozilla Foundation, Google, Opera Software oraz Apple Inc. Przeglądarki internetowe takie jak Mozilla Firefox, Google Chrome oraz Opera już teraz implementują większość z planowanych nowości przedstawionych w aktualnym szkicu w wersjach produkcyjnych. Z powodu dojrzałości obecnej formy standard oraz wielkiej popularności już na obecną chwilę można założyć, że jego podstawowe założenia oraz komponenty pozostaną w obecnej formie bez rewolucyjnych zmian.
 
-W rozwiązaniu przedstawionym w pracy po stronie klienta stosujemy dwa nowe komponenty HTML5: canvas (ang. płótno) oraz WebSocket.
+W proponowanym rozwiązaniu, po stronie klienta zaadoptowano dwa nowe komponenty HTML5: canvas (ang. płótno) oraz WebSocket.
 
 \subsection{Element canvas}
 Nowy element drzewa DOM canvas pozwala na renderowanie dynamicznych bitmap na stronie przy pomocy skryptów języka Javascript. Aktualnie wszystkie przeglądarki producentów z WHATWG implementują obecny standard w pełni poprawnie.
  Wprowadzenie tego komponentu pozwala na tworzenie dowolnych animacji oraz grafik, których użycie wcześniej wymagało użycia zewnętrznych pluginów (np. Flash lub Java).
-W projekcie elemntu ten używany jest do rysowania pojedynczych widgetów. 
+W projekcie elemnt ten używany jest do rysowania pojedynczych widgetów. 
 
 \subsection{Technologia WebSocket}
-WebSocket jest technologią oferującą ustandaryzowaną pełną dwustronną komunikację między klientem (przeglądarką internetową) a serwerem. Podobną funkcjonalność można było wcześniej zasymulować przy pomocy modelu Comet korzystającego z długotrwałych połączeń HTTP, na które leniwie były wysyłane dane. Poprzednie rozwiązanie z powodu braku ustandaryzowania oraz wykorzystywania obejścia było trudne w utrzymaniu oraz nie oferowało synchronicznej komunikacji dwustronnej.
+WebSocket jest technologią oferującą ustandaryzowaną pełną dwukierunkową komunikację między klientem (przeglądarką internetową) a serwerem. Podobną funkcjonalność można było wcześniej zasymulować przy pomocy modelu Comet korzystającego z długotrwałych połączeń HTTP, na które leniwie były wysyłane dane. Poprzednie rozwiązanie z powodu braku ustandaryzowania oraz wykorzystywania obejścia było trudne w utrzymaniu oraz nie oferowało synchronicznej komunikacji dwustronnej.
 W projekcie technologia wykorzystywana jest do komunikacji z serwerem. Łączność ta jest dwustronna.

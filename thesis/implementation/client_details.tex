@@ -38,5 +38,7 @@ Funkcjonalność minimalizacji okna jest również symulowana. Okno jest chowane
 \subsection{Rysowanie pojedynczego widgeta}
 Na stronie widget reprezentowany jest przez element kontenera div i zawarte w nim element canvas oraz kontener na widgety potomne. Element kontenera ma jedynie funkcję pomocniczą i rozmieszcza w odpowiedniej pozycji canvas oraz dzieci. Jest całkowicie przezroczysty i nie jest widoczny na stronie. Taka implementacja relacji rodzic-dziecko widgetów na stronie zapewnia drzewiastość i łatwość zarządzania widgetami. Zmiana rodzica widgeta, który posiada zagnieżdzone dzieci nie jest problematyczna, a ze względu na format przesyłanych danych od serwera ta operacja jest bardzo często używana na etapie tworzenia okien. Najstarsze widgety (bezpośrednio dziedziczące po QDialog) stoją najwyżej w strukturze i są dodatkowo opakowane w kontener okna z całą jego strukturą.
 
-** TODO BULLSHIT! QMainWindow też jest najwyżej w strukturze a nie dziedziczy po QDialog. Liczy się flaga widgeta Qt::Window! **
-** TODO rysunek struktury **
+\begin{itemize}
+\item TODO - Poprawić - QMainWindow też jest najwyżej w strukturze a nie dziedziczy po QDialog. Liczy się flaga widgeta Qt::Window!
+\item TODO rysunek struktury
+\end{itemize}

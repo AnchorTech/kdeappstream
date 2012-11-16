@@ -1,12 +1,14 @@
 Interakcja użytkownika z aplikacją sprowadza się do obsługi następujących zdarzeń:
 \begin{enumerate}
-  \item Ruch myszy nad elementem
-  \item Wciśnięcie, zwolnienie oraz dwuklik przycisku myszy
-  \item Zmiana położenia kółka myszy
-  \item Wciśnięcie oraz zwolnienie klawiszy na klawiaturze
-  \item Zmiana rozmiaru okna aplikacji poprzez przeciąganie jego krawędzi
-  \item Zamknięcie, minimalizacja lub maksymalizacja okna aplikacji
+  \item ruch myszy nad elementem,
+  \item wciśnięcie, zwolnienie oraz dwuklik przycisku myszy,
+  \item zmiana położenia kółka myszy,
+  \item wciśnięcie oraz zwolnienie klawiszy na klawiaturze,
+  \item zmiana rozmiaru okna aplikacji poprzez przeciąganie jego krawędzi,
+  \item zamknięcie, minimalizacja lub maksymalizacja okna aplikacji.
 \end{enumerate}
 Większość z wyżej wymienionych elementów jest obsługiwana jako zdarzenia w języku JavaScript większości dzisiejszych przeglądarek. Proponowane podejście na rozwiązanie tego zagadnienia polega na stworzeniu formatu danych bazując na notacji JSON (JavaScript Object Notation). Dane w tym formacie przesyłane do serwera są następnie poddawane walidacji i konwersji na obiekty zdarzeń biblioteki Qt. Zdarzenia takie są następnie przesyłane do kolejki zdarzeń w głównym wątku aplikacji.
 
 Odbiorcą zdarzenia jest widget, który wygenerował dane zdarzenie po stronie przeglądarki bazując na hierarchicznej budowie interfejsu użytkownika. Wyjątkami są tutaj zdarzenia klawiatury, które nie mają bezpośredniego odbiorcy w momencie ich zaistnienia. Aplikacja sama decyduje o tym, który element powinien odebrać zdarzenie. Domyślnie jest to widget, który atualnie posiada tzw. focus, a to z kolei zależy od poprzednich zdarzeń oraz logiki samego programu. W celu symulacji podobnego zachowania decyzja o odbiorcy zdarzeń klawiatury podejmowana jest po stronie serwera bazując na aktualnym stanie aplikacji.
+
+// TODO: Przepływy danych / d. kolaboracji (nie wiem co to drugie ma znaczyć :P)
