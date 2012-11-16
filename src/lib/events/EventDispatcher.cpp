@@ -88,9 +88,9 @@ bool EventDispatcher::eventFilter(QObject * recv, QEvent * e)
                 fWidget = fWidget->focusProxy();
             if (fWidget->focusPolicy() & Qt::ClickFocus)
             {
-                QWidget * keyboardGrabber = QWidget::keyboardGrabber();
-                if (keyboardGrabber)
-                    keyboardGrabber->releaseKeyboard();
+                //QWidget * keyboardGrabber = QWidget::keyboardGrabber();
+                //if (keyboardGrabber)
+                //    keyboardGrabber->releaseKeyboard();
                 fWidget->setFocus(Qt::MouseFocusReason);
             }
             QMouseEvent mouseEvent(QEvent::MouseButtonPress, mEvent->pos(), mEvent->pos(), mEvent->button(), mEvent->buttons(), mEvent->modifiers());

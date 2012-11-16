@@ -42,7 +42,7 @@ WebRenderer * WebRenderer::instance(QObject * parent)
     return m_instance;
 }
 
-void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
+bool WebRenderer::queue(QWidget * widget, QPaintEvent * event)
 {
     if (currentRenderingWidget != widget)
     {
@@ -63,10 +63,12 @@ void WebRenderer::queue(QWidget * widget, QPaintEvent * event)
             renderSemaphore.acquire();
             t->start(50);
         }
+        return false;
     }
     else
     {
         currentRenderingWidget = 0;
+        return false;
     }
 }
 

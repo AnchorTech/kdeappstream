@@ -387,7 +387,7 @@ bool EventFilter::eventFilter(QObject * recv, QEvent * e)
                 if (WidgetsCollection::instance()->contains(w))
                 {
                     QPaintEvent * pe = dynamic_cast<QPaintEvent*>(e);
-                    WebRenderer::instance()->queue(w, pe);
+                    return WebRenderer::instance()->queue(w, pe);
                 }
                 break;
             case QEvent::PaletteChange:
