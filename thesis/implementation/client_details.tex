@@ -1,7 +1,7 @@
 \subsection{Biblioteki pomocniczne}
 Podczas pracy z projektem zostały wykorzystane popularne biblioteki ułatwiające podstawowe zadania. Wszystkie z nich są darmowe nawet w wykorzystaniu komercyjnym oraz całkowicie otwarte.
 \begin{enumerate}
-  \item jQuery --- biblioteka ułatwijąca operacje na elementach DOM
+  \item jQuery --- lekka biblioteka ułatwijąca operacje na elementach DOM i ułatwiająca pracę z językiem Javascript
   \item jQuery-UI --- plugin do biblioteki jQuery umożliwiający tworzenie zaawansowanych wizualnych elementów, takich jak okna dialogowe, elementy rozszerzalne (ang. resizable), elementy przesuwalne (ang. draggable).
   \item jQuery-mousewheel --- plugin do biblioteki jQuery dodający obsługę kółka myszy
   \item sylvester.js --- biblioteka służąca do zaawansowanych obliczeń na macierzach i wektorach
@@ -9,7 +9,7 @@ Podczas pracy z projektem zostały wykorzystane popularne biblioteki ułatwiają
 
 
 \subsection{Połączenie}
-Klient po załadowaniu początkowej strony dokonuje połączenia WebSocket z serwerem na port podany na stronie. Następnie nasłuchuje na informacje od serwera i na każdą z nich reaguje. Komunikaty w formacie JSON w drugą stronę wysyłane są po zajściu zdarzeń po stronie klienta, np. ruchu myszą. Dokładny opis zdarzeń znajduję się w sekcji % TODO
+Klient po załadowaniu początkowej strony dokonuje połączenia WebSocket z serwerem na port podany na stronie. Następnie nasłuchuje na informacje od serwera i na każdą z nich reaguje. Komunikaty w formacie JSON w drugą stronę wysyłane są po zajściu zdarzeń po stronie klienta, np. ruchu myszą. Dokładny opis zdarzeń znajduję się w sekcji TODO - link do dodatku/sekcji
 
 \subsection{Window manager (ang. zarządca okien) na szybkości}
 Typowe programy komputerowe składaja się z wielu okien. Sposób implementacji pseudookien i zarządcy w projekcie był możliwy na dwa sposoby.
@@ -17,28 +17,25 @@ Pierwszym wariantem jest zastosowanie osobnych okien przeglądarki (tzw. popupó
 Drugą opcją jest stworzenie minimalistycznego managera okien w języku Javascript.
 
 Minusem pierwszym rozwiązania jest całkowitym brak możliwości sterowania oknami. Przeglądarka nie jest w stanie zablokować możliwości zamknięcia okna, sterować ich modalnościa oraz przyciskami sterowania (minimalizacji, maksymalizacji, zamknięcia i innymi). Co więcej stosowanie dodatkowych okien przeglądarki jest uważane za złą praktykę.
+
 Z powodu tak dużej ilości problemów w projekcie zdecydowano się na użycie drugiego wariantu. Do stworzenia okien wykorzystana została biblioteka jQuery-UI dostarczająca metody umożliwiający w przystępny sposób tworzenie elementów rozszerzalnych (ang. resizable) oraz przeciągalnych (ang. draggable). Celem funkcjonalnym było upodobnienie zachowania pseudookien w przeglądarce do prawdziwych okien programu:
-\begin{enumerate}
-  \item zmiana rozmiaru okna przy pomocy uchwytów w rogach i na krawędziach
-  \item przenoszenie okien za pomocą paska tytułowego
-  \item minimalizacja, maksymalizacja oraz zamykanie okien za pomocą przycisków w prawym górnym rogu
-\end{enumerate}
+\begin{itemize}
+  \item zmiana rozmiaru okna przy pomocy uchwytów w rogach i na krawędziach,
+  \item przenoszenie okien za pomocą paska tytułowego,
+  \item minimalizacja, maksymalizacja oraz zamykanie okien za pomocą przycisków w prawym górnym rogu.
+\end{itemize}
 
-%* TODO - tutaj rysunk okienka z zaznaczonymi elementami typu pasek Bar, przyciski _,[],X, chywataki resizable.
+TODO - tutaj rysunk okienka z zaznaczonymi elementami typu pasek Bar, przyciski -,[],X, chywataki resizable.
 
-Wszystkie elementy są prostymi obiektami blokowymi typu div. Odpowiednie usytułowanie elementów zapewniają właściwości CSS.
-Funkcjonalność maksymalizacji różni się od funkcjonalności w rzeczywistym środowisku. Jest to równoważne ze zwiększeniem rozmiaru okna do maksymalnego dostępnu obszaru (100 procent szerokości i wysokości ciała strony).
+Okno na stronie jest elementem blokowym typu \emph{div} z zagnieżdżonymi elementami symulującymi swoje odpowiedniki z systemowego menedżera okien.
 
-Taka implementacja problemu wynika z możliwości uruchomienia serwera aplikacji w serwerze X w dowolnej rozdzielczości. Po faktycznym zmaksymalizowaniu okna na serwerze użytkownik po stronie przeglądarki widziałby okno o rozmiarze innym niż pełny dostępny obszar widoku. W przypadku rozmiaru mniejszego skutkowałoby to pustym, niezagospodarowanym miejscem w oknie przeglądarki, natomiast większy rozmiar powodowałby pojawienie się suwaków przewijania (ang. scrollbar).
+Zaimplementowana funkcjonalność maksymalizacji okna po stronie przeglądarki różni się od funkcjonalności w rzeczywistym środowisku (po stronie serwera). Maksymalizacja polega na zwiększeniu rozmiarów okna do maksymalnego dostępnu obszaru na stronie HTML.
+Takie rozwiązanie wynika z możliwości uruchomienia serwera aplikacji w serwerze X11 w dowolnej rozdzielczości. Po faktycznym zmaksymalizowaniu okna na serwerze użytkownik po stronie przeglądarki widziałby okno o rozmiarze innym niż pełny dostępny obszar widoku w przeglądarce. W przypadku rozmiaru mniejszego skutkowałoby to pustym, niezagospodarowanym miejscem w oknie przeglądarki, natomiast większy rozmiar powodowałby pojawienie się suwaków przewijania (ang. scrollbar).
 
-Funkcjonalność minimalizacji okna jest również symulowana. Okno jest chowane poprzez zmianę wartości CSS display na none. Dodatkowo tworzony jest element na pasku zadań, który po kliknięciu przywraca ukryte okno. Pasek zadań jest elementem strony znajdującym się na samym dole.
+Funkcjonalność minimalizacji okna jest również symulowana. Okno jest chowane poprzez zmianę wartości CSS \emph{display} na \emph{none}. Dodatkowo tworzony jest element na pasku zadań, który po kliknięciu przywraca ukryte okno. Pasek zadań jest elementem strony znajdującym się na samym dole.
 
 ** TODO rysunek paska zadań **
 
 \subsection{Rysowanie pojedynczego widgeta}
-Na stronie widget reprezentowany jest przez element kontenera div i zawarte w nim element canvas oraz kontener na widgety potomne. Element kontenera ma jedynie funkcję pomocniczą i rozmieszcza w odpowiedniej pozycji canvas oraz dzieci. Jest całkowicie przezroczysty i nie jest widoczny na stronie. Taka implementacja relacji rodzic-dziecko widgetów na stronie zapewnia drzewiastość i łatwość zarządzania widgetami. Zmiana rodzica widgeta, który posiada zagnieżdzone dzieci nie jest problematyczna, a ze względu na format przesyłanych danych od serwera ta operacja jest bardzo często używana na etapie tworzenia okien. Najstarsze widgety (bezpośrednio dziedziczące po QDialog) stoją najwyżej w strukturze i są dodatkowo opakowane w kontener okna z całą jego strukturą.
-
-\begin{itemize}
-\item TODO - Poprawić - QMainWindow też jest najwyżej w strukturze a nie dziedziczy po QDialog. Liczy się flaga widgeta Qt::Window!
-\item TODO rysunek struktury
-\end{itemize}
+Widget reprezentowany jest przez element \emph{div} zawierający dwa elementy: element \emph{canvas} oraz kontener \emph{div} na widgety potomne posiadające analogiczną struktruę. Element ten ma pełni funkcję pomocniczą (jest w pełni przeźroczysty) i służy do umiejscowienia elementu w stosounku do jego rodzica za pomocą atrybutów CSS \emph{left} oraz \emph{top}. Taka implementacja relacji rodzic-dziecko widgetów na stronie zapewnia drzewiastość i łatwość zarządzania widgetami. Zmiana rodzica widgeta, który posiada zagnieżdzone dzieci nie jest problematyczna, a ze względu na format przesyłanych danych od serwera ta operacja jest bardzo często używana na etapie tworzenia okien.
+Widgety z flagą \emph{Qt::Window}, czyli przede wszystkim dziedziczące z \emph{QDialog} oraz \emph{QMainWindow} są traktowane w specjalny sposób. Są opakowywane w kontener okna opisany powyżej i są elementami stojącymi najwyżej w strukturze drzewa.
