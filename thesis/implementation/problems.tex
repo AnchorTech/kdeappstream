@@ -34,9 +34,7 @@ Rozwiązaniem tego problemu była reimplementacja odpowiednich metod \emph{Qt} w
 Ad.\ref{problems_keyboard} 
 \emph{Qt} dostarcza platformowo niezależny opis kodów znaków klawiatury za pomocą zdefiniowanego typu wyliczeniowego \emph{Qt::Key}\footnote{http://doc.qt.digia.com/qt/qt.html\#Key-enum}. Niestety przeglądarki nie są dobrze ustandaryzowane i ich numeracja klawiszy znacznie różni się nie tylko między samymi platformami ale również między ich wersjami. Dodatkowo przeglądarki często nie wspierają wszystkich klawiszy przez to zakres kodów znaków jest inny niż w przypadku biblioteki \emph{Qt}.
 
-Powyższe problemy wymusiły konieczność zaimplementowania metody konwertującej po stronie klienta kody klawiszy na odpowiadające im wartości typu wyliczeniowego \emph{Qt::Key}.
-
-|| TODO: Jak to Janek zrobił
+Powyższe problemy wymusiły konieczność zaimplementowania metody konwertującej po stronie klienta kody klawiszy na odpowiadające im wartości typu wyliczeniowego \emph{Qt::Key}. Kod metody znajduje się w dodatkach (\ref{lst:addons_keyboard_method})
 
 Ad.\ref{problems_clipping}
-Podczas implementacji obcinania (ang. clipping) w kliencie rozpoznano problem z implementacją tej funkcjonalności w dwóch testowanych przeglądarkach -- \emph{Mozilla Firefox} w wersji 16.0.2 oraz \emph{Google Chrome} w wersji 23.0.1271.95 m.
+Podczas implementacji obcinania (ang. clipping) w kliencie rozpoznano problem z implementacją tej funkcjonalności w dwóch testowanych przeglądarkach -- \emph{Mozilla Firefox} w wersji 16.0.2 oraz \emph{Google Chrome} w wersji 23.0.1271.95 m. Problem jest znany i zgłoszony\footnote{http://code.google.com/p/chromium/issues/detail?id=135559}.
