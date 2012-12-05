@@ -50,6 +50,8 @@ virtual void QPaintEngine::updateState(const QPaintEngineState& state)
   }
 \end{lstlisting}
 
+Pełna implementacja za pomocą ustawienia koloru na RGB(0,0,0,0) -- całkowicie przeźroczysty.
+
 \item Gradient liniowy
 \begin{lstlisting}[language=JavaScript,numbers=none]	    "brush":			
 {
@@ -80,6 +82,8 @@ virtual void QPaintEngine::updateState(const QPaintEngineState& state)
 }
 \end{lstlisting}
 
+Pełna implementacja za pomocą \emph{createLinearGradient}.
+
 \item Gradient kołowy
 \begin{lstlisting}[language=JavaScript,numbers=none]	    "brush":			
 {
@@ -104,6 +108,8 @@ virtual void QPaintEngine::updateState(const QPaintEngineState& state)
 }
 \end{lstlisting}
 
+Pełna implementacja za pomocą \emph{createRadialGradient}.
+
 \item Gradient stożkowy
 \begin{lstlisting}[language=JavaScript,numbers=none]	    "brush":			
 {
@@ -127,6 +133,8 @@ virtual void QPaintEngine::updateState(const QPaintEngineState& state)
 }
 \end{lstlisting}
 
+Brak implementacji w \emph{canvas}.
+
 \item Tekstura
 \begin{lstlisting}[language=JavaScript,numbers=none]
 "brush":			
@@ -137,6 +145,8 @@ virtual void QPaintEngine::updateState(const QPaintEngineState& state)
   }
 \end{lstlisting}
 
+Implementacja częściowa za pomocą \emph{createPattern}, bez możliwości określenia transformacji.
+
 \item Kolor
 \begin{lstlisting}[language=JavaScript,numbers=none]	      	 "brush":			
   {
@@ -145,6 +155,8 @@ virtual void QPaintEngine::updateState(const QPaintEngineState& state)
     [,"transform":[[1,0,0],[0,1,0],[0,0,1]]]
   }
 \end{lstlisting}
+
+Pełna implementacja w \emph{canvas}.
 
 \end{itemize}
 
@@ -157,6 +169,8 @@ Istnieje kilka rodzajów pędzli krawędziowych. Każdy z nich posiada inną str
 \item 0x10 Qt::SquareCap
 \item 0x20 Qt::RoundCap
 \end{itemize}
+Wszystkie opcje dostępne w \emph{canvas}.
+
 \item Złączenia (załamania) linii \emph{join}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenJoinStyle-enum}
 \begin{itemize}
 \item 0x00 Qt::MiterJoin
@@ -166,10 +180,13 @@ Wraz z tą wartością parametru musi dodatkowo pojawić się parametr \emph{mit
 \item 0x80 Qt::RoundJoin
 \item 0x100 Qt::SvgMiterJoin
 \end{itemize}
+Opcja \emph{Qt::SvgMiterJoin} niedostępna w \emph{canvas} z wiadomych względów.
+
 \item Szerokość linii \emph{width}
 
 Wartość tego parametru stanowi szerokość linii mierzoną w pikselach.
 \end{enumerate}
+Pełne wsparcie w \emph{canvas}.
 
 W celu wyczyszczenia wartości pędzla jako wartość dla klucza \emph{pen} wysyłany jest obiekt pusty.
 
@@ -184,6 +201,7 @@ W celu wyczyszczenia wartości pędzla jako wartość dla klucza \emph{pen} wysy
     "width":10
   }
 \end{lstlisting}
+Pełne wsparcie w \emph{canvas}.
 
 \item Linia przerywana
 \begin{lstlisting}[language=JavaScript,numbers=none]
@@ -200,6 +218,7 @@ W celu wyczyszczenia wartości pędzla jako wartość dla klucza \emph{pen} wysy
     "width":10
   }
 \end{lstlisting}
+Brak wsparcie \emph{canvas}. Możliwe jedynie symulowanie za pomocą pojedynczych kresek. Brak implementacji w projekcie.
 
 \item Linia z teksturą
 \begin{lstlisting}[language=JavaScript,numbers=none]
@@ -212,6 +231,7 @@ W celu wyczyszczenia wartości pędzla jako wartość dla klucza \emph{pen} wysy
     "width":10
   }
 \end{lstlisting}
+Pełne wsparcia w \emph{canvas}.
 
 \end{itemize}
 
@@ -230,6 +250,15 @@ Przykład:
 "font":"italic small-caps lighter 15px Sans-Serif"
 \end{lstlisting}
 
+Pełne wsparcie w \emph{canvas}. W aplikacji po stronie klienta ciąg CSS font jest rozdzielany na pojedyncze elementy:
+\begin{itemize}
+\item caps
+\item weight
+\item size
+\item family
+\end{itemize}
+Podawanie wszystkich parametrów w \emph{canvas} jest wymagane, brak możliwości podania całego ciągu.
+
 \subsubsection{Metoda kompozycji}
 Parametr ten określa w jaki sposób łączone są kolejne nakładające się warstwy.\footnote{http://doc.qt.digia.com/qt/qpainter.html\#CompositionMode-enum}
 \begin{itemize}
@@ -246,6 +275,7 @@ Parametr ten określa w jaki sposób łączone są kolejne nakładające się wa
 \item xor
 \item copy
 \end{itemize}
+Pełne wsparcie wszystkich opcji w \emph{canvas}.
 
 \subsubsection{Obcinanie}
 \begin{lstlisting}[language=JavaScript,numbers=none]
@@ -263,3 +293,4 @@ Parametr ten określa w jaki sposób łączone są kolejne nakładające się wa
               // 1: Qt::WindingFill
   }
 \end{lstlisting}
+Pełne wsparcie w \emph{canvas}, jednak implementacja w popularnych przeglądarkach(Google Chrome oraz Mozilla Firefox) zawiera poważne błędy opisane w podrozdziale \ref{sec:napotkane_problemy}
