@@ -1,4 +1,19 @@
+W zdarzeniach myszy używane są następujące pola:
+\begin{itemize}
+\item type -- typ zdarzenia,
+\item id -- identyfikator widgeta, którego dotyczy zdarzenie,
+\item x -- pozycja na osi X w momencie zajścia zdarzenia,
+\item y -- pozycja na osi Y w momencie zajścia zdarzenia,
+\item ox -- poprzednia pozycja na osi X, używane tylko przy ruchu,
+\item oy -- poprzednia pozycja na osi Y, używane tylko przy ruchu,
+\item btn -- wartość liczbowa określająca przyciski wciśnięte w momencie zajścia zdarzenia,
+\item modifiers -- wartość liczbowa określająca klawisze specjalne (Alt, Control, Shift, klawisz Windows, klawisz Menu) wciśnięte w momencie zajścia zdarzenia,
+\item delta -- wartość przesunięcia, używane tylko przy przewijaniu,
+\item orientation -- kierunek, używane tylko przy przewijaniu.
+\end{itemize}
+
 \subsubsection{Ruch myszy}
+
 \begin{lstlisting}[language=JavaScript,numbers=none]
 {
   "command": "mouse",

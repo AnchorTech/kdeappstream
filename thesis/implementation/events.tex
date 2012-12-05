@@ -1,16 +1,30 @@
-Po stronie przeglądarki przechwytywane są wszystkie zdarzenia myszy oraz klawiatury. Każde zdarzenie jest zamieniane na obiekt \emph{JSON} i wysyłane do serwera przy użyciu \emph{Websocket}. Dodatkowo przesyłane są zdarzenia dotyczące manipulacji oknami -- zdarzenia zmiany rozmiary, zamknięcia oraz aktywacji okna. W ten sposób z poziomu przeglądarki możliwa jest całkowita kontrola aplikacji.
+Po stronie przeglądarki przechwytywane są wszystkie zdarzenia myszy oraz klawiatury. Każde zdarzenie jest zamieniane na obiekt \emph{JSON} i wysyłane do serwera przy użyciu \emph{Websocket}. Dodatkowo przesyłane są zdarzenia dotyczące manipulacji oknami -- zdarzenia zmiany rozmiary, zamknięcia oraz aktywacji okna. Serwer na podstawie otrzymanych danych tworzy i wstawia zdarzenia do pętli zdarzeń (ang. event loop). W ten sposób z poziomu przeglądarki możliwa jest całkowita kontrola aplikacji, dla końcowego użytkownika równoważna funkcjonalnie z pracą na zdalnym urządzeniu.
+
+W zdarzeniach myszy oraz klawiatury wszystkie przekazywane wartości są zgodne z wewnętrznym systemem zdarzeń Qt, przez co nie jest wymagana dodatkowa konwersja po stronie serwera. Wszystkie wartości pozycji, szerokości i wysokości określone są w pikselach.
+
+W rozdziale przedstawiono przykłady przesyłanych obiektów \emph{JSON} wraz z komentarzem.
 
 \subsection{Zdarzenia myszy}
+
 \input{implementation/events/mouse.tex}
 
 \subsection{Zdarzenia klawiatury}
 \input{implementation/events/keyboard.tex}
 
-\subsection{Zmiana rozmiaru okna}
+\subsection{Zdarzenia okien}
+
+W zdarzeniach okien używane są następujące pola:
+\begin{itemize}
+\item id -- tak jak w przypadku eventów myszy liczba będąca identyfikatorem widgetu, którego dotyczy zdarzenie
+\item w -- wysokość
+\item h -- szerokość
+\end{itemize}
+
+\subsubsection{Zmiana rozmiaru okna}
 \input{implementation/events/resize.tex}
 
-\subsection{Aktywacja okna}
+\subsubsection{Aktywacja okna}
 \input{implementation/events/activate.tex}
 
-\subsection{Zamknięcie okna}
+\subsubsection{Zamknięcie okna}
 \input{implementation/events/close.tex}
