@@ -1,0 +1,58 @@
+
+Aby umożliwić renderowanie elementów po stronie klienta należało utworzyć wspólny format danych bazując na wejściu ze strony biblioteki Qt oraz potrzebnych danych wyjściowych dla obiektu Canvas w języku HTML5. 
+
+Każda komenda rysowania po stronie klienta składa się z podstawowych informacji dotyczących rysowanego obiektu, takich jak: identyfikator, pozycja czy rozmiar, oraz listy prostych elementów z których danych obiekt jest złożony (linie, prostokąty, etc.). Poniżej przedstawiono format pojedyńczej komendy rysowania wraz z wszystkimi możliwymi elementami budującymi widgety w aplikacjach opartych o bibliotekę \emph{Qt}.
+
+
+\begin{lstlisting}[language=JavaScript,numbers=none,caption=Komenda renderowania elementu interfejsu]
+{
+  "command":"draw",
+  "widget":{
+    "id": 12431,          // Identyfikator
+    ["z": 0,]             // Pozycja na stosie obiektow potomnych
+    "name":"QLineEdit",   // Nazwa obiektu
+    "flags": 0x1029,      // Flagi obiektu (definiuja jego typ 
+                          // i wlasciwosci)
+    "x": 100,             // Pozycja X
+    "y": 120,             // Pozycja Y
+    "w": 200,             // Szerokosc
+    "h": 150,             // Wysokosc
+    "r":{                 // Renderowany obszar elementu
+      "x": 0,             // Pozycja obszaru X
+      "y": 0,             // Pozycja obszaru Y
+      "w": 200,           // Szerokosc obszaru
+      "h": 150,           // Wysokosc obszaru
+    }
+  },
+  "render":[]             // Lista elementow do narysowania
+}
+\end{lstlisting}
+
+Poniżej w kolejności alfabetycznej przedstawiono elementy, z których może być zbudowany każdy obiekt klasy \emph{QWidget}. Każdy opis zawiera deklarację metody podklasy \emph{QPaintEngine} wykorzystywanej po stronie serwera, format przesyłanych danych oraz opis metody interpretacji tych danych po stronie klienta.
+
+\subsection{Elipsy}
+\input{implementation/render/ellipse.tex}
+
+\subsection{Kwadraty}
+\input{implementation/render/rectangle.tex}
+
+\subsection{Linie}
+\input{implementation/render/line.tex}
+
+\subsection{Obrazy}
+\input{implementation/render/image.tex}
+
+\subsection{Wielokąty}
+\input{implementation/render/polygon.tex}
+
+\subsection{Punkty}
+\input{implementation/render/point.tex}
+
+\subsection{Ścieżki}
+\input{implementation/render/path.tex}
+
+\subsection{Tekst}
+\input{implementation/render/text.tex}
+
+\subsection{Stan pędzli}
+\input{implementation/render/state.tex}
