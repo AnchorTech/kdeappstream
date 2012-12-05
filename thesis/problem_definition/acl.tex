@@ -1,8 +1,8 @@
 Ponieważ jednym z celów projektu było umożliwienie uruchamiania pełnoprawnych aplikacji zainstalowanych na systemie operacyjnym serwera, kluczową staje się możliwość blokowania nieautoryzowanego dostępu do wrażliwych lub potencjalnie niebezpiecznych aplikacji.
 
-W związku z powyższym, stworzono mechanizm list ACL (ang. Access Control Lists), który pozwala administratorowi systemu na zdefiniowane, które aplikacje mogą być uruchamiane przez klientów, a w przypadku których zostanie wyświetlony komunikatu o braku dostępu.
+W związku z powyższym, stworzono mechanizm list \emph{ACL} (ang. Access Control Lists), który pozwala administratorowi systemu na zdefiniowane, które aplikacje mogą być uruchamiane przez klientów, a w przypadku których zostanie wyświetlony komunikatu o braku dostępu.
 
-Listy kontroli dostępu przechowywane są w pliku konfiguracyjnym serwera w postaci danych w formacie XML. Nazwy aplikacji w postaci komend linii poleceń mogą więc być definiowane ręcznie w dowolnym edytorze tekstowym lub za pomocą pliku wykonywalnego serwera poprzez poniższe argumentów wywołania programu:
+Listy kontroli dostępu przechowywane są w pliku konfiguracyjnym serwera w postaci danych w formacie \emph{XML}\footnote{(ang. Extensible Markup Language}. Nazwy aplikacji w postaci komend linii poleceń mogą więc być definiowane ręcznie w dowolnym edytorze tekstowym lub za pomocą pliku wykonywalnego serwera poprzez poniższe argumentów wywołania programu:
 
 \begin{itemize}
 \item \emph{accept-all}
@@ -15,4 +15,4 @@ spowoduje, że aplikacja o podanej nazwie będzie mogła być uruchamiana przez 
 komenda blokujaca możliwość uruchamiania aplikacji o podanej nazwie.
 \end{itemize}
 
-Serwer, ze względów bezpieczeństwa, od razu po zainstalowaniu domyslnie blokuje wszystkie zapytania klientów i oczekuje się od administratora serwera skonfigurowania list ACL według uznania. Zmiana ustawień serwera wymaga jego ponownego uruchomienia.
+Serwer, ze względów bezpieczeństwa, od razu po zainstalowaniu domyslnie blokuje wszystkie zapytania klientów i oczekuje się od administratora serwera skonfigurowania list \emph{ACL} według uznania. Zmiana ustawień serwera wymaga jego ponownego uruchomienia.
