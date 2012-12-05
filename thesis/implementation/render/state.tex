@@ -161,24 +161,22 @@ Pełna implementacja w \emph{canvas}.
 \end{itemize}
 
 \subsubsection{Pędzel krawędziowy}
-Istnieje kilka rodzajów pędzli krawędziowych. Każdy z nich posiada inną strukturę opisu przedstawione poniżej. W tym miejscu należy również zaznaczyć kilka opcji wspólnych, które występują we wszystkich rodzajach pędzli:
+Istnieje kilka rodzajów pędzli krawędziowych. Każdy z nich posiada inną strukturę przesyłanych danych, które przedstawiono poniżej. W tym miejscu należy również zaznaczyć kilka opcji wspólnych, występujące we wszystkich rodzajach pędzli:
 \begin{enumerate}
 \item Zakończenia linii \emph{cap}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenCapStyle-enum}
 \begin{itemize}
-\item 0x00 Qt::FlatCap
-\item 0x10 Qt::SquareCap
-\item 0x20 Qt::RoundCap
+\item \emph{Qt::FlatCap} (wartość 0x00) --- proste ścięcie linią prostopadłą do stycznej na końcu krzywej,
+\item \emph{Qt::SquareCap} (wartość 0x10) --- zakończenie kwadratowe, bardzo podobne do poprzedniego typu,
+\item \emph{Qt::RoundCap} (wartość 0x20) --- gładkie, zaokrąglone zakończenie.
 \end{itemize}
 Wszystkie opcje dostępne w \emph{canvas}.
 
 \item Złączenia (załamania) linii \emph{join}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenJoinStyle-enum}
 \begin{itemize}
-\item 0x00 Qt::MiterJoin
-
-Wraz z tą wartością parametru musi dodatkowo pojawić się parametr \emph{miter} określający promień zaokrąglania załamań linii.
-\item 0x40 Qt::BevelJoin
-\item 0x80 Qt::RoundJoin
-\item 0x100 Qt::SvgMiterJoin
+\item \emph{Qt::MiterJoin} (wartość 0x00) \footnote{Wraz z tą wartością parametru musi dodatkowo pojawić się parametr \emph{miter} określający promień zaokrąglania załamań linii.}
+\item \emph{Qt::BevelJoin} (wartość 0x40)
+\item \emph{Qt::RoundJoin} (wartość 0x80)
+\item \emph{Qt::SvgMiterJoin} (wartość 0x100)
 \end{itemize}
 Opcja \emph{Qt::SvgMiterJoin} niedostępna w \emph{canvas} z wiadomych względów.
 
@@ -218,7 +216,7 @@ Pełne wsparcie w \emph{canvas}.
     "width":10
   }
 \end{lstlisting}
-Brak wsparcie \emph{canvas}. Możliwe jedynie symulowanie za pomocą pojedynczych kresek. Brak implementacji w projekcie.
+Brak wsparcia \emph{canvas}. Możliwe jedynie symulowanie za pomocą pojedynczych kresek. Brak implementacji w projekcie.
 
 \item Linia z teksturą
 \begin{lstlisting}[language=JavaScript,numbers=none]
@@ -231,7 +229,7 @@ Brak wsparcie \emph{canvas}. Możliwe jedynie symulowanie za pomocą pojedynczyc
     "width":10
   }
 \end{lstlisting}
-Pełne wsparcia w \emph{canvas}.
+Pełne wsparcie w \emph{canvas}.
 
 \end{itemize}
 
@@ -250,32 +248,25 @@ Przykład:
 "font":"italic small-caps lighter 15px Sans-Serif"
 \end{lstlisting}
 
-Pełne wsparcie w \emph{canvas}. W aplikacji po stronie klienta ciąg CSS font jest rozdzielany na pojedyncze elementy:
-\begin{itemize}
-\item caps
-\item weight
-\item size
-\item family
-\end{itemize}
-Podawanie wszystkich parametrów w \emph{canvas} jest wymagane, brak możliwości podania całego ciągu.
+Pełne wsparcie w \emph{canvas}. 
 
 \subsubsection{Metoda kompozycji}
 Parametr ten określa w jaki sposób łączone są kolejne nakładające się warstwy.\footnote{http://doc.qt.digia.com/qt/qpainter.html\#CompositionMode-enum}
 \begin{itemize}
-\item source-atop
-\item source-in
-\item source-out
-\item source-over
-\item destination-atop
-\item destination-in
-\item destination-out
-\item destination-over
-\item lighter
-\item darker
-\item xor
-\item copy
+\item\emph{ source-atop}
+\item \emph{source-in}
+\item \emph{source-out}
+\item \emph{source-over}
+\item \emph{destination-atop}
+\item \emph{destination-in}
+\item \emph{destination-out}
+\item \emph{destination-over}
+\item \emph{lighter}
+\item \emph{darker}
+\item \emph{xor}
+\item \emph{copy}
 \end{itemize}
-Pełne wsparcie wszystkich opcji w \emph{canvas}.
+Lista mozliwych wariantów po stronie serwera jest zdecydowanie dłuższa od wyżej przedstawionej, która obejmujenie jedynie kolejność i sposoby łaczenia poszczególnych warstw ale również złożone metody mieszania kolorów. Serwer przesyła więc tylko te opcje, które są wspierane przez \emph{canvas} po stronie klienta, a wszystkie pozostałe zastępuje domyślną wartością \emph{source-atop}.
 
 \subsubsection{Obcinanie}
 \begin{lstlisting}[language=JavaScript,numbers=none]
@@ -293,4 +284,5 @@ Pełne wsparcie wszystkich opcji w \emph{canvas}.
               // 1: Qt::WindingFill
   }
 \end{lstlisting}
-Pełne wsparcie w \emph{canvas}, jednak implementacja w popularnych przeglądarkach(Google Chrome oraz Mozilla Firefox) zawiera poważne błędy opisane w podrozdziale \ref{sec:napotkane_problemy}
+Obcinanie polega na ograniczaniu obszaru rysowania poprzez dowolną krzywą. 
+Pełne wsparcie w \emph{canvas}, jednak z powodu błędów w implementacji popularnych przeglądarek (Google Chrome oraz Mozilla Firefox) nie została ona zaimplementowana. Problem został opisany w podrozdziale \ref{sec:napotkane_problemy}.

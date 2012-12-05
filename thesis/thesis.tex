@@ -36,7 +36,7 @@
 
 \lstset{
    language=C++,
-   emph={QPaintEngineState,QPaintEngine,Qt,QTextItem,QRect,QRectF,QPoint,QPointF,QLine,QLineF,QEllipse,QPainterPath,QPixmap,QImage},
+   emph={QPainter,QRegion,RenderFlags,QPaintEngineState,QPaintEngine,Qt,QTextItem,QRect,QRectF,QPoint,QPointF,QLine,QLineF,QEllipse,QPainterPath,QPixmap,QImage},
    emphstyle={\color{RedViolet}\bfseries}
 }
 
@@ -98,6 +98,7 @@ W rodziale tym przedstawione zostaną najważniejsze informacje dotyczące techn
 \section{Renderowanie}
 \input{implementation/render.tex}
 \section{Zdarzenia po stronie klienta}
+\label{client_events}
 \input{implementation/events.tex}
 
 \section{Szczegóły implementacji po stronie serwera}
@@ -107,8 +108,8 @@ W rodziale tym przedstawione zostaną najważniejsze informacje dotyczące techn
 \section{Szczegóły implementacji po stronie klienta}
 \input{implementation/client_details.tex}
 
-\label{sec:napotkane_problemy}
 \section{Napotkane problemy}
+\label{sec:napotkane_problemy}
 \input{implementation/problems.tex}
 
 \chapter{Testy aplikacji}
