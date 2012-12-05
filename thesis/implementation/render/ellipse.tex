@@ -13,9 +13,8 @@ virtual void QPaintEngine::drawEllipse( const QRect & rect );
 \end{lstlisting}
 
 Pełna implementacja za pomocą krzywych Beziera.
-Kod implementacji:
 
-\begin{lstlisting}[language=JavaScript,numbers=left]
+\begin{lstlisting}[language=JavaScript,numbers=none,caption=Implementacja rysowania elips za pomocą krzywych Beziera wykorzystana w projekcie]
 // ctx - konteks canvas, x,y,w,h - jak w JSON
 var kappa = .5522848;
 var ox = (w / 2) * kappa,
