@@ -1,3 +1,51 @@
-Renderowanie jest operacją realizowaną za każdym razem gdy wykrywa zostania zmiana dowolnego elementu interfejsu użytkownika. W standardowej aplikacji do kolejki zdarzeń trafia informacja o konieczności odświeżenia widoku aby w kolejnym kroku narysować odświeżany element na ekranie. 
+Renderowanie jest operacją realizowaną za każdym razem gdy wykryta zostania zmiana dowolnego elementu interfejsu użytkownika. W standardowej aplikacji do kolejki zdarzeń trafia informacja o konieczności odświeżenia widoku aby w kolejnym kroku narysować odświeżany element na ekranie. 
 
-W niniejszej pracy ze względu na konieczność rysowania interfejsu aplikacji na zdalnej maszynie konieczne jest przechwycenie informacji z kolejki zdarzeń o zmianie parametrów widgeta oraz utworzenie opisu jego wyglądu w wykorzystywanym formacie wymiany informacji. Szczegóły struktur danych, ich opis oraz sposobu przetwarzania został opisany w sekcji \ref{data_protocol}.
+W niniejszej pracy ze względu na konieczność rysowania interfejsu aplikacji na zdalnej maszynie konieczne jest przechwycenie informacji z kolejki zdarzeń o zmianie parametrów widgeta oraz utworzenie opisu jego wyglądu w wykorzystywanym formacie wymiany informacji. Szczegóły struktur danych, ich opis oraz sposoby przetwarzania zostały opisane w sekcji \ref{data_protocol}.
+
+Biblioteka \emph{Qt} nie umożliwia pobrania informacji o wyglądzie elementu bezpośrednio. Należało więc wykorzystać wewnętrzny mechanizm rysowania. Dokonano to poprzez zaimplementowanie dwóch klas dziedziczących po \emph{QPaintDevice} oraz \emph{QPaintEngine}. 
+
+Klasa \emph{QPaintDevice} opisuje wirtualne urządzenie, na którym dokonywane jest renderowanie elementu. Jej implementacja w projekcie nie zawiera żadnej logiki. Informuje jedynie pozostałe elementy systemu o typie, maksymalnym rozmiarze i stosowanej jednostce miary wirtualnego urządzenia. 
+
+Klasa \emph{QPaintEngine}, zgodnie z założeniami biblioteki \emph{Qt}, jest odpowiedzialna za rysowanie na obiekcie \emph{QPaintDevice}. Udostępnia więc szereg metod dokonujących rysowania podstawowych elementów takich jak linie, okręgi czy krzywe oraz umożliwia ustawienie palety kolorów i przekształceń geometrycznych. W projekcie metody te zaimplementowano w taki sposób aby zapisywały informacje o rysowanych elementach w formacie dnych do przesłania klientowi. Informacje te są przetrzymywane w buforze a po jego zapełnieniu są przekazywane klientowi. W rzeczywistości elementy nie są nigdzie rysowane po stronie serwera, lecz zbierane są jedynie dane pozwalające na odtworzenie interfejsu aplikajcji po stronie klienta. Poniżej przedstawiono implementację klasy \emph{QPaintEngine} zawierającą listę wszystkich dostępnych metod.
+
+\begin{lstlisting}[language=C++,numbers=none,caption=Implementacja klasy \emph{QPaintEngine}]
+class PaintEngine : public QPaintEngine
+{
+    public:
+
+        explicit PaintEngine();
+        virtual ~PaintEngine();
+        virtual bool begin(QPaintDevice * pdev);
+        virtual void drawEllipse(const QRectF & rect);
+        virtual void drawEllipse(const QRect & rect);
+        virtual void drawImage(const QRectF & rectangle, 
+                               const QImage & image, 
+                               const QRectF & sr,
+                               Qt::ImageConversionFlags flags 
+                                      = Qt::AutoColor);
+        virtual void drawLines(const QLineF * lines, int lineCount);
+        virtual void drawLines(const QLine * lines, int lineCount);
+        virtual void drawPath(const QPainterPath & path);
+        virtual void drawPixmap(const QRectF & r, 
+                                const QPixmap & pm, 
+                                const QRectF & sr);
+        virtual void drawPoints(const QPointF * points, int pointCount);
+        virtual void drawPoints(const QPoint * points, int pointCount);
+        virtual void drawPolygon(const QPointF * points, 
+                                 int pointCount, 
+                                 PolygonDrawMode mode);
+        virtual void drawPolygon(const QPoint * points, 
+                                 int pointCount, 
+                                 PolygonDrawMode mode);
+        virtual void drawRects (const QRectF * rects, int rectCount);
+        virtual void drawRects (const QRect * rects, int rectCount);
+        virtual void drawTextItem(const QPointF & p, 
+                                  const QTextItem & textItem);
+        virtual void drawTiledPixmap(const QRectF & rect, 
+                                     const QPixmap & pixmap, 
+                                     const QPointF & p);
+        virtual bool end();
+        virtual Type type() const;
+        virtual void updateState (const QPaintEngineState & state);
+};
+\end{lstlisting}
