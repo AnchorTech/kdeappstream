@@ -42,3 +42,21 @@ Problem ten został rozwiązany w dwojaki sposób. Po pierwsze serwer przesyła 
 \subsubsection{Problemy z obcinaniem (ang. clipping) w przeglądarkach.}
 \label{problems_clipping}
 Podczas implementacji obcinania (ang. clipping) w kliencie rozpoznano problem z implementacją tej funkcjonalności w dwóch testowanych przeglądarkach -- \emph{Mozilla Firefox} w wersji 16.0.2 oraz \emph{Google Chrome} w wersji 23.0.1271.95 m. Problem jest znany i zgłoszony\footnote{http://code.google.com/p/chromium/issues/detail?id=135559}.
+
+\subsubsection{Synchroniczne ładowanie obrazków}
+
+Wszystkie grafiki używane do renderowania w elementach \emph{canvas} wymagają pełnego załadowania ich do pamięci przeglądarki. Język \emph{Javascript} nie pozwala na przeprowadzenie tej operacji synchroniczne. Pełny obraz dostępny jest dopiero w asynchronicznym wywołaniu zwrotnym (ang. callback), które jest całkowicie niedeterministyczne czasowo, to znaczy nie jest określona kolejność rozpoczęcia wczytywania obrazów. Protokół komunikacji i specyfika elemntu \emph{canvas} -- pozwalająca na rysowanie tylko na wierzchu elementu -- wymusza rysowanie elementów na widgetach w odpowiedniej kolejności. Jest to sprzeczne z asynchronicznością wywołań zwrotnych, dlatego przed rozpoczęciem rysowania danego widgetu ładowane są wszystkie potrzebne obrazki. Używana jest do tego metoda \emph{delayCallback} w listingu \ref{lst:source_images_delay}. Pierwszym argumentem jest liczba obrazków do załadowania, drugim funkcja zwrotna, która zostanie wywołana po załadowaniu się wszystkich obrazów. Funkcja zwraca domknięcie, które należy wywołać w każdym wywołaniu zwrotnym załadowania obrazu (\emph{onload}).
+
+\label{lst:source_images_delay}
+\begin{lstlisting}[language=JavaScript,numbers=left,caption={Metoda łącząca wywołania wielu callbacków w jeden},label={lst:source_images_delay}]
+var delayCallback = function (num, callback) {
+    function finished() {
+        num -= 1;
+        if (num == 0 && callback) {
+            callback();
+        }
+    }
+    return finished;
+};
+\end{lstlisting}
+
