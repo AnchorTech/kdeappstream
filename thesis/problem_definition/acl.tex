@@ -1,1 +1,18 @@
-TODO opis zastosowanego ACL
+Ponieważ jednym z celów projektu było umożliwienie uruchamiania pełnoprawnych aplikacji zainstalowanych na systemie operacyjnym serwera, kluczową staje się możliwość blokowania nieautoryzowanego dostępu do wrażliwych lub potencjalnie niebezpiecznych aplikacji.
+
+W związku z powyższym, stworzono mechanizm list ACL (ang. Access Control Lists), który pozwala administratorowi systemu na zdefiniowane, które aplikacje mogą być uruchamiane przez klientów, a w przypadku których zostanie wyświetlony komunikatu o braku dostępu.
+
+Listy kontroli dostępu przechowywane są w pliku konfiguracyjnym serwera w postaci danych w formacie XML. Nazwy aplikacji w postaci komend linii poleceń mogą więc być definiowane ręcznie w dowolnym edytorze tekstowym lub za pomocą pliku wykonywalnego serwera poprzez poniższe argumentów wywołania programu:
+
+\begin{itemize}
+\item \emph{accept-all}
+spowoduje zniesienie wszystkich wcześniej wprowadzonych obostrzeń i możliwe będzie uruchomienie wszystkich aplikacji zainstalowanych na serwerze,
+\item \emph{reject-all}
+spowoduje zablokowanie wszystkich zapytań serwera. Komenda ta powinna stanowić pierwszy krok w etapie budowy list dostępu,
+\item \emph{accept nazwa-aplikacji} \footnote{Nazwa aplikacji oznacza pełną komendę wiersza poleceń (wraz z możliwymi argumentami), która spowoduje uruchomienie aplikacji. Może to być również ścieżka bezwzględna do pliku wykonywalnego aplikacji.}
+spowoduje, że aplikacja o podanej nazwie będzie mogła być uruchamiana przez serwer,
+\item \emph{reject nazwa-aplikacji},
+komenda blokujaca możliwość uruchamiania aplikacji o podanej nazwie.
+\end{itemize}
+
+Serwer, ze względów bezpieczeństwa, od razu po zainstalowaniu domyslnie blokuje wszystkie zapytania klientów i oczekuje się od administratora serwera skonfigurowania list ACL według uznania. Zmiana ustawień serwera wymaga jego ponownego uruchomienia.
