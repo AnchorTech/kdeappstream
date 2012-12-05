@@ -6,7 +6,8 @@
   \item Kody znaków klawiatury
   \label{problems_keyboard}
   \item ....
-  \item problem z clippingiem w przeglądarkach
+  \item problem z obcinaniem (ang. clipping) w przeglądarkach
+  \label{problems_clipping}
 \end{enumerate}
 
 Ad.\ref{rendering_events} Rysowanie widgetów we frameworku \emph{Qt} realizowane jest wewnątrz kolejki zdarzeń aplikacji. Zdarzenie rysowania powiadamia element interfejsu o konieczności przerysowania. Widget posiada wskaźnik do miejsca w pamięci gdzie powinien przeprowadzic operację renderowania, gdyż sam jest implementacją klasy QPaintDevice. 
@@ -36,3 +37,6 @@ Ad.\ref{problems_keyboard}
 Powyższe problemy wymusiły konieczność zaimplementowania metody konwertującej po stronie klienta kody klawiszy na odpowiadające im wartości typu wyliczeniowego \emph{Qt::Key}.
 
 || TODO: Jak to Janek zrobił
+
+Ad.\ref{problems_clipping}
+Podczas implementacji obcinania (ang. clipping) w kliencie rozpoznano problem z implementacją tej funkcjonalności w dwóch testowanych przeglądarkach -- \emph{Mozilla Firefox} w wersji 16.0.2 oraz \emph{Google Chrome} w wersji 23.0.1271.95 m.
