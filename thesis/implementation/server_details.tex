@@ -1,3 +1,14 @@
+\subsection{Kolejka zdarzeń}
+Aplikacje z graficznym interfejsem opartym o bibliotekę Qt wykorzystują kolejkę zdarzeń do asynchronicznej komunikacji zarówno między obiektami wewnątrz aplikacji jak i aplikacji z systemem operacyjnym. Wszystkie zdarzenia pochodzące od systemu operacyjnego są zamieniane na wewnętrzne zdarzenia biblioteki Qt aby mogły zostać przetworzone przez aplikację. I tak na przykład zwadzenie XMouse jest zamieniane na zdarzenie QMouseEvent, a XFocus na QFocusEvent. 
+
+Podobny model zastosowany został w projekcie serwera aplikacji do komunikacji klienta z aplikacją uruchomioną na serwerze. Wszystkie zdarzenia generowane przez klienta za pomocą przeglądarki wysyłane są w przedstawionym w sekcji .... formacie. Z oczywistych względów dane takie należy przetworzyć aby mogły zostać przetworzone przez aplikację. Do tego celu stworzona została specjalna klasa zajmująca się parsowaniem i konwersją danych wejściowych na obiekty. 
+
+Obiekty takie nie mogą być bezpośrednio przekazane aplikacji ponieważ część implementacji kolejki zdarzeń nie jest dostępna dla programistów ze względów bezpieczeństwa, w związku z tym nie jest możliwa np. kontrola fucusu na określone okno aplikacji tylko z wykorzystaniem zdarzeń, lecz kontrola taka musi odbywać się w sposób manualny poprzez wywoływanie odpowiednich metody biblioteki Qt.
+
+W związku z powyższym stworzona została dodatkowa warstwa obsługi zdarzeń, która w reakcji na odbiór zdarzeń pośrednich podejmuje decyzję o przekazaniu zdarzenia bezpśrednio do samej aplikacji lub też przejmuje na siebie obowiązek sterowania zachowaniem aplikacji w odpowiedzi na dane zdarzenie poprzez uruchamianie odpowiednich metod i procedur. 
+
+Taki podział strukturalny modelu zdarzeń umożliwia przede wszystkim łatwą jej modyfikację oraz dodawanie obsługi nowych zdarzeń w przyszłości (np. zdarzenia do obsługi urządzeń z ekranem dotykowym).
+
 \subsection{Buforowanie grafik}
 Większość współczesnych aplikacji z graficznym interfejsem użytkownika zawiera pewne elementy jak ikona lub obraz w formacie PNG (ang. Portable Network Graphics), których nie da się opisać za pomocą prostych elementów jak linia czy elipsa, lecz trzeba je przesłać w postaci danych binarnych. W przypadku takich aplikacji przy każdej zmianie widgeta zawierającego grafikę następuje ponowne jest narysowanie, a więc ta sama ikona czy obraz PNG będzie wykorzystywany wielokrotnie. 
 
