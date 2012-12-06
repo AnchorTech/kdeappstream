@@ -1,7 +1,7 @@
 \subsubsection{Rysowanie za pomocą zdarzeń, synchronizacja i buforowanie.}
 \label{rendering_events}
 
-Rysowanie widgetów we frameworku \emph{Qt} realizowane jest wewnątrz kolejki zdarzeń aplikacji. Zdarzenie rysowania powiadamia element interfejsu o konieczności przerysowania. Widget posiada wskaźnik do miejsca w pamięci gdzie powinien przeprowadzic operację renderowania, gdyż sam jest implementacją klasy QPaintDevice. 
+Rysowanie widgetów we frameworku \emph{Qt} realizowane jest wewnątrz kolejki zdarzeń aplikacji. Zdarzenie rysowania powiadamia element interfejsu o konieczności przerysowania. Widget posiada wskaźnik do miejsca w pamięci gdzie powinien przeprowadzic operację renderowania, gdyż sam jest implementacją klasy \emph{QPaintDevice}. 
 
 Powyższy schemat działania wymagał znalezienia sposobu na zmuszenie widgetów do rysowania za pomocą specjalnie przygotowanej implementacji klasy QPaintEngine oraz QPaintDevice. Do tego celu wykorzystana została metoda biblioteki Qt:
 

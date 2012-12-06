@@ -178,7 +178,7 @@ Wszystkie opcje dostępne w \emph{canvas}.
 \item \emph{Qt::RoundJoin} (wartość 0x80)
 \item \emph{Qt::SvgMiterJoin} (wartość 0x100)
 \end{itemize}
-Opcja \emph{Qt::SvgMiterJoin} niedostępna w \emph{canvas} z wiadomych względów.
+Opcja \emph{Qt::SvgMiterJoin} to wewnętrzny sposób \emph{Qt} złączania linii stosowany przy grafikach \emph{SVG}. Metoda ta nie jest dostępna w \emph{canvas}.
 
 \item Szerokość linii \emph{width}
 
@@ -285,4 +285,4 @@ Lista mozliwych wariantów po stronie serwera jest zdecydowanie dłuższa od wy�
   }
 \end{lstlisting}
 Obcinanie polega na ograniczaniu obszaru rysowania poprzez dowolną krzywą. 
-Pełne wsparcie w \emph{canvas}, jednak z powodu błędów w implementacji popularnych przeglądarek (Google Chrome oraz Mozilla Firefox) nie została ona zaimplementowana. Problem został opisany w podrozdziale \ref{sec:napotkane_problemy}.
+Pełne wsparcie w \emph{canvas}, jednak z powodu błędów w implementacji popularnych przeglądarek (\emph{Google Chrome} oraz \emph{Mozilla Firefox}) nie została ona zaimplementowana. Problem został opisany w podrozdziale \ref{sec:napotkane_problemy}.
