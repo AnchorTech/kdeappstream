@@ -14,7 +14,7 @@ void QWidget::render(QPainter * painter,
                                         DrawChildren))
 \end{lstlisting}
 
-Umożliwiła nam ona wskazanie obiektu QPainter wykorzystującego mechanizm renderowania serwera, tj. reimplementacje klasy QPaintEngine oraz QPaintDevice. Wykorzystanie tej metody powoduje wygenerowanie kolejnego zdarzenia i umieszczenie go w kolejce aplikacji. Powodowało to problem wpadania serwera w nieskończoną pętlę i uniemożliwiało jego dalsze poprawne funkcjonowanie. 
+Umożliwiła nam ona wskazanie obiektu \emph{QPainter} wykorzystującego mechanizm renderowania serwera, tj. reimplementacje klasy \emph{QPaintEngine} oraz \emph{QPaintDevice}. Wykorzystanie tej metody powoduje wygenerowanie kolejnego zdarzenia i umieszczenie go w kolejce aplikacji. Powodowało to problem wpadania serwera w nieskończoną pętlę i uniemożliwiało jego dalsze poprawne funkcjonowanie. 
 
 Rozwiązaniem problemu było stworzenie własnej kolejki widgetów, które wymagają renderowania. Kolejka ta jest opróżniana w pewnych odstępach czasu nie krótszych niż 100 milisekund. Wartość ta została dobrana eksperymentalnie tak aby uzyskać efekt płynnej interakcji z aplikacją.
 

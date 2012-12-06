@@ -1,10 +1,10 @@
 \subsection{Biblioteki pomocniczne}
 Podczas pracy z projektem zostały wykorzystane popularne biblioteki ułatwiające podstawowe zadania. Wszystkie z nich są darmowe nawet w wykorzystaniu komercyjnym oraz całkowicie otwarte.
 \begin{enumerate}
-  \item jQuery --- lekka biblioteka ułatwijąca operacje na elementach DOM i ułatwiająca pracę z językiem Javascript
+  \item jQuery --- lekka biblioteka ułatwijąca operacje na elementach DOM i ułatwiająca pracę z językiem Javascript.
   \item jQuery-UI --- plugin do biblioteki jQuery umożliwiający tworzenie zaawansowanych wizualnych elementów, takich jak okna dialogowe, elementy rozszerzalne (ang. resizable), elementy przesuwalne (ang. draggable).
-  \item jQuery-mousewheel --- plugin do biblioteki jQuery dodający obsługę kółka myszy
-  \item sylvester.js --- biblioteka służąca do zaawansowanych obliczeń na macierzach i wektorach
+  \item jQuery-mousewheel --- plugin do biblioteki jQuery dodający obsługę kółka myszy.
+  \item sylvester.js --- biblioteka służąca do zaawansowanych obliczeń na macierzach i wektorach.
 \end{enumerate}
 
 
@@ -16,7 +16,7 @@ Typowe programy komputerowe składaja się z wielu okien. Sposób implementacji 
 Pierwszym wariantem jest zastosowanie osobnych okien przeglądarki (tzw. popupów), które odpowiadałyby rzeczywistym oknom przeglądarki.
 Drugą opcją jest stworzenie minimalistycznego managera okien w języku Javascript.
 
-Minusem pierwszym rozwiązania jest całkowitym brak możliwości sterowania oknami. Przeglądarka nie jest w stanie zablokować możliwości zamknięcia okna, sterować ich modalnościa oraz przyciskami sterowania (minimalizacji, maksymalizacji, zamknięcia i innymi). Co więcej stosowanie dodatkowych okien przeglądarki jest uważane za złą praktykę.
+Główną wadą rozwiązania jest całkowitym brak możliwości sterowania oknami. Przeglądarka nie jest w stanie zablokować możliwości zamknięcia okna, sterować ich modalnościa oraz przyciskami sterowania (minimalizacji, maksymalizacji, zamknięcia i innymi). Co więcej stosowanie dodatkowych okien przeglądarki jest uważane za złą praktykę.
 
 Z powodu tak dużej ilości problemów w projekcie zdecydowano się na użycie drugiego wariantu. Do stworzenia okien wykorzystana została biblioteka jQuery-UI dostarczająca metody umożliwiający w przystępny sposób tworzenie elementów rozszerzalnych (ang. resizable) oraz przeciągalnych (ang. draggable). Celem funkcjonalnym było upodobnienie zachowania pseudookien w przeglądarce do prawdziwych okien programu:
 \begin{itemize}

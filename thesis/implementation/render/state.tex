@@ -266,7 +266,7 @@ Parametr ten określa w jaki sposób łączone są kolejne nakładające się wa
 \item \emph{xor}
 \item \emph{copy}
 \end{itemize}
-Lista mozliwych wariantów po stronie serwera jest zdecydowanie dłuższa od wyżej przedstawionej, która obejmujenie jedynie kolejność i sposoby łaczenia poszczególnych warstw ale również złożone metody mieszania kolorów. Serwer przesyła więc tylko te opcje, które są wspierane przez \emph{canvas} po stronie klienta, a wszystkie pozostałe zastępuje domyślną wartością \emph{source-atop}.
+Lista mozliwych wariantów po stronie serwera jest zdecydowanie dłuższa od wyżej przedstawionej, która obejmujenie jedynie kolejność i sposoby łaczenia poszczególnych warstw. Po stronie serwera możliwe są również złożone metody mieszania kolorów warstw nie wspierane przez element \emph{canvas}, dlatego też przesyłane są tylko kompatybilne opcje, a wszystkie pozostałe zastępowane domyślną wartością \emph{source-atop}.
 
 \subsubsection{Obcinanie}
 \begin{lstlisting}[language=JavaScript,numbers=none]
