@@ -1,9 +1,11 @@
+Przedmiotem pracy jest stworzenie prototypowego serwera oraz klienta HTML5. Zadaniem serwera jest jest udostępnienie usługi uruchamiającej aplikacje oparte o biblioteki \emph{Qt} i KDE. Zdalny dostęp do aplikacji uruchomionej w środowisku serwera jest dostępny poprzez interfejs HTML5 udostępniany przez instancję serwera.
+
+Użytkownik serwisu w celu skorzystania z aplikacji \emph{Qt} zainstalowanej na serwerze wchodzi na odpowiedni adres przy użyciu nowoczesnej przeglądarki internetowej. Następnie wybiera interesujący go program i przejmuje nad nim kontrolę. Jest w stanie wyświetlić program w przeglądarce, który wizualnie odpowiada rzeczywistej instancji uruchomionej na serwerze. Wszystkie akcje myszy oraz klawiatury przechwycone przez przeglądarke są wysyłane do serwera, dzięki czemu użytkownik ma pełną kontrolę nad uruchomioną aplikacją. Należy również zaimplementować odpowiednik menedżera okien (ang. window manager) po stronie klienta, aby udostępnić użytkownikowi funkcjonalność pracy z wieloma oknami --- przesuwanie, rozszerzanie, zamykanie, oraz opcjonalnie minimalizowanie oraz maksymalizowanie.
+
 // TODO: Wymagania (ogólne)
 // TODO: Przypadki użycia
 // TODO: Zachowanie systemu / software'u
 // TODO: Struktura systemu / software'u
-
-Przedmiotem pracy jest stworzenie prototypowego serwera hostującego desktopowe aplikacjie oparte o biblioteki \emph{Qt} oraz KDE. Na żądanie klienta serwer uruchamia wybraną aplikację oraz wstrzykuje kod odpowiedzialny za komunikację klienta z procesem aplikacji i przesyłanie klientowi danych dotyczących wyglądu graficznego interfejsu aplikacji. 
 
 Postawione zadanie w głównej mierze polega na rozwiązaniu trzech podstawowych problemów:
 \begin{enumerate}
