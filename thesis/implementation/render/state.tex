@@ -253,7 +253,7 @@ Pełne wsparcie w \emph{canvas}.
 \subsubsection{Metoda kompozycji}
 Parametr ten określa w jaki sposób łączone są kolejne nakładające się warstwy.\footnote{http://doc.qt.digia.com/qt/qpainter.html\#CompositionMode-enum}
 \begin{itemize}
-\item\emph{ source-atop}
+\item \emph{source-atop}
 \item \emph{source-in}
 \item \emph{source-out}
 \item \emph{source-over}
@@ -266,6 +266,7 @@ Parametr ten określa w jaki sposób łączone są kolejne nakładające się wa
 \item \emph{xor}
 \item \emph{copy}
 \end{itemize}
+
 Lista mozliwych wariantów po stronie serwera jest zdecydowanie dłuższa od wyżej przedstawionej, która obejmujenie jedynie kolejność i sposoby łaczenia poszczególnych warstw. W \emph{Qt} możliwe są również złożone metody mieszania kolorów warstw nie wspierane przez element \emph{canvas}, dlatego też przesyłane są tylko kompatybilne opcje, a wszystkie pozostałe zastępowane domyślną wartością \emph{source-atop}. Metody te są bardzo specyficzne i rzadko używane, dlatego brak ich implemetacnji nie wpływa na odbiór i użytkowanie typowych aplikacji użytkowych.
 
 \subsubsection{Obcinanie}
