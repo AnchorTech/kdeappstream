@@ -18,7 +18,7 @@ Postawione zadanie w głównej mierze polega na rozwiązaniu czterech podstawowy
 Na rysunku \ref{fig:arch} przedstawiono ideowy schemat architektury systemu rozwiązującego powyższe kwestie. 
 Podstawą projektu jest jego modułowość, która separuje logikę odpowiedzialną za udostępnianie interfejsu WWW inicjującego proces aplikacji Qt od części stanowiącej węzeł komunikacyjny pomiędzy klientem a aplikacją Qt działąjącą po stronie serwera.
 Można również zauważyć bardzo wyraźne rozgraniczenie między dwoma kanałami przesyłu danych, które wynika z konieczności umożliwienia korzystania z serwera wielu klientom. 
-Poniżej przedstawiono opis rozwiązań kolejnych problemów wraz z odniesieniem do odpowiednich części architektury na większym poziomie szczegółowości.
+W dalszej części przedstawiono opis rozwiązań kolejnych problemów wraz z odniesieniem do odpowiednich części architektury na większym poziomie szczegółowości.
 
 \begin{figure}
 \centering
@@ -26,3 +26,20 @@ Poniżej przedstawiono opis rozwiązań kolejnych problemów wraz z odniesieniem
 \caption{Schemat architektury systemu.}
 \label{fig:arch}
 \end{figure}
+
+\input{problem_definition/communication.tex}
+
+\section{Uzyskanie informacji o wyglądzie elementów graficznego interfejsu aplikacji}
+\input{problem_definition/data.tex}
+
+\section{Symulacja interakcji użytkownika z interfejsem aplikacji}
+\input{problem_definition/simulation.tex}
+
+\section{Odtwarzanie aplikacji po stronie klienta}
+\input{problem_definition/render.tex}
+
+\section{Wewnętrzne przepływy danych w module WebSocket serwera}
+\input{problem_definition/server-flow.tex}
+
+\section{Zabezpieczenie serwera}
+\input{problem_definition/acl.tex}
