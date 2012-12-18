@@ -161,9 +161,9 @@ Pełna implementacja w \emph{canvas}.
 \end{itemize}
 
 \subsubsection{Pędzel krawędziowy}
-Istnieje kilka rodzajów pędzli krawędziowych. Każdy z nich posiada inną strukturę przesyłanych danych, które przedstawiono poniżej. W tym miejscu należy również zaznaczyć kilka opcji wspólnych, występujące we wszystkich rodzajach pędzli:
+Istnieje kilka rodzajów pędzli krawędziowych. Każdy z nich posiada inną strukturę przesyłanych danych, które przedstawiono poniżej. Wszystkie pędzle posiadają pewne cechy wspólne -- zakończenie linii, sposób łamania oraz posiadają określoną szerokość.
 \begin{enumerate}
-\item Zakończenia linii \emph{cap}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenCapStyle-enum}
+\item Zakończenia linii \emph{cap}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenCapStyle-enum}:
 \begin{itemize}
 \item \emph{Qt::FlatCap} (wartość 0x00) --- proste ścięcie linią prostopadłą do stycznej na końcu krzywej,
 \item \emph{Qt::SquareCap} (wartość 0x10) --- zakończenie kwadratowe, bardzo podobne do poprzedniego typu,
@@ -171,7 +171,7 @@ Istnieje kilka rodzajów pędzli krawędziowych. Każdy z nich posiada inną str
 \end{itemize}
 Wszystkie opcje dostępne w \emph{canvas}.
 
-\item Złączenia (załamania) linii \emph{join}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenJoinStyle-enum}
+\item Złączenia (załamania) linii \emph{join}\footnote{http://doc.qt.digia.com/qt/qt.html\#PenJoinStyle-enum}:
 \begin{itemize}
 \item \emph{Qt::MiterJoin} (wartość 0x00) \footnote{Wraz z tą wartością parametru musi dodatkowo pojawić się parametr \emph{miter} określający promień zaokrąglania załamań linii.}
 \item \emph{Qt::BevelJoin} (wartość 0x40)
@@ -184,7 +184,7 @@ Opcja \emph{Qt::SvgMiterJoin} to wewnętrzny sposób \emph{Qt} złączania linii
 
 Wartość tego parametru stanowi szerokość linii mierzoną w pikselach.
 \end{enumerate}
-Pełne wsparcie w \emph{canvas}.
+Pełne wsparcie w \emph{canvas} dla wszystkich atrybutów.
 
 W celu wyczyszczenia wartości pędzla jako wartość dla klucza \emph{pen} wysyłany jest obiekt pusty.
 
@@ -216,7 +216,7 @@ Pełne wsparcie w \emph{canvas}.
     "width":10
   }
 \end{lstlisting}
-Brak wsparcia \emph{canvas}. Możliwe jedynie symulowanie za pomocą pojedynczych kresek. Brak implementacji w projekcie.
+Tymczasowy brak wsparcia \emph{canvas} we wszystkich przeglądarkach. Możliwe jedynie symulowanie za pomocą pojedynczych kresek. Brak implementacji w projekcie, co skutkuje wyświetlaniem linii przerywanych jako linie ciągłe. Ten rodzaj pędzla jest używany bardzo rzadko w aplikacjach, dlatego nie stanowi to dużego problemu.
 
 \item Linia z teksturą
 \begin{lstlisting}[language=JavaScript,numbers=none]
@@ -236,11 +236,11 @@ Pełne wsparcie w \emph{canvas}.
 \subsubsection{Czcionka}
 Opis czcionki reprezentowany jest w formacie CSS\footnote{http://www.w3schools.com/cssref/pr\_font\_font.asp} i obejmuje kolejno:
 \begin{itemize}
-\item Styl
-\item Wariant
-\item Rozmiar
-\item Wysokość
-\item Rodzinę (lista nazw rozdzielona przecinkami)
+\item styl,
+\item wariant,
+\item rozmiar,
+\item wysokość,
+\item rodzinę (lista nazw rozdzielona przecinkami).
 \end{itemize}
 
 Przykład:
@@ -266,7 +266,7 @@ Parametr ten określa w jaki sposób łączone są kolejne nakładające się wa
 \item \emph{xor}
 \item \emph{copy}
 \end{itemize}
-Lista mozliwych wariantów po stronie serwera jest zdecydowanie dłuższa od wyżej przedstawionej, która obejmujenie jedynie kolejność i sposoby łaczenia poszczególnych warstw. Po stronie serwera możliwe są również złożone metody mieszania kolorów warstw nie wspierane przez element \emph{canvas}, dlatego też przesyłane są tylko kompatybilne opcje, a wszystkie pozostałe zastępowane domyślną wartością \emph{source-atop}.
+Lista mozliwych wariantów po stronie serwera jest zdecydowanie dłuższa od wyżej przedstawionej, która obejmujenie jedynie kolejność i sposoby łaczenia poszczególnych warstw. W \emph{Qt} możliwe są również złożone metody mieszania kolorów warstw nie wspierane przez element \emph{canvas}, dlatego też przesyłane są tylko kompatybilne opcje, a wszystkie pozostałe zastępowane domyślną wartością \emph{source-atop}. Metody te są bardzo specyficzne i rzadko używane, dlatego brak ich implemetacnji nie wpływa na odbiór i użytkowanie typowych aplikacji użytkowych.
 
 \subsubsection{Obcinanie}
 \begin{lstlisting}[language=JavaScript,numbers=none]

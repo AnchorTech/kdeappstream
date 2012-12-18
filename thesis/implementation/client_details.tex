@@ -57,7 +57,7 @@ Funkcjonalność minimalizacji okna jest również symulowana. Okno jest chowane
 
 
 \subsection{Rysowanie pojedynczego widgeta}
-Widget reprezentowany jest przez element \emph{div} zawierający dwa elementy: element \emph{canvas} oraz kontener \emph{div} na widgety potomne posiadające analogiczną struktruę. Element ten ma pełni funkcję pomocniczą (jest w pełni przeźroczysty) i służy do umiejscowienia elementu w stosounku do jego rodzica za pomocą atrybutów CSS \emph{left} oraz \emph{top}. Taka implementacja relacji rodzic-dziecko widgetów na stronie zapewnia drzewiastość i łatwość zarządzania widgetami. Zmiana rodzica widgeta, który posiada zagnieżdzone dzieci nie jest problematyczna, a ze względu na format przesyłanych danych od serwera ta operacja jest bardzo często używana na etapie tworzenia okien.
+Widget reprezentowany jest przez element \emph{div} zawierający dwa elementy: element \emph{canvas} oraz kontener \emph{div} na widgety potomne posiadające analogiczną struktruę. Element ten ma pełni funkcję pomocniczą (jest w pełni przeźroczysty) i służy do umiejscowienia elementu w stosounku do jego rodzica za pomocą atrybutów CSS \emph{left} oraz \emph{top}. Taka implementacja relacji rodzic-dziecko widgetów na stronie zapewnia strukturę drzewiastą i łatwość zarządzania widgetami. Zmiana rodzica widgeta, który posiada zagnieżdzone dzieci nie jest problematyczna, a ze względu na format przesyłanych danych od serwera ta operacja jest bardzo często używana na etapie tworzenia okien.
 Widgety z flagą \emph{Qt::Window}, czyli przede wszystkim dziedziczące z \emph{QDialog} oraz \emph{QMainWindow} są traktowane w specjalny sposób. Są opakowywane w kontener okna opisany powyżej i są elementami stojącymi najwyżej w strukturze drzewa.
 
 \begin{figure}
