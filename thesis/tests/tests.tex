@@ -36,6 +36,7 @@ Aplikacje były sprawdzane pod względem poprawności wyświetlania elementów, 
   \label{dolphin}
 \end{figure}
 
+
 \begin{figure}[!h]
   \centering
   \includegraphics[width=\textwidth,height=!]{img/qtcreator.png}
@@ -122,8 +123,18 @@ VNC            & 6945 & 7541 & 6801 & 6541 &  7211 & 7007   \\
 
 \subsection{Badanie działania przy słabym połączeniu i dużych opóźnieniach}
 
-Do symulacji pracy przy użyciu słabego łącza wykorzystano pakiet netem \cite{netem}.
+Do symulacji pracy przy użyciu słabego łącza wykorzystano pakiet netem \cite{netem}. Z powodu braku możliwości łatwego opisania konkretnymi wartościami testów zapisano jedynie odczucia z punktu widzenia użytkownika. Przeprowadzono dwa testy.
 
+Pierwszy test miał na celu sprawdzenie funkcjonalność przy niewielkim opóźnieniu około 100 milisekund przy stracie pakietów około 0.3\%. Zastosowano następujące polecenia:\\
+\texttt{tc qdisc change dev eth0 root netem delay 100ms 20ms distribution normal} \\
+\texttt{tc qdisc change dev eth0 root netem loss 0.3\% 50\%} \\ 
+W takich warunkach testowana aplikacja zachowywała się prawidłowo. Opóźnienia i responsywność nie odbiegały wiele od systemu \emph{VNC}.
+
+Drugi test badał zachowanie funkcjonalności przy zastosowaniu bardzo słabego łącza. Zasymulowano opóźnienie około 600 milisekund i stratę pakietów na poziomie 1\%. Zastosowano następujące polecenia: \\
+\texttt{tc qdisc change dev eth0 root netem delay 600ms 50ms distribution normal} \\
+\texttt{tc qdisc change dev eth0 root netem loss 1\% 50\%} \\ 
+W takiej sytuacji testowana aplikacja zachowywała się prawidłowo i była w pełni stabilna. Reagowała na aktywność użytkownika prawidłowo i mimo spowolnienia w wyświetlaniu nie zaobserwowano znaczących błędów i awarii serwera.
+Mimo tego z powodu zbyt dużego obciążenia z punktu widzenia użytkownika aplikacje uruchomina za zarówno w testowanym systemie jak i w \emph{VNC} były bardzo niewygodne w użytkowaniu. Nie zauważono dużych różnic w działaniu obu rozwiązań w tej próbie.
 
 \section{Podsumowanie testów}
 W środowisku lokalnym oba rozwiązania praktycznie nie różnią się od siebie w kwestii wydajności. Przewaga systemu \emph{VNC} w sieci Internet wynika głównie z powodu mniejszej ilości przesyłanych danych. Przy zastosowaniu dodatkowych rozwiązań kompresujących dane możliwe będzie uzyskanie wyniku zbliżonego, lub nawet niższego w szczególnych przypadkach.
