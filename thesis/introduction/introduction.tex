@@ -8,4 +8,45 @@ Podczas badań rynku pod kątem aktualnie dostępnych technologii dostrzeżono b
 Głównym wzorcem dla tej pracy jest projekt GTK+ Broadway powstały w 2011 roku oferujący dostęp przez przeglądarkę internetową do aplikacji działających pod kontrolą biblioteki GTK na zdalnym serwerze. Do tej pory nie istniało rozwiązanie oferujące podobną funkcjonalność dla biblioteki Qt i stworzony na potrzeby tej pracy projekt jest pierwszą taką implementacją. Kluczowym czynnikiem wyróżniającym tę pracę na tle innych jest innowacyjny sposób przesyłu danych do wizualizacji okien i ich elementów, który nie opieraja się na transmisji bitmap. Zamiast pełnych bitmap przesyłane są informacje sterującę rysowaniem pochodzące z silnika renderującego QT.
 Takie rozwiązanie wykorzysta pełne możliwości elementu \emph{canvas} z HTML5 i pozwoli na przetestowanie praktycznej implementacji większości dostępnych funkcjonalności.
 
+\subsubsection{Zawartość pracy}
+
 W rozdziale 2 zostały krótko przedstawione użyte technologie - HTML5, biblioteka Qt i projekt GTK Broadway. Rozdział 3 opisuje problem i prototypową propozycję rozwiązania - protokół komunikacyjny, sposób interakcji użytkownika oraz proste zabezpieczenie serwera. Rozdział 4 opisuje dokładnie implementację. Z racji na swoją długość został podzielony na kilka części. Osobno zaprezentowano protokół, system zdarzeń po stronie klienta (przeglądarki) oraz szczegóły implementacji po obu stronach. W tym rozdziale zawarte zostały również informacje o licznych napotkanych problemach przy tworzeniu projektu. W rozdziale 5 zaprezentowano wyniki testów w środowisku lokalnym oraz w Internecie.
+Tablica \ref{tab:podzial} przedstawia podział podczas pisania rozdziałów pracy.
+
+\begin{table}
+\centering  
+\begin{tabular}{ |l|l|c|c|}
+\hline
+Rozdział & Podrozdział              & Jędrychowski & Spas   \\
+\hline
+\multicolumn{2}{|c|}{Wstęp} & - & całość \\
+\hline 
+\multirow{3}{*}{Podstawy teoretyczne} & Wybrane rozwiązania HTML5 & całość & -  \\
+ & Opis biblioteki Qt & - & całość  \\
+ & GTK Broadway & całość & -  \\
+ \hline
+ \multirow{6}{*}{Określenie problemu} & Komunikacja & całość & -  \\
+  & Uzyskiwanie informacji o wyglądzie & - & całość  \\
+  & Symulacja interakcji & - & całość  \\
+  & Odtwarzanie interakcji& całość & -  \\
+  & Wewnętrzny przepływ danych & - & całość  \\
+  & Zabezpieczenie serwera & - & całość  \\
+  \hline
+  \multirow{6}{*}{Implementacja} & Renderowanie & - & całość  \\
+   & Protokół wymiany danych & - & całość  \\
+   & Zdarzenia po stronie klienta & całość & -  \\
+   & Implementacja -- serwer & - & całość  \\
+   & Implementacja -- klient & całość & -  \\
+   & Napotkane problemy & całość & -  \\
+   \hline
+   \multirow{3}{*}{Testy aplikacji} & Funkcjonalne & całość & -  \\
+     & Wydajnościowe & całość & -  \\
+     & Podsumowanie testów & całość & -  \\
+   \hline
+   \multicolumn{2}{|c|}{Podsumowanie} & - & całość \\
+   \hline
+
+\end{tabular}
+\caption{Podział pracy przy tworzeniu rozdziałów}
+\label{tab:podzial}
+\end{table}
