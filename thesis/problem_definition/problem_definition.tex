@@ -18,9 +18,9 @@ Postawione zadanie w głównej mierze polega na rozwiązaniu czterech podstawowy
 Na rysunku \ref{fig:arch} przedstawiono ideowy schemat architektury systemu rozwiązującego powyższe kwestie. 
 Podstawą projektu jest jego modułowość, która separuje logikę odpowiedzialną za udostępnianie interfejsu WWW inicjującego proces aplikacji Qt od części stanowiącej węzeł komunikacyjny pomiędzy klientem a aplikacją Qt działąjącą po stronie serwera.
 Można również zauważyć bardzo wyraźne rozgraniczenie między dwoma kanałami przesyłu danych, które wynika z konieczności umożliwienia korzystania z serwera wielu klientom. 
-W dalszej części przedstawiono opis rozwiązań kolejnych problemów wraz z odniesieniem do odpowiednich części architektury na większym poziomie szczegółowości.
+W dalszej części przedstawiono opisy poszczególnych modułów oraz przepływów danych między różnymi częściami architektury na większym poziomie szczegółowości.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width=1.0\linewidth]{img/arch}
 \caption{Schemat architektury systemu.}
@@ -42,4 +42,5 @@ W dalszej części przedstawiono opis rozwiązań kolejnych problemów wraz z od
 \input{problem_definition/server-flow.tex}
 
 \section{Zabezpieczenie serwera}
+\label{sec:server-security}
 \input{problem_definition/acl.tex}
