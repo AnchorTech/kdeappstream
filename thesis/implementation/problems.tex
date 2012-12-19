@@ -3,7 +3,7 @@
 
 Rysowanie widgetów we frameworku \emph{Qt} realizowane jest wewnątrz kolejki zdarzeń aplikacji. Zdarzenie rysowania powiadamia element interfejsu o konieczności przerysowania. Widget posiada wskaźnik do miejsca w pamięci gdzie powinien przeprowadzic operację renderowania, gdyż sam jest implementacją klasy \emph{QPaintDevice}. 
 
-Powyższy schemat działania wymagał znalezienia sposobu na zmuszenie widgetów do rysowania za pomocą specjalnie przygotowanej implementacji klasy QPaintEngine oraz QPaintDevice. Do tego celu wykorzystana została metoda biblioteki Qt:
+Powyższy schemat działania wymagał znalezienia sposobu na zmuszenie widgetów do rysowania za pomocą specjalnie przygotowanej implementacji klasy \emph{QPaintEngine} oraz \emph{QPaintDevice}. Do tego celu wykorzystana została metoda biblioteki \emph{Qt}:
 
 \begin{lstlisting}[language=C++,numbers=none]
 void QWidget::render(QPainter * painter, 
@@ -28,9 +28,9 @@ Rozwiązaniem tego problemu była reimplementacja odpowiednich metod \emph{Qt} w
 \subsubsection{Kody znaków klawiatury.}
 \label{problems_keyboard}
 
-\emph{Qt} dostarcza platformowo niezależny opis kodów znaków klawiatury za pomocą zdefiniowanego typu wyliczeniowego \emph{Qt::Key}\cite[qtkey]. Niestety przeglądarki nie są dobrze ustandaryzowane i ich numeracja klawiszy znacznie różni się nie tylko między samymi platformami ale również między ich wersjami. Dodatkowo przeglądarki często nie wspierają wszystkich klawiszy przez to zakres kodów znaków jest inny niż w przypadku biblioteki \emph{Qt}.
+\emph{Qt} dostarcza platformowo niezależny opis kodów znaków klawiatury za pomocą zdefiniowanego typu wyliczeniowego \emph{Qt::Key }\cite{qtkey}. Niestety przeglądarki nie są dobrze ustandaryzowane i ich numeracja klawiszy znacznie różni się nie tylko między samymi platformami ale również między ich wersjami. Dodatkowo przeglądarki często nie wspierają wszystkich klawiszy przez to zakres kodów znaków jest inny niż w przypadku biblioteki \emph{Qt}.
 
-Powyższe problemy wymusiły konieczność zaimplementowania metody konwertującej po stronie klienta kody klawiszy na odpowiadające im wartości typu wyliczeniowego \emph{Qt::Key}. Kod metody znajduje się w dodatkach (\ref{lst:addons_keyboard_method})
+Powyższe problemy wymusiły konieczność zaimplementowania metody konwertującej po stronie klienta kody klawiszy na odpowiadające im wartości typu wyliczeniowego \emph{Qt::Key}. Kod metody znajduje się w dodatku (\ref{lst:addons_keyboard_method})
 
 \subsubsection{Niedopasowanie czcionek.}
 \label{problems_fonts}

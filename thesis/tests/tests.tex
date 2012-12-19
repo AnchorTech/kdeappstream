@@ -14,7 +14,7 @@ Specyfikacja oprogramowania.
 
 Na obu komputerach oprogramowanie zostało zainstalowane w standardowy sposób oraz nie dokonywano żadnych zmian w ustawieniach. Używany jest domyślny styl \emph{Oxygen}.
 
-Do porównania wybrano dwa programy -- kalkulator \emph{KCalc} dostępny w podstawowym pakiecie KDE oraz grę pasjans \emph{KPat} (aka \emph{KPatience}) z pakietu KDE Games. \emph{KCalc} jest aplikacją wykorzystującą podstawowe widgety, gdzie praktycznie nie używane są bitmapy. Gra \emph{KPat} prawie w całości bazuje na elemencie, który w \emph{Qt} renderowany jest za pomocą bitmap. Wybór tych programów pozwoli na porównanie działania dla dwóch różnych przypadków.
+Do porównania wybrano dwa programy -- kalkulator \emph{KCalc} dostępny w podstawowym pakiecie KDE oraz grę pasjans \emph{KPat} (aka \emph{KPatience}) z pakietu KDE Games. \emph{KCalc} jest aplikacją wykorzystującą podstawowe widgety, gdzie praktycznie nie używane są bitmapy. Gra \emph{KPat} prawie w całości bazuje na elemencie, który w \emph{Qt} renderowany jest za pomocą bitmap. Wybór tych programów pozwoli na porównanie działania dla dwóch różnych przypadków --- dużej ilości natywnych widgetów albo dużej ilości grafik.
 
 \section {Testy funkcjonalne}
 Z powodu poziomu skomplikowania aplikacji testy funkcjonalne przeprowadzono ręcznie. Polegały na uruchomieniu wielu programów użytkowych z pakietu \emph{KDE} takich jak:
@@ -55,10 +55,9 @@ Aplikacje były sprawdzane pod względem poprawności wyświetlania elementów, 
 
 \subsection{Badanie ilości przesłanych danych}
 
-Pierwszym testem jest sprawdzenie ilości przesłanych. Do pomiaru użyto program \emph{iftop}, wykonano 5 prób, wyniki podane w kilobajtach.
 Stworzono dwa przypadki testowe wykonane w 5 próbach. Pierwszy polega na włączneniu aplikacji i pomiarze przesłanych danych aż do pełnego wyświetlenia się na ekranie. Wyniki znajdują się w tablicach \ref{tab:test1} oraz \ref{tab:test2}. Drugim scenariuszem jest sprawdzenie działania aplikacji w dłuższym okresie czasu. Dokonano nagrania prostego makra z użyciem myszy za pomocą aplikacji \emph{xmacro2}. Testu dokonywano przez około minutę testując cykliczne kliknięcia na wybranych elementach w stałych odstępach czasu. Wyniki dostępne w tablicach \ref{tab:test3} oraz \ref{tab:test4}.
 
-Wyniki wskazują wyższość systemu \emph{VNC} pod kątem ilości przesłanych danych. Różnice te wynikają przede wszystkim z narzutu protokołu. \emph{RFB} jest protokołem binarnym, gdzie przesyłane są głównie obrazy. W protokole użytym w projekcie duży narzut stanowi użyty format \emph{JSON}. Obejściem tego problemu może być próba zastosowanie kompresji \emph{GZIP}. Przesyłane dane ze względu na ogarniczoną ilość użytych znaków, które często się powtarzają bardzo dobrze się kompersują -- uzyskiwany jest kilkukrotny zysk objętościowym. Za pomocą \emph{WebWorkerów} HTML5 możliwa jest dekompresja w wielu wątkach w celu przyspieszenia aplikacji.
+Wyniki wskazują wyższość systemu \emph{VNC} pod kątem ilości przesłanych danych. Różnice te wynikają przede wszystkim z narzutu protokołu. \emph{RFB} jest protokołem binarnym, gdzie przesyłane są głównie obrazy. W protokole użytym w projekcie duży narzut stanowi użyty format \emph{JSON}. Obejściem tego problemu może być próba zastosowanie kompresji \emph{GZIP}. Przesyłane dane ze względu na ogarniczoną ilość użytych znaków, które często się powtarzają bardzo dobrze się kompersują -- uzyskiwany jest kilkukrotny zysk objętościowym. Za pomocą \emph{WebWorkerów HTML5} możliwa jest dekompresja w wielu wątkach w celu przyspieszenia aplikacji.
 
 \begin{table}
 \centering  
@@ -71,7 +70,7 @@ KAppstream & 560 & 1002 & 494 & 506 & 641 &  640  \\
 \hline
 VNC            & 592 & 621 & 651 & 575 &  584 &  604  \\
 \end{tabular}
-\caption{Test aplikacji KCalc -- ilość przesłanych danych od startu}
+\caption{Test aplikacji \emph{KCalc} -- ilość przesłanych danych od startu}
 \label{tab:test1}
 \end{table}
 
@@ -86,7 +85,7 @@ KAppstream & 672 & 642 & 694 & 705 & 650 &  672  \\
 \hline
 VNC            & 619 & 981 & 651 & 575 &  610 &  687  \\
 \end{tabular}
-\caption{Test aplikacji KPat -- ilość przesłanych danych od startu}
+\caption{Test aplikacji \emph{KPat} -- ilość przesłanych danych od startu}
 \label{tab:test2}
 \end{table}
 
@@ -102,7 +101,7 @@ KAppstream & 1802 & 2021 & 1902 & 2104 & 1802 &  1926  \\
 \hline
 VNC            & 1021 & 989 & 1101 & 1021 &  1258 &  1078  \\
 \end{tabular}
-\caption{Test działania aplikacji KCalc  -- symulacja działania użytkownika}
+\caption{Test działania aplikacji \emph{KCalc}  -- symulacja działania użytkownika}
 \label{tab:test3}
 \end{table}
 
@@ -117,7 +116,7 @@ KAppstream & 10847 & 9054 & 10814 & 9581 & 10485 & 10156   \\
 \hline
 VNC            & 6945 & 7541 & 6801 & 6541 &  7211 & 7007   \\
 \end{tabular}
-\caption{Test działania aplikacji KPat -- symulacja działania użytkownika}
+\caption{Test działania aplikacji \emph{KPat} -- symulacja działania użytkownika}
 \label{tab:test4}
 \end{table}
 
