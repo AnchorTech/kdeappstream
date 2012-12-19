@@ -21,7 +21,7 @@ Takie rozwiązanie zapewnia:
 \item możliwość kontroli wielkości bufora przez klienta dzięki możliwości zdalnego czyszczenia pamięci kluczy.
 \end{itemize}
 
-\subsection{Wpinanie się do aplikacji Qt i komunikacja z serwerem}
+\subsection{Wpinanie się do aplikacji Qt i komunikacja z serwerem} \label{sec:ldpreload}
 Jednym z głównych założeń projektu jest brak konieczności rekompilacji jakichkolwiek aplikacji i bibliotek, w tym \emph{Qt}. Przy tak postawionym warunku jedyną możliwością wykonywania kodu w aplikacji jest użycie wstrzyknięcie własnej biblioteki DLL (ang. DLL injection). Technika ta jest używana do wykonania kodu wstrzykiwanej biblioteki w miejsce oryginalnego kodu innych bibliotek, które normalnie wywołuje program. W systemie \emph{Linux} zastosowanie tej techniki jest bardzo proste przy pomocy bardzo prostego mechanizmu \emph{LD\_PRELOAD}\cite{ld}.
 
 Dogłębna analiza kodu źródłowego biblioteki \emph{Qt} pomogła znaleźć funkcję \emph{qt\_startup\_hook} stworzoną specjalnie do nadpisywania i  wstrzykiwania własnego kodu do programów opartych o \emph{Qt}.
