@@ -252,23 +252,23 @@ Przykład:
 Pełne wsparcie w \emph{canvas}. 
 
 \subsubsection{Metoda kompozycji}
-Parametr ten określa w jaki sposób łączone są kolejne nakładające się warstwy.\cite{compositionmode}
+Parametr ten określa w jaki sposób łączone są kolejne nakładające się warstwy.\cite{compositionmode} Metody dostępne w \emph{canvas}:
 \begin{itemize}
-\item \emph{source-atop}
-\item \emph{source-in}
-\item \emph{source-out}
-\item \emph{source-over}
-\item \emph{destination-atop}
-\item \emph{destination-in}
-\item \emph{destination-out}
-\item \emph{destination-over}
-\item \emph{lighter}
-\item \emph{darker}
-\item \emph{xor}
-\item \emph{copy}
+\item \emph{source-atop},
+\item \emph{source-in},
+\item \emph{source-out},
+\item \emph{source-over},
+\item \emph{destination-atop},
+\item \emph{destination-in},
+\item \emph{destination-out},
+\item \emph{destination-over},
+\item \emph{lighter},
+\item \emph{darker},
+\item \emph{xor},
+\item \emph{copy}.
 \end{itemize}
 
-Lista mozliwych wariantów po stronie serwera jest zdecydowanie dłuższa od wyżej przedstawionej, która obejmujenie jedynie kolejność i sposoby łaczenia poszczególnych warstw. W \emph{Qt} możliwe są również złożone metody mieszania kolorów warstw nie wspierane przez element \emph{canvas}, dlatego też przesyłane są tylko kompatybilne opcje, a wszystkie pozostałe zastępowane domyślną wartością \emph{source-atop}. Metody te są bardzo specyficzne i rzadko używane, dlatego brak ich implemetacnji nie wpływa na odbiór i użytkowanie typowych aplikacji użytkowych.
+Lista mozliwych wariantów po stronie aplikacji \emph{Qt} jest zdecydowanie dłuższa od wyżej przedstawionej, która obejmujenie jedynie kolejność i sposoby łaczenia poszczególnych warstw. W \emph{Qt} możliwe są również złożone metody mieszania kolorów warstw nie wspierane przez element \emph{canvas}, dlatego też przesyłane są tylko kompatybilne opcje, a wszystkie pozostałe zastępowane domyślną wartością \emph{source-atop}. Metody te są bardzo specyficzne i rzadko używane, dlatego brak ich implemetacnji nie wpływa na odbiór i użytkowanie typowych aplikacji użytkowych.
 
 \subsubsection{Obcinanie}
 \begin{lstlisting}[language=JavaScript,numbers=none]
