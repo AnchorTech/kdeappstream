@@ -4,6 +4,12 @@
 #include "events/EventConverter.h"
 #include "events/EventFilter.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 #include <QDebug>
 #include <QCoreApplication>
 #include <QHoverEvent>
