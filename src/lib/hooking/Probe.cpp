@@ -4,6 +4,12 @@
 #include <dlfcn.h>
 #include <QWidget>
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 #include "paint/PaintDevice.h"
 #include "paint/PaintEngine.h"
 #include "events/EventFilter.h"
