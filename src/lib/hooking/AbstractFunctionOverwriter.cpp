@@ -1,5 +1,5 @@
 #include "AbstractFunctionOverwriter.h"
-
+#include <stdint.h>
 #include <iostream>
 
 #ifdef ARCH_X86
