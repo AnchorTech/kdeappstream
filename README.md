@@ -1,3 +1,6 @@
+# I'm not solved any problem yet
+# Go back later time
+
 # kdeappstream
 HTML5 backend for QT applications
 
