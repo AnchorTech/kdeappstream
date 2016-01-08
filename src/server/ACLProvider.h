@@ -41,6 +41,9 @@ class ACLProvider
         void save();
 
         void printInfo();
+
+    private:
+        void createPermissionsFile();
 };
 
 #endif // ACLPROVIDER_H
