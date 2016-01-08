@@ -8,7 +8,7 @@ Requirements
 * libqt4-dev
 * cmake
 
-
+your request write acl.conf for permissions
 
 Building kdeappstream on Linux\X11
 ----------------------------------
