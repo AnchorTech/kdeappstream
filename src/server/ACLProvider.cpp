@@ -2,7 +2,6 @@
 
 #include <QDir>
 #include <QFile>
-#include <QDesktopServices>
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QDomDocument>
 #include <QCoreApplication>
@@ -15,8 +14,11 @@ ACLProvider::ACLProvider() :
     _rejectAll(true)
 {
     m_instance = this;
-    _dir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-    _path = _dir + "/acl.conf";
+    _dir = QDir(QDir::homePath() + "/.config").absolutePath();
+    _path = QDir(_dir + "/kappstream_acl.conf").absolutePath();
+    if (!QFile(_path).exists())
+        createPermissionsFile();
+    
     qDebug() << _path;
 
     QFile f(_path);
@@ -67,6 +69,7 @@ void ACLProvider::createPermissionsFile() {
     
     if (!file.open(QIODevice::WriteOnly)) {
         qDebug() << file.errorString();
+        return;
     }
 
     QXmlStreamWriter().setCodec("UTF-8");
