@@ -19,7 +19,7 @@ Building kdeappstream on Linux\X11
 
 >$ mkdir ~/kdeappstream/build
 
->$ cmake .. --prefix=/user/bin
+>$ cmake ..
 
 >$ make
 
