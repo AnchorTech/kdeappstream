@@ -1,6 +1,3 @@
-# I'm not solved any problem yet
-# Go back later time
-
 # kdeappstream
 HTML5 backend for QT applications
 
@@ -9,6 +6,7 @@ Requirements
 * libfontconfig1-dev
 * kdelibs5-dev
 * libqt4-dev
+* cmake
 
 
 
