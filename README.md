@@ -25,3 +25,10 @@ On Ubuntu/Debian
 
 On Fedora/Centos/Ojuba
 >$ su -c make install
+
+
+For Try
+>$ kappstream-server
+
+Open Location
+127.0.0.1:8080
