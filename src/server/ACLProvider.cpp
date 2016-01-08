@@ -61,6 +61,38 @@ ACLProvider::ACLProvider() :
     }
 }
 
+void ACLProvider::createPermissionsFile() {
+
+    QFile file(_path);
+    
+    if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << file.errorString();
+    }
+
+    QXmlStreamWriter().setCodec("UTF-8");
+
+    QXmlStreamWriter perms(&file);
+    perms.setAutoFormatting(true);
+    perms.writeStartDocument();
+    perms.writeStartElement("config");
+    
+    perms.writeStartElement("accepted");
+    perms.writeAttribute("all", "false");
+    perms.writeStartElement("accept");
+    perms.writeAttribute("name", "testapp");
+    
+    perms.writeEndElement();
+    perms.writeEndElement();
+    
+    perms.writeStartElement("reject");
+    perms.writeAttribute("all", "true");
+    
+    perms.writeEndElement();
+    perms.writeEndDocument();
+    
+    file.close();
+}
+
 ACLProvider * ACLProvider::instance()
 {
     if (!m_instance)
