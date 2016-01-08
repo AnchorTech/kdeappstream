@@ -13,7 +13,7 @@ ApplicationWrapperThread::ApplicationWrapperThread(QString applicationName, QObj
 void ApplicationWrapperThread::run()
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("LD_PRELOAD", "/usr/lib64/libkappstream.so /usr/lib64/libkappstreamhook.so");
+    env.insert("LD_PRELOAD", "/usr/lib/libkappstream.so /usr/lib/libkappstreamhook.so");
     QProcess p;
     p.setProcessEnvironment(env);
     p.setProcessChannelMode(QProcess::ForwardedChannels);
