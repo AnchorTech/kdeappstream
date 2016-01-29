@@ -26,6 +26,11 @@ On Ubuntu/Debian
 On Fedora/Centos/Ojuba
 >$ su -c make install
 
+For add application to kappstream-server
+>$ kappstream-server a applicationName
+
+For remove application from kappstream-server
+>$ kappstream-server r applicationName
 
 For Try
 >$ kappstream-server
